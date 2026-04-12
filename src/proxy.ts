@@ -1,18 +1,49 @@
-import { NextResponse, type NextRequest } from 'next/server'
-import { updateSession } from '@/lib/supabase/middleware'
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
+
+const PUBLIC_ADMIN_ROUTES = [
+  '/admin/forgot-password',
+  '/admin/reset-password',
+]
 
 export async function proxy(request: NextRequest) {
-  const { supabaseResponse, user } = await updateSession(request)
+  const { pathname } = request.nextUrl
 
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/admin/')
-
-  if (isAdminRoute && !user) {
-    const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/admin'
-    return NextResponse.redirect(loginUrl)
+  // Allow public admin routes (password recovery)
+  if (PUBLIC_ADMIN_ROUTES.some(route => pathname.startsWith(route))) {
+    return NextResponse.next()
   }
 
-  return supabaseResponse
+  // All other /admin/* routes require a session
+  if (pathname.startsWith('/admin')) {
+    const response = NextResponse.next()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll: () => request.cookies.getAll(),
+          setAll: (cookiesToSet) => {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            )
+          },
+        },
+      }
+    )
+
+    const { data: { session } } = await supabase.auth.getSession()
+
+    if (!session) {
+      const loginUrl = new URL('/admin', request.url)
+      return NextResponse.redirect(loginUrl)
+    }
+
+    return response
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
