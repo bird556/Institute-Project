@@ -1,0 +1,83 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+import { Moon, Sun, LogOut, Menu } from 'lucide-react'
+import { useTheme } from 'next-themes'
+import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
+import { logoutAction } from '@/actions/auth'
+
+function getPageTitle(pathname: string): string {
+  const segments = pathname.split('/').filter(Boolean)
+  const last = segments[segments.length - 1]
+  if (!last || last === 'admin') return 'Dashboard'
+  return last
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ')
+}
+
+export function AdminHeader() {
+  const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
+
+  function openMobileNav() {
+    window.dispatchEvent(new CustomEvent('open-mobile-nav'))
+  }
+
+  return (
+    <header className="sticky top-0 z-20 flex items-center justify-between h-14 px-4 md:px-6 bg-background border-b border-border shrink-0">
+      {/* Left: mobile menu + page title */}
+      <div className="flex items-center gap-3">
+        <button
+          onClick={openMobileNav}
+          className="lg:hidden p-1.5 rounded-lg text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
+          aria-label="Open menu"
+        >
+          <Menu size={20} />
+        </button>
+        <h1 className="font-display font-bold text-[var(--color-text-primary)] dark:text-[#e8ecec] text-lg leading-none">
+          {getPageTitle(pathname)}
+        </h1>
+      </div>
+
+      {/* Right: theme toggle + admin avatar */}
+      <div className="flex items-center gap-2">
+        {/* Theme toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          aria-label="Toggle theme"
+          className="cursor-pointer"
+        >
+          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+        </Button>
+
+        {/* Admin avatar dropdown */}
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-brand-teal)] text-white text-xs font-bold shrink-0 outline-none cursor-pointer"
+            aria-label="Admin menu"
+          >
+            A
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuItem
+              onClick={() => logoutAction()}
+              className="gap-2 cursor-pointer"
+            >
+              <LogOut size={15} />
+              Sign out
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  )
+}

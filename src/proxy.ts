@@ -7,7 +7,7 @@ const PUBLIC_ADMIN_ROUTES = [
   '/admin/reset-password',
 ]
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Allow public admin routes (password recovery)
@@ -47,5 +47,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*'],
+  matcher: ['/admin/:path+'],
 }

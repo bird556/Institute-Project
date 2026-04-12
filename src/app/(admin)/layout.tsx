@@ -1,11 +1,19 @@
-export default function AdminLayout({
+import { createClient } from '@/lib/supabase/server';
+import { AdminShell } from '@/components/admin/AdminShell';
+
+export default async function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  return (
-    <div className="min-h-screen bg-surface dark:bg-dark-background">
-      {children}
-    </div>
-  )
+  const supabase = await createClient();
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  if (!session) {
+    return <>{children}</>;
+  }
+
+  return <AdminShell>{children}</AdminShell>;
 }

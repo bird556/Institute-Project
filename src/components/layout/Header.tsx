@@ -66,7 +66,7 @@ export function Header() {
             {/* Search toggle */}
             <button
               onClick={() => setSearchOpen((v) => !v)}
-              className="p-2 rounded-md text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+              className="p-2 rounded-md text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors cursor-pointer"
               aria-label="Toggle search"
             >
               <Search size={18} />
@@ -77,7 +77,7 @@ export function Header() {
             {/* Mobile menu toggle */}
             <button
               onClick={() => setMobileOpen((v) => !v)}
-              className="lg:hidden p-2 rounded-md text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+              className="lg:hidden p-2 rounded-md text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors cursor-pointer"
               aria-label="Toggle menu"
             >
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
