@@ -101,6 +101,13 @@ body {
 }
 .dark .tiptap-editor code,
 .dark .tiptap-content code { background: var(--color-dark-surface-hover); }
+.tiptap-editor hr, .tiptap-content hr {
+  border: none;
+  border-top: 2px solid var(--color-border);
+  margin: 1.5rem 0;
+}
+.dark .tiptap-editor hr,
+.dark .tiptap-content hr { border-top-color: var(--color-dark-border); }
 
 @theme inline {
   --font-heading:       var(--font-sans);

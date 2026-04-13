@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { Moon, Sun, LogOut, Menu } from 'lucide-react'
 import { useTheme } from 'next-themes'
@@ -12,10 +13,26 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { logoutAction } from '@/actions/auth'
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-/i
+
+const EDITOR_TITLES: Record<string, string> = {
+  blogs: 'Blog Post',
+  events: 'Event',
+  'reading-list': 'Reading List Item',
+  partners: 'Partner',
+}
+
 function getPageTitle(pathname: string): string {
   const segments = pathname.split('/').filter(Boolean)
   const last = segments[segments.length - 1]
   if (!last || last === 'admin') return 'Dashboard'
+
+  // UUID/ID segment — derive title from the parent route
+  if (UUID_RE.test(last) && segments.length >= 2) {
+    const parent = segments[segments.length - 2]
+    return EDITOR_TITLES[parent] ?? 'Edit'
+  }
+
   return last
     .split('-')
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
@@ -25,6 +42,8 @@ function getPageTitle(pathname: string): string {
 export function AdminHeader() {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
 
   function openMobileNav() {
     window.dispatchEvent(new CustomEvent('open-mobile-nav'))
@@ -56,7 +75,7 @@ export function AdminHeader() {
           aria-label="Toggle theme"
           className="cursor-pointer"
         >
-          {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+          {mounted && (theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />)}
         </Button>
 
         {/* Admin avatar dropdown */}
