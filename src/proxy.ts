@@ -15,33 +15,30 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // All other /admin/* routes require a session
-  if (pathname.startsWith('/admin')) {
-    const response = NextResponse.next()
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll: () => request.cookies.getAll(),
-          setAll: (cookiesToSet) => {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              response.cookies.set(name, value, options)
-            )
-          },
-        },
-      }
-    )
-
-    const { data: { session } } = await supabase.auth.getSession()
-
-    if (!session) {
-      const loginUrl = new URL('/admin', request.url)
-      return NextResponse.redirect(loginUrl)
-    }
-
-    return response
-  }
+  // TODO: Re-enable auth guard once Supabase is wired up
+  // if (pathname.startsWith('/admin')) {
+  //   const response = NextResponse.next()
+  //   const supabase = createServerClient(
+  //     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  //     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  //     {
+  //       cookies: {
+  //         getAll: () => request.cookies.getAll(),
+  //         setAll: (cookiesToSet) => {
+  //           cookiesToSet.forEach(({ name, value, options }) =>
+  //             response.cookies.set(name, value, options)
+  //           )
+  //         },
+  //       },
+  //     }
+  //   )
+  //   const { data: { session } } = await supabase.auth.getSession()
+  //   if (!session) {
+  //     const loginUrl = new URL('/admin', request.url)
+  //     return NextResponse.redirect(loginUrl)
+  //   }
+  //   return response
+  // }
 
   return NextResponse.next()
 }
