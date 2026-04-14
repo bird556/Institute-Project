@@ -52,6 +52,14 @@ export interface SiteSetting {
   value: string
 }
 
+export interface SiteSettings {
+  site_name: string
+  logo_path: string
+  contact_email: string
+  contact_phone: string
+  address: string
+}
+
 export interface PageContent {
   id: string
   page: string

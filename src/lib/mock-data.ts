@@ -67,6 +67,22 @@ export interface MockPartner {
   created_at: string
 }
 
+export interface MockSiteSettings {
+  site_name: string
+  logo_path: string       // storage key — empty string if no logo set yet
+  contact_email: string
+  contact_phone: string
+  address: string
+}
+
+export const mockSiteSettings: MockSiteSettings = {
+  site_name: 'Institute Name',
+  logo_path: '',          // no logo yet — shows placeholder
+  contact_email: 'info@institute.ca',
+  contact_phone: '+1 (416) 555-0100',
+  address: '123 Education Ave, Toronto, ON M5V 1A1',
+}
+
 // ─── Blog Posts ───────────────────────────────────────────────────────────────
 
 export const mockBlogs: MockBlogPost[] = [
