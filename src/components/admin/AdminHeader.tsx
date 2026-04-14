@@ -86,7 +86,13 @@ export function AdminHeader() {
           >
             A
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuItem
+              onClick={() => window.open('/', '_blank')}
+              className="gap-2 cursor-pointer"
+            >
+              View Site
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => logoutAction()}
               className="gap-2 cursor-pointer"
