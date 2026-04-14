@@ -10,6 +10,7 @@ import {
   Handshake,
   Home,
   Info,
+  Target,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -61,8 +62,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Pages',
     items: [
-      { label: 'Home', href: '/admin/home', icon: Home },
-      { label: 'About', href: '/admin/about', icon: Info },
+      { label: 'Home',    href: '/admin/home',    icon: Home },
+      { label: 'About',   href: '/admin/about',   icon: Info },
+      { label: 'Mission', href: '/admin/mission', icon: Target },
     ],
   },
   {
