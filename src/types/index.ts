@@ -74,6 +74,41 @@ export interface ActionResult<T = undefined> {
   error?: string
 }
 
+export type SubmissionType   = 'research_call' | 'research_note' | 'commentary'
+export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
+
+export interface NewsletterEdition {
+  id: string
+  title: string
+  slug: string
+  intro: string
+  cover_path: string | null
+  published: boolean
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface NewsletterSubmission {
+  id: string
+  type: SubmissionType
+  status: SubmissionStatus
+  title: string
+  content: string
+  abstract: string | null
+  submitter_name: string
+  submitter_email: string
+  submitter_role: string | null
+  institution: string | null
+  admin_note: string | null
+  reviewed_at: string | null
+  edition_id: string | null
+  deadline: string | null
+  contact_email: string | null
+  created_at: string
+  updated_at: string
+}
+
 export type SearchResultType = 'blog' | 'event' | 'reading_list'
 
 export interface SearchResult {

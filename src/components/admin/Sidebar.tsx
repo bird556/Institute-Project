@@ -12,6 +12,7 @@ import {
   Info,
   Target,
   Settings,
+  Newspaper,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -57,6 +58,7 @@ const NAV_GROUPS: NavGroup[] = [
       { label: 'Events', href: '/admin/events', icon: CalendarDays },
       { label: 'Reading List', href: '/admin/reading-list', icon: BookOpen },
       { label: 'Partners', href: '/admin/partners', icon: Handshake },
+      { label: 'Newsletter', href: '/admin/newsletter', icon: Newspaper },
     ],
   },
   {

@@ -2,12 +2,14 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { FileText, CalendarDays, BookOpen, Handshake, Plus } from 'lucide-react'
-import { mockDashboardStats, mockRecentActivity } from '@/lib/mock-data'
+import { FileText, CalendarDays, BookOpen, Handshake, Inbox, Plus } from 'lucide-react'
+import { mockDashboardStats, mockRecentActivity, mockNewsletterSubmissions } from '@/lib/mock-data'
 import { formatDate } from '@/lib/utils'
 import { cn } from '@/lib/utils'
 
 // ── Stat cards ────────────────────────────────────────────────────────────────
+
+const pendingCount = mockDashboardStats.newsletter.pendingReview
 
 const STAT_CARDS = [
   {
@@ -15,24 +17,36 @@ const STAT_CARDS = [
     icon:     FileText,
     value:    mockDashboardStats.blogs.published,
     subLabel: 'published',
+    urgent:   false,
   },
   {
     label:    'Events',
     icon:     CalendarDays,
     value:    mockDashboardStats.events.upcoming,
     subLabel: 'upcoming',
+    urgent:   false,
   },
   {
     label:    'Reading List',
     icon:     BookOpen,
     value:    mockDashboardStats.readingList.published,
     subLabel: 'items',
+    urgent:   false,
   },
   {
     label:    'Partners',
     icon:     Handshake,
     value:    mockDashboardStats.partners.active,
     subLabel: 'active',
+    urgent:   false,
+  },
+  {
+    label:    'Submissions Pending',
+    icon:     Inbox,
+    value:    pendingCount,
+    subLabel: 'need review',
+    urgent:   pendingCount > 0,
+    href:     '/admin/newsletter',
   },
 ]
 
@@ -74,27 +88,48 @@ export default function DashboardOverview() {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         {STAT_CARDS.map((card) => {
           const Icon = card.icon
-          return (
+          const inner = (
             <motion.div
               key={card.label}
               whileHover={{ y: -2 }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] rounded-xl p-5 flex items-center gap-4"
+              className={cn(
+                'bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] border rounded-xl p-5 flex items-center gap-4',
+                card.urgent
+                  ? 'border-amber-400 dark:border-amber-500 ring-1 ring-amber-300 dark:ring-amber-600'
+                  : 'border-[var(--color-border)] dark:border-[var(--color-dark-border)]',
+              )}
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--color-brand-teal)]/10 text-[var(--color-brand-teal)] dark:text-white shrink-0">
+              <div className={cn(
+                'flex items-center justify-center w-10 h-10 rounded-lg shrink-0',
+                card.urgent
+                  ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400'
+                  : 'bg-[var(--color-brand-teal)]/10 text-[var(--color-brand-teal)] dark:text-white',
+              )}>
                 <Icon size={20} />
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-medium text-[var(--color-text-muted)] truncate">{card.label}</p>
-                <p className="font-display text-2xl font-bold text-[var(--color-text-primary)] dark:text-[#e8ecec] leading-tight">
+                <p className={cn(
+                  'font-display text-2xl font-bold leading-tight',
+                  card.urgent
+                    ? 'text-amber-600 dark:text-amber-400'
+                    : 'text-[var(--color-text-primary)] dark:text-[#e8ecec]',
+                )}>
                   {card.value}
                 </p>
                 <p className="text-xs text-[var(--color-text-muted)]">{card.subLabel}</p>
               </div>
             </motion.div>
+          )
+
+          return card.href ? (
+            <Link key={card.label} href={card.href} className="block">{inner}</Link>
+          ) : (
+            <div key={card.label}>{inner}</div>
           )
         })}
       </div>
@@ -117,6 +152,52 @@ export default function DashboardOverview() {
           ))}
         </div>
       </div>
+
+      {/* Pending newsletter submissions */}
+      {pendingCount > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
+              Pending Submissions
+            </h3>
+            <Link
+              href="/admin/newsletter"
+              className="text-xs text-[var(--color-brand-teal)] hover:underline"
+            >
+              View all →
+            </Link>
+          </div>
+          <div className="bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] border border-amber-300 dark:border-amber-700 rounded-xl divide-y divide-[var(--color-border)] dark:divide-[var(--color-dark-border)] overflow-hidden">
+            {mockNewsletterSubmissions
+              .filter((s) => s.status === 'pending')
+              .slice(0, 3)
+              .map((s) => (
+                <Link
+                  key={s.id}
+                  href={`/admin/newsletter/submissions/${s.id}`}
+                  className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className={cn(
+                      'shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold',
+                      s.type === 'research_call' ? 'bg-[var(--color-brand-teal)] text-white' :
+                      s.type === 'research_note' ? 'bg-amber-500 text-white' :
+                                                   'bg-purple-600 text-white',
+                    )}>
+                      {s.type === 'research_call' ? 'RC' : s.type === 'research_note' ? 'RN' : 'AC'}
+                    </span>
+                    <span className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
+                      {s.title}
+                    </span>
+                  </div>
+                  <span className="shrink-0 text-xs text-[var(--color-text-muted)]">
+                    Review →
+                  </span>
+                </Link>
+              ))}
+          </div>
+        </div>
+      )}
 
       {/* Recent activity */}
       <div>

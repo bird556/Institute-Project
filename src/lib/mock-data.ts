@@ -546,6 +546,277 @@ export function getMockSection(page: string, section: string): MockPageContent |
 
 
 
+// ─── Newsletter ───────────────────────────────────────────────────────────────
+
+export type SubmissionType   = 'research_call' | 'research_note' | 'commentary'
+export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
+
+export interface MockNewsletterEdition {
+  id: string
+  title: string
+  slug: string
+  intro: string           // HTML from Tiptap
+  cover_url: string
+  published: boolean
+  published_at: string
+  created_at: string
+  updated_at: string
+}
+
+export interface MockNewsletterSubmission {
+  id: string
+  type: SubmissionType
+  status: SubmissionStatus
+  title: string
+  content: string         // HTML (admin-edited after approval) or plain text from form
+  abstract: string
+  submitter_name: string
+  submitter_email: string
+  submitter_role: string
+  institution: string
+  admin_note: string
+  reviewed_at: string
+  edition_id: string | null
+  deadline: string | null
+  contact_email: string | null
+  created_at: string
+  updated_at: string
+}
+
+export const mockNewsletterEditions: MockNewsletterEdition[] = [
+  {
+    id: '88888888-0000-0000-0000-000000000001',
+    title: 'Volume 3, Q1 2025',
+    slug: 'vol-3-q1-2025',
+    intro: `<h2>Editorial Introduction</h2><p>Welcome to the first edition of our quarterly newsletter for 2025. This issue features a rich collection of research calls, practitioner notes, and analytical commentaries from educators and scholars across Canada. We are grateful to all who contributed, and we hope these pages spark meaningful dialogue in your communities.</p>`,
+    cover_url: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=800&q=80',
+    published: true,
+    published_at: '2025-03-15T10:00:00Z',
+    created_at: '2025-02-20T09:00:00Z',
+    updated_at: '2025-03-15T10:00:00Z',
+  },
+  {
+    id: '88888888-0000-0000-0000-000000000002',
+    title: 'Volume 2, Q4 2024',
+    slug: 'vol-2-q4-2024',
+    intro: `<h2>Editorial Introduction</h2><p>As we close out 2024, this edition reflects on a year of significant change in Canadian education policy and practice. From Indigenous pedagogy to funding equity, our contributors have offered thoughtful perspectives that we believe will resonate long into the new year.</p>`,
+    cover_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80',
+    published: true,
+    published_at: '2024-12-10T10:00:00Z',
+    created_at: '2024-11-15T09:00:00Z',
+    updated_at: '2024-12-10T10:00:00Z',
+  },
+  {
+    id: '88888888-0000-0000-0000-000000000003',
+    title: 'Volume 3, Q2 2025',
+    slug: 'vol-3-q2-2025',
+    intro: '',
+    cover_url: '',
+    published: false,
+    published_at: '',
+    created_at: '2025-04-01T09:00:00Z',
+    updated_at: '2025-04-01T09:00:00Z',
+  },
+]
+
+export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
+  // ── Research Calls ────────────────────────────────────────────────────────
+  {
+    id: '99999999-0000-0000-0000-000000000001',
+    type: 'research_call',
+    status: 'pending',
+    title: 'A Call for Papers on Indigenous Pedagogy in Canadian Schools',
+    content: 'We are inviting submissions from scholars and practitioners working at the intersection of Indigenous knowledge systems and formal schooling. We seek papers that examine decolonising approaches to curriculum, land-based learning models, and community-led educational governance.',
+    abstract: 'Inviting papers on Indigenous pedagogy, decolonising curriculum, and land-based learning in Canadian K–12 and post-secondary contexts.',
+    submitter_name: 'Dr. Sarah Okafor',
+    submitter_email: 's.okafor@umanitoba.ca',
+    submitter_role: 'Associate Professor of Education',
+    institution: 'University of Manitoba',
+    admin_note: '',
+    reviewed_at: '',
+    edition_id: null,
+    deadline: '2025-06-30T23:59:00Z',
+    contact_email: 's.okafor@umanitoba.ca',
+    created_at: '2025-04-13T10:30:00Z',
+    updated_at: '2025-04-13T10:30:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000002',
+    type: 'research_call',
+    status: 'approved',
+    title: 'Call for Contributions: Reimagining Teacher Evaluation',
+    content: `<p>This research call invites educators, researchers, and policy analysts to submit contributions examining alternatives to standardised teacher evaluation frameworks. We are particularly interested in peer-led review models, portfolio-based approaches, and evaluation systems designed collaboratively with teachers' federations.</p><p>Submissions may take the form of empirical research, policy analysis, or practitioner reflections.</p>`,
+    abstract: 'Inviting contributions on alternative teacher evaluation frameworks — peer review, portfolios, and federation-designed models.',
+    submitter_name: 'Prof. Adaeze Nwosu',
+    submitter_email: 'a.nwosu@queensu.ca',
+    submitter_role: 'Professor of Educational Leadership',
+    institution: "Queen's University",
+    admin_note: 'Strong fit for Q1 2025 edition. Approved without changes.',
+    reviewed_at: '2025-02-28T14:00:00Z',
+    edition_id: '88888888-0000-0000-0000-000000000001',
+    deadline: '2025-05-15T23:59:00Z',
+    contact_email: 'a.nwosu@queensu.ca',
+    created_at: '2025-02-10T09:00:00Z',
+    updated_at: '2025-02-28T14:00:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000003',
+    type: 'research_call',
+    status: 'rejected',
+    title: 'Research Call: AI Tools in the Elementary Classroom',
+    content: 'Seeking papers on AI-assisted instruction for grades 1–6, focusing on reading and numeracy interventions.',
+    abstract: 'Looking for papers on AI tools in elementary literacy and numeracy instruction.',
+    submitter_name: 'Marcus Chen',
+    submitter_email: 'm.chen@example.com',
+    submitter_role: 'EdTech Product Manager',
+    institution: 'Brightpath Learning Inc.',
+    admin_note: 'Commercial interest apparent — not a strong fit for an independent scholarly publication. Declined.',
+    reviewed_at: '2025-03-05T11:00:00Z',
+    edition_id: null,
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-03-01T15:00:00Z',
+    updated_at: '2025-03-05T11:00:00Z',
+  },
+
+  // ── Research Notes ────────────────────────────────────────────────────────
+  {
+    id: '99999999-0000-0000-0000-000000000004',
+    type: 'research_note',
+    status: 'pending',
+    title: 'Reflections on Community School Funding Models',
+    content: 'Per-pupil funding formulas consistently disadvantage schools in low-income neighbourhoods. This note draws on budget data from five Ontario school boards to argue for a needs-weighted allocation model that accounts for socioeconomic context, English language learner populations, and special education demands.',
+    abstract: 'A brief exploration of how per-pupil funding fails under-resourced schools, with a case for needs-weighted allocation.',
+    submitter_name: 'James Tran',
+    submitter_email: 'j.tran@tdsb.on.ca',
+    submitter_role: 'Curriculum Consultant',
+    institution: 'Toronto District School Board',
+    admin_note: '',
+    reviewed_at: '',
+    edition_id: null,
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-04-08T08:45:00Z',
+    updated_at: '2025-04-08T08:45:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000005',
+    type: 'research_note',
+    status: 'pending',
+    title: 'What Restorative Practices Actually Look Like in Secondary Schools',
+    content: 'After three years implementing restorative circles in a Toronto secondary school, I want to share what worked, what failed, and what the research does not prepare you for. The gap between theory and implementation is significant and deserves honest documentation.',
+    abstract: 'A practitioner account of three years implementing restorative justice practices in a Toronto secondary school.',
+    submitter_name: 'Fatimah Al-Hassan',
+    submitter_email: 'fal.hassan@email.com',
+    submitter_role: 'Vice Principal',
+    institution: 'North York Secondary School',
+    admin_note: '',
+    reviewed_at: '',
+    edition_id: null,
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-04-10T13:20:00Z',
+    updated_at: '2025-04-10T13:20:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000006',
+    type: 'research_note',
+    status: 'approved',
+    title: 'Small Schools, Big Outcomes: Evidence from Rural Ontario',
+    content: `<p>This note examines outcome data from 22 rural Ontario schools with enrolment under 150 students, comparing literacy and numeracy results against provincial averages. Contrary to assumptions driving school consolidation policy, small schools in this sample outperformed provincial benchmarks in 14 of 22 cases.</p><p>The findings suggest that community embeddedness, staff stability, and student-teacher ratio — all characteristic of small schools — may be underweighted in policy discussions dominated by cost-efficiency arguments.</p>`,
+    abstract: 'Outcome data from 22 rural Ontario schools challenges consolidation policy — small school enrolments correlate with above-average literacy and numeracy results.',
+    submitter_name: 'Dr. Colette Mercier',
+    submitter_email: 'c.mercier@laurentian.ca',
+    submitter_role: 'Assistant Professor',
+    institution: 'Laurentian University',
+    admin_note: 'Excellent data-grounded note. Approved for Q1 2025.',
+    reviewed_at: '2025-02-25T10:00:00Z',
+    edition_id: '88888888-0000-0000-0000-000000000001',
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-02-12T09:00:00Z',
+    updated_at: '2025-02-25T10:00:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000007',
+    type: 'research_note',
+    status: 'rejected',
+    title: 'Why Traditional Phonics Instruction Is Always Best',
+    content: 'This note argues that all progressive literacy approaches are harmful and that schools must return exclusively to explicit phonics instruction.',
+    abstract: 'A case for returning exclusively to traditional phonics methods in all literacy instruction.',
+    submitter_name: 'Bob Whitmore',
+    submitter_email: 'b.whitmore@email.com',
+    submitter_role: 'Retired Teacher',
+    institution: '',
+    admin_note: 'Overstated claims, no citations, and dismisses a substantial evidence base. Does not meet publication standards.',
+    reviewed_at: '2025-03-10T09:30:00Z',
+    edition_id: null,
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-03-07T14:00:00Z',
+    updated_at: '2025-03-10T09:30:00Z',
+  },
+
+  // ── Analytical Commentaries ───────────────────────────────────────────────
+  {
+    id: '99999999-0000-0000-0000-000000000008',
+    type: 'commentary',
+    status: 'pending',
+    title: 'Commentary: The Politics of Curriculum Revision in Ontario',
+    content: 'The 2023–2024 curriculum revision cycle in Ontario revealed deep tensions between evidence-based curriculum design and political expediency. This commentary examines three case studies where subject-area expert recommendations were overridden by ministerial directive, and considers what this means for curriculum legitimacy.',
+    abstract: 'An analysis of three Ontario curriculum revision decisions where political considerations overrode expert recommendations.',
+    submitter_name: 'Dr. Priya Sharma',
+    submitter_email: 'p.sharma@uoft.ca',
+    submitter_role: 'PhD Candidate, Curriculum Studies',
+    institution: 'University of Toronto (OISE)',
+    admin_note: '',
+    reviewed_at: '',
+    edition_id: null,
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-04-11T11:00:00Z',
+    updated_at: '2025-04-11T11:00:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000009',
+    type: 'commentary',
+    status: 'approved',
+    title: 'On the Myth of the "Learning Styles" Framework',
+    content: `<p>Despite persistent popularity among practitioners, the learning styles hypothesis — that students learn better when instruction matches their preferred style (visual, auditory, kinaesthetic) — has been repeatedly disconfirmed in controlled studies. This commentary traces why the framework persists in teacher education programmes and professional development despite the evidence, and what this reveals about how educational research is (or is not) translated into practice.</p>`,
+    abstract: 'Why the learning styles myth persists in teacher education despite decades of disconfirming research — and what it reveals about research-to-practice translation.',
+    submitter_name: 'Dr. Obinna Eze',
+    submitter_email: 'o.eze@mcmaster.ca',
+    submitter_role: 'Associate Professor of Educational Psychology',
+    institution: 'McMaster University',
+    admin_note: 'Well-argued and timely. Approved for Q1 2025.',
+    reviewed_at: '2025-02-22T15:00:00Z',
+    edition_id: '88888888-0000-0000-0000-000000000001',
+    deadline: null,
+    contact_email: null,
+    created_at: '2025-02-08T10:00:00Z',
+    updated_at: '2025-02-22T15:00:00Z',
+  },
+  {
+    id: '99999999-0000-0000-0000-000000000010',
+    type: 'commentary',
+    status: 'approved',
+    title: 'Rethinking "Parent Engagement" in High-Needs Schools',
+    content: `<p>School effectiveness literature consistently identifies parent engagement as a key driver of student outcomes. Yet standard engagement strategies — evening information nights, report card conferences, volunteer programmes — systematically exclude parents who work shift jobs, lack reliable transportation, or are not fluent in English. This commentary argues that the field needs to shift from measuring engagement by attendance to measuring it by genuine influence on school decisions.</p>`,
+    abstract: 'Standard parent engagement metrics disadvantage high-needs communities — a case for measuring influence rather than attendance.',
+    submitter_name: 'Yemi Adeyemi',
+    submitter_email: 'y.adeyemi@email.com',
+    submitter_role: 'Parent Council Chair & Education Advocate',
+    institution: 'Peel District School Board',
+    admin_note: 'Powerful community voice. Approved for Q4 2024.',
+    reviewed_at: '2024-11-20T10:00:00Z',
+    edition_id: '88888888-0000-0000-0000-000000000002',
+    deadline: null,
+    contact_email: null,
+    created_at: '2024-11-10T09:00:00Z',
+    updated_at: '2024-11-20T10:00:00Z',
+  },
+]
+
 export const mockDashboardStats = {
   blogs: {
     total: mockBlogs.length,
@@ -564,6 +835,11 @@ export const mockDashboardStats = {
   partners: {
     total: mockPartners.length,
     active: mockPartners.filter(p => p.published).length,
+  },
+  newsletter: {
+    editions:      { total: 3, published: 2, drafts: 1 },
+    submissions:   { total: 10, pending: 4, approved: 5, rejected: 1 },
+    pendingReview: 4,
   },
 }
 
