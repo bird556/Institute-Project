@@ -7,10 +7,12 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import ImageUpload from '@/components/shared/ImageUpload'
+import { Switch } from '@/components/ui/switch'
 import {
   updateSiteSetting,
   updateSiteSettings,
   changeAdminPassword,
+  toggleSectionVisibility,
 } from '@/actions/settings'
 import type { SiteSettings } from '@/types'
 
@@ -24,6 +26,13 @@ const EMPTY: SiteSettings = {
   contact_email: '',
   contact_phone: '',
   address: '',
+  about_enabled: 'true',
+  mission_enabled: 'true',
+  blogs_enabled: 'true',
+  events_enabled: 'true',
+  reading_list_enabled: 'true',
+  partners_enabled: 'true',
+  newsletter_enabled: 'true',
 }
 
 export default function SettingsClient({ initialSettings }: SettingsClientProps) {
@@ -99,6 +108,26 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
       toast.success('Contact information updated')
     } else {
       toast.error(res.error ?? 'Failed to update contact information')
+    }
+  }
+
+  // ── Page Visibility ─────────────────────────────────────────────────────────
+  const [visibility, setVisibility] = useState({
+    about_enabled:        settings.about_enabled        !== 'false',
+    mission_enabled:      settings.mission_enabled      !== 'false',
+    blogs_enabled:        settings.blogs_enabled        !== 'false',
+    events_enabled:       settings.events_enabled       !== 'false',
+    reading_list_enabled: settings.reading_list_enabled !== 'false',
+    partners_enabled:     settings.partners_enabled     !== 'false',
+    newsletter_enabled:   settings.newsletter_enabled   !== 'false',
+  })
+
+  async function handleToggleVisibility(key: keyof typeof visibility, enabled: boolean) {
+    setVisibility(prev => ({ ...prev, [key]: enabled }))
+    const res = await toggleSectionVisibility(key, enabled)
+    if (!res.success) {
+      setVisibility(prev => ({ ...prev, [key]: !enabled }))
+      toast.error(res.error ?? 'Failed to update visibility')
     }
   }
 
@@ -309,6 +338,44 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
           >
             {savingPassword ? 'Updating…' : 'Update Password'}
           </Button>
+        </div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 5: Page Visibility ────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Page Visibility
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Hide sections from the public site. Content is still manageable in the admin while hidden.
+          </p>
+        </div>
+
+        <div className="space-y-3">
+          {([
+            { key: 'about_enabled',        label: 'About',        description: 'When hidden, /about redirects to home' },
+            { key: 'mission_enabled',      label: 'Mission',      description: 'When hidden, /mission redirects to home' },
+            { key: 'blogs_enabled',        label: 'Blog',         description: 'When hidden, /blogs and all blog posts redirect to home' },
+            { key: 'events_enabled',       label: 'Events',       description: 'When hidden, /events and all event pages redirect to home' },
+            { key: 'reading_list_enabled', label: 'Reading List', description: 'When hidden, /reading-list and all items redirect to home' },
+            { key: 'partners_enabled',     label: 'Partners',     description: 'When hidden, /partners redirects to home' },
+            { key: 'newsletter_enabled',   label: 'Newsletter',   description: 'When hidden, /newsletter and all edition pages redirect to home' },
+          ] as const).map(({ key, label, description }) => (
+            <div key={key} className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-text-primary dark:text-white">{label}</p>
+                <p className="text-xs text-text-muted mt-0.5">{description}</p>
+              </div>
+              <Switch
+                checked={visibility[key]}
+                onCheckedChange={(checked) => handleToggleVisibility(key, checked)}
+                className="cursor-pointer shrink-0"
+              />
+            </div>
+          ))}
         </div>
       </section>
 

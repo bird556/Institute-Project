@@ -6,25 +6,30 @@ import { useState } from 'react'
 import { Menu, X, Search } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
 import { cn } from '@/lib/utils'
+import type { SiteVisibility } from '@/lib/site-visibility'
 
-const navLinks = [
-  { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/mission', label: 'Mission' },
-  { href: '/events', label: 'Events' },
-  { href: '/blogs', label: 'Blogs' },
-  { href: '/reading-list', label: 'Reading List' },
-  { href: '/newsletter', label: 'Newsletter' },
-  { href: '/partners', label: 'Partners' },
-]
+interface HeaderProps {
+  visibility: SiteVisibility
+}
 
-export function Header() {
+export function Header({ visibility }: HeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
 
-  function handleSearchSubmit(e: React.FormEvent) {
+  const navLinks = [
+    { href: '/',             label: 'Home',         show: true },
+    { href: '/about',        label: 'About',        show: visibility.about_enabled },
+    { href: '/mission',      label: 'Mission',      show: visibility.mission_enabled },
+    { href: '/events',       label: 'Events',       show: visibility.events_enabled },
+    { href: '/blogs',        label: 'Blogs',        show: visibility.blogs_enabled },
+    { href: '/reading-list', label: 'Reading List', show: visibility.reading_list_enabled },
+    { href: '/newsletter',   label: 'Newsletter',   show: visibility.newsletter_enabled },
+    { href: '/partners',     label: 'Partners',     show: visibility.partners_enabled },
+  ].filter(link => link.show)
+
+  function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (searchQuery.trim().length >= 2) {
       window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`

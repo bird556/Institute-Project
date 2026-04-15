@@ -58,6 +58,14 @@ export interface SiteSettings {
   contact_email: string
   contact_phone: string
   address: string
+  // Page visibility — stored as 'true' | 'false' strings
+  about_enabled: string
+  mission_enabled: string
+  blogs_enabled: string
+  events_enabled: string
+  reading_list_enabled: string
+  partners_enabled: string
+  newsletter_enabled: string
 }
 
 export interface PageContent {

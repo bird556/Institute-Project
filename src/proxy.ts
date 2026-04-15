@@ -1,11 +1,22 @@
-import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getSiteVisibility, type SiteVisibility } from '@/lib/site-visibility'
 
 const PUBLIC_ADMIN_ROUTES = [
   '/admin/forgot-password',
   '/admin/reset-password',
 ]
+
+// Maps each public section route prefix → its visibility key
+const SECTION_ROUTES: Record<string, keyof SiteVisibility> = {
+  '/about':        'about_enabled',
+  '/mission':      'mission_enabled',
+  '/blogs':        'blogs_enabled',
+  '/events':       'events_enabled',
+  '/reading-list': 'reading_list_enabled',
+  '/partners':     'partners_enabled',
+  '/newsletter':   'newsletter_enabled',
+}
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
@@ -40,9 +51,29 @@ export async function proxy(request: NextRequest) {
   //   return response
   // }
 
+  // Redirect to home if a public section is disabled
+  for (const [routePrefix, visibilityKey] of Object.entries(SECTION_ROUTES)) {
+    if (pathname === routePrefix || pathname.startsWith(routePrefix + '/')) {
+      const visibility = await getSiteVisibility()
+      if (!visibility[visibilityKey]) {
+        return NextResponse.redirect(new URL('/', request.url))
+      }
+      break
+    }
+  }
+
   return NextResponse.next()
 }
 
 export const config = {
-  matcher: ['/admin/:path+'],
+  matcher: [
+    '/admin/:path+',
+    '/about',
+    '/mission',
+    '/blogs/:path*',
+    '/events/:path*',
+    '/reading-list/:path*',
+    '/partners',
+    '/newsletter/:path*',
+  ],
 }

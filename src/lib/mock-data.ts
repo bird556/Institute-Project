@@ -73,6 +73,14 @@ export interface MockSiteSettings {
   contact_email: string
   contact_phone: string
   address: string
+  // Page visibility — stored as 'true' | 'false' strings
+  about_enabled: string
+  mission_enabled: string
+  blogs_enabled: string
+  events_enabled: string
+  reading_list_enabled: string
+  partners_enabled: string
+  newsletter_enabled: string
 }
 
 export const mockSiteSettings: MockSiteSettings = {
@@ -81,6 +89,14 @@ export const mockSiteSettings: MockSiteSettings = {
   contact_email: 'info@institute.ca',
   contact_phone: '+1 (416) 555-0100',
   address: '123 Education Ave, Toronto, ON M5V 1A1',
+  // Page visibility
+  about_enabled:          'true',
+  mission_enabled:        'true',
+  blogs_enabled:          'true',
+  events_enabled:         'true',
+  reading_list_enabled:   'true',
+  partners_enabled:       'true',
+  newsletter_enabled:     'true',
 }
 
 // ─── Blog Posts ───────────────────────────────────────────────────────────────

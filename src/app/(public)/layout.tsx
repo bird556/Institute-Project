@@ -1,4 +1,4 @@
-import { Header } from '@/components/layout/Header'
+import { HeaderServer } from '@/components/layout/HeaderServer'
 import { Footer } from '@/components/layout/Footer'
 
 export default function PublicLayout({
@@ -8,7 +8,7 @@ export default function PublicLayout({
 }) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <HeaderServer />
       <main className="flex-1">{children}</main>
       <Footer />
     </div>

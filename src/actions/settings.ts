@@ -58,6 +58,27 @@ export async function updateSiteSettings(
   }
 }
 
+export async function toggleSectionVisibility(
+  key: string,
+  enabled: boolean,
+): Promise<{ success: boolean; error?: string }> {
+  // TODO: replace with Supabase query + revalidateTag('site-visibility')
+  // const supabase = await createClient()
+  // const { error } = await supabase
+  //   .from('site_settings')
+  //   .update({ value: enabled ? 'true' : 'false' })
+  //   .eq('key', key)
+  // if (error) return { success: false, error: error.message }
+  // revalidateTag('site-visibility')
+  // return { success: true }
+  try {
+    (mockSiteSettings as unknown as Record<string, string>)[key] = enabled ? 'true' : 'false'
+    return { success: true }
+  } catch (err) {
+    return { success: false, error: (err as Error).message }
+  }
+}
+
 export async function changeAdminPassword(
   _currentPassword: string,
   _newPassword: string,
