@@ -39,6 +39,7 @@ export interface MockEvent {
   cover_url: string
   location: string
   event_date: string        // ISO date string
+  external_url: string | null  // Optional link to external registration (e.g. Eventbrite)
   published: boolean
   created_at: string
   updated_at: string
@@ -224,7 +225,8 @@ export const mockEvents: MockEvent[] = [
     `.trim(),
     cover_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
     location: 'The Grand Convention Centre, Toronto',
-    event_date: '2025-06-14T09:00:00Z',
+    event_date: '2026-06-14T09:00:00Z',
+    external_url: 'https://www.eventbrite.ca',
     published: true,
     created_at: '2025-02-01T10:00:00Z',
     updated_at: '2025-02-15T14:00:00Z',
@@ -244,6 +246,7 @@ export const mockEvents: MockEvent[] = [
     cover_url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
     location: 'Institute Learning Centre, Room 204',
     event_date: '2025-05-08T13:00:00Z',
+    external_url: null,
     published: true,
     created_at: '2025-03-10T09:00:00Z',
     updated_at: '2025-03-10T09:00:00Z',
@@ -263,6 +266,7 @@ export const mockEvents: MockEvent[] = [
     cover_url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80',
     location: 'Virtual — Zoom Webinar',
     event_date: '2025-04-24T18:30:00Z',
+    external_url: 'https://zoom.us',
     published: true,
     created_at: '2025-03-20T11:00:00Z',
     updated_at: '2025-03-20T11:00:00Z',
@@ -279,6 +283,7 @@ export const mockEvents: MockEvent[] = [
     cover_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80',
     location: 'Institute Library, 3rd Floor',
     event_date: '2025-05-01T17:00:00Z',
+    external_url: null,
     published: true,
     created_at: '2025-04-01T08:00:00Z',
     updated_at: '2025-04-01T08:00:00Z',
@@ -295,8 +300,9 @@ export const mockEvents: MockEvent[] = [
     `.trim(),
     cover_url: 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=800&q=80',
     location: 'Lakeside Conference Retreat, Muskoka',
-    event_date: '2025-07-21T08:00:00Z',
-    published: false,
+    event_date: '2026-07-21T08:00:00Z',
+    external_url: 'https://www.eventbrite.ca',
+    published: true,
     created_at: '2025-04-05T09:00:00Z',
     updated_at: '2025-04-05T09:00:00Z',
   },

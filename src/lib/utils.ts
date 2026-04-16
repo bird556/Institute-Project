@@ -25,6 +25,15 @@ export function formatDate(date: string | Date): string {
   }).format(new Date(date))
 }
 
+export function formatTime(date: string | Date): string {
+  return new Intl.DateTimeFormat('en-CA', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC',
+  }).format(new Date(date))
+}
+
 export function truncate(text: string, length: number): string {
   if (text.length <= length) return text
   return text.slice(0, length).trimEnd() + '…'

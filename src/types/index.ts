@@ -19,6 +19,7 @@ export interface Event {
   cover_path: string | null
   location: string | null
   event_date: string
+  external_url: string | null   // Optional link to external registration (e.g. Eventbrite)
   published: boolean
   created_at: string
   updated_at: string
