@@ -14,6 +14,7 @@ let store: Event[] = mockEvents.map((e) => ({
   cover_path: null,           // mock uses cover_url, not a storage path
   location: e.location,
   event_date: e.event_date,
+  external_url: e.external_url,
   published: e.published,
   created_at: e.created_at,
   updated_at: e.updated_at,
@@ -75,6 +76,7 @@ export async function createEvent(): Promise<ActionResult<{ id: string }>> {
     //     slug: `untitled-event-${Date.now()}`,
     //     description: '',
     //     event_date: new Date().toISOString(),
+    //     external_url: null,
     //   })
     //   .select('id')
     //   .single()
@@ -91,6 +93,7 @@ export async function createEvent(): Promise<ActionResult<{ id: string }>> {
       cover_path: null,
       location: null,
       event_date: now,
+      external_url: null,
       published: false,
       created_at: now,
       updated_at: now,
