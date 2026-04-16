@@ -403,7 +403,7 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000001',
     name: 'The Learning Foundation',
-    logo_url: 'https://placehold.co/200x80/374d4f/ffffff?text=TLF',
+    logo_url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&q=80',
     description:
       'A national charitable foundation dedicated to closing the equity gap in K–12 education through research, advocacy, and direct school grants.',
     website_url: 'https://example.com/learning-foundation',
@@ -414,7 +414,7 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000002',
     name: 'Bright Futures Initiative',
-    logo_url: 'https://placehold.co/200x80/374d4f/ffffff?text=BFI',
+    logo_url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80',
     description:
       'A cross-sector initiative connecting schools with local businesses and community organisations to expand experiential learning opportunities for students.',
     website_url: 'https://example.com/bright-futures',
@@ -425,7 +425,7 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000003',
     name: 'Ontario Teachers\' Federation',
-    logo_url: 'https://placehold.co/200x80/374d4f/ffffff?text=OTF',
+    logo_url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80',
     description:
       'The provincial federation representing over 160,000 teachers across Ontario, committed to professional development and the advancement of public education.',
     website_url: 'https://example.com/otf',
@@ -436,7 +436,7 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000004',
     name: 'EdTech Collaborative',
-    logo_url: 'https://placehold.co/200x80/374d4f/ffffff?text=ETC',
+    logo_url: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=80',
     description:
       'A non-profit collaborative of educators and technologists working to ensure digital tools in schools are evidence-based, equitable, and teacher-informed.',
     website_url: 'https://example.com/edtech-collaborative',
@@ -447,7 +447,7 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000005',
     name: 'University of Toronto — OISE',
-    logo_url: 'https://placehold.co/200x80/374d4f/ffffff?text=OISE',
+    logo_url: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80',
     description:
       'The Ontario Institute for Studies in Education — one of Canada\'s leading graduate schools of education and a key research partner for evidence-based practice.',
     website_url: 'https://example.com/oise',
@@ -458,7 +458,7 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000006',
     name: 'Community Schools Network',
-    logo_url: 'https://placehold.co/200x80/374d4f/ffffff?text=CSN',
+    logo_url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80',
     description:
       'A grassroots network of community schools across Ontario advocating for wraparound support models that address the social determinants of educational outcomes.',
     website_url: 'https://example.com/community-schools',
