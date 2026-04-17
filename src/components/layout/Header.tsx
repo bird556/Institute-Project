@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X, Search } from 'lucide-react'
 import { ThemeToggle } from './ThemeToggle'
+import { SearchBar } from './SearchBar'
 import { cn } from '@/lib/utils'
 import type { SiteVisibility } from '@/lib/site-visibility'
 
@@ -16,7 +17,6 @@ export function Header({ visibility }: HeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
 
   const navLinks = [
     { href: '/',             label: 'Home',         show: true },
@@ -28,13 +28,6 @@ export function Header({ visibility }: HeaderProps) {
     { href: '/newsletter',   label: 'Newsletter',   show: visibility.newsletter_enabled },
     { href: '/partners',     label: 'Partners',     show: visibility.partners_enabled },
   ].filter(link => link.show)
-
-  function handleSearchSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
-    if (searchQuery.trim().length >= 2) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`
-    }
-  }
 
   return (
     <header className="sticky top-0 z-50 bg-background dark:bg-dark-background border-b border-border dark:border-dark-border">
@@ -94,16 +87,7 @@ export function Header({ visibility }: HeaderProps) {
         {/* Search bar (expandable) */}
         {searchOpen && (
           <div className="pb-3">
-            <form onSubmit={handleSearchSubmit}>
-              <input
-                autoFocus
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search blogs, events, reading list…"
-                className="w-full px-4 py-2 rounded-lg border border-border dark:border-dark-border bg-surface dark:bg-dark-surface text-text-primary dark:text-white placeholder:text-text-muted text-sm outline-none focus:ring-2 focus:ring-brand-teal"
-              />
-            </form>
+            <SearchBar onClose={() => setSearchOpen(false)} />
           </div>
         )}
 
