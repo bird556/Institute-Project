@@ -1,19 +1,51 @@
-# Phase 13 — Public Pages: Search
+# Phase 14 — Admin Dashboard: Page Hero Editor
 
-> Full spec: `context/features/public/public-phase-13.md`
+> Full spec: `context/features/dashboard-admin-phase-10.md`
 
-## Phase 13 Status
+## Phase 14 Status
 
-Not started. Branch: `phase-13-public-search`
+Not started. Branch: `phase-14-page-hero-editor`
 
 ## Steps
 
-- [ ] Step 1 — Search Server Action (`src/actions/search.ts`) — query `blog_posts`, `events`, `reading_list` in parallel
-- [ ] Step 2 — `SearchResultItem.tsx` component
-- [ ] Step 3 — `SearchResults.tsx` component (client — receives results, handles empty/loading)
-- [ ] Step 4 — `/search` page (`?q=<query>`) — server-rendered, calls search action
-- [ ] Step 5 — Header search bar (`SearchBar.tsx`) — `useDebounce` 300ms, fires search action
+- [ ] Step 1 — Add 10 mock data entries to `mock-data.ts` (hero_title + hero_subtitle for blogs, events, newsletter, reading_list, partners)
+- [ ] Step 2 — `PageHeroEditor.tsx` shared component (heading input + subtitle textarea + Save All)
+- [ ] Step 3 — `/admin/pages/events` page
+- [ ] Step 4 — `/admin/pages/blogs` page
+- [ ] Step 5 — `/admin/pages/newsletter` page
+- [ ] Step 6 — `/admin/pages/reading-list` page
+- [ ] Step 7 — `/admin/pages/partners` page
+- [ ] Step 8 — Sidebar + MobileNav update (5 new links under Pages group)
+- [ ] Step 9 — Public listing pages updated (blogs, events, newsletter, reading-list, partners fetch + render hero)
+- [ ] Step 10 — Supabase swap (deferred)
+
+---
+
+# Phase 13 — Public Pages: Search — COMPLETE ✅
+
+> Full spec: `context/features/public/public-phase-13.md`
+
+## Phase 13 Status — COMPLETE ✅
+
+Steps 1–5 built, build passed, committed and merged to `main` (2026-04-16). Branch `phase-13-public-search` deleted. Step 6 (Supabase swap) deferred to the Supabase wiring pass at the end of all phases.
+
+## Steps
+
+- [x] Step 1 — Search Server Action (`src/actions/search.ts`) — query `blog_posts`, `events`, `reading_list` in parallel
+- [x] Step 2 — `SearchResultItem.tsx` component
+- [x] Step 3 — `SearchResults.tsx` component (client — receives results, handles empty/loading)
+- [x] Step 4 — `/search` page (`?q=<query>`) — server-rendered, calls search action
+- [x] Step 5 — Header search bar (`SearchBar.tsx`) — `useDebounce` 300ms, inline dropdown (5 results max) + "View all" link to `/search?q=`
 - [ ] Step 6 — Supabase swap (deferred)
+
+## Notes
+
+- Mock FTS uses `String.includes()` across title, excerpt/description (HTML-stripped), and author — three `Promise.all` branches ready to swap to Supabase FTS
+- `SearchBar` debounces 300ms, fires `searchContent()` via `useTransition`, shows inline dropdown; form submit / "View all" navigates to `/search?q=`
+- `SearchResultItem` links use `id` (matching the `[id]` route param pattern across all public detail pages)
+- Dark mode heading fix: added `.dark .tiptap-content h1/h2/h3 { color: #ffffff }` to `globals.css` — was invisible (brand teal on dark bg)
+- Added explicit font sizes to `globals.css`: h1 (2.5rem), h2 (1.875rem), h3 (1.375rem)
+- **Future (Supabase phase):** `searchContent` must respect page visibility flags — if admin hides a section, those content types must be excluded from search results
 
 ---
 

@@ -80,6 +80,14 @@ body {
   margin-bottom: 0.5rem;
   line-height: 1.25;
 }
+.dark .tiptap-editor h1, .dark .tiptap-content h1,
+.dark .tiptap-editor h2, .dark .tiptap-content h2,
+.dark .tiptap-editor h3, .dark .tiptap-content h3 {
+  color: #ffffff;
+}
+.tiptap-editor h1, .tiptap-content h1 { font-size: 2.5rem; }
+.tiptap-editor h2, .tiptap-content h2 { font-size: 1.875rem; }
+.tiptap-editor h3, .tiptap-content h3 { font-size: 1.375rem; }
 .tiptap-editor p,  .tiptap-content p  { margin-bottom: 0.875rem; line-height: 1.75; }
 .tiptap-editor a,  .tiptap-content a  { color: var(--color-brand-teal); text-decoration: underline; }
 .tiptap-editor img,.tiptap-content img { max-width: 100%; border-radius: 0.5rem; margin: 1rem 0; }
