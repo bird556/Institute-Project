@@ -1,5 +1,7 @@
 import { getPageContent } from '@/actions/page-content'
+import { getSiteSettings } from '@/actions/settings'
 import PageSectionEditor from '@/components/admin/PageSectionEditor'
+import HomeHeroImagePanels from '@/components/admin/HomeHeroImagePanels'
 
 const HOME_SECTIONS = [
   { key: 'hero',  label: 'Hero Section' },
@@ -8,7 +10,10 @@ const HOME_SECTIONS = [
 ]
 
 export default async function AdminHomePage() {
-  const { data: sections } = await getPageContent('home')
+  const [{ data: sections }, { data: settings }] = await Promise.all([
+    getPageContent('home'),
+    getSiteSettings(),
+  ])
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-6">
@@ -34,6 +39,19 @@ export default async function AdminHomePage() {
           />
         )
       })}
+
+      <div>
+        <h2 className="text-lg font-semibold text-[var(--color-text-primary)] dark:text-white mb-1">
+          Hero Images
+        </h2>
+        <p className="text-sm text-[var(--color-text-muted)] mb-4">
+          Optionally add a side image and background to the home hero section.
+        </p>
+        <HomeHeroImagePanels
+          initialHeroImageUrl={settings?.home_hero_image_path ? undefined : undefined}
+          initialBgImageUrl={settings?.home_hero_bg_path ? undefined : undefined}
+        />
+      </div>
     </div>
   )
 }

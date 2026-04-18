@@ -4,20 +4,28 @@
 
 ## Phase 14 Status
 
-Not started. Branch: `phase-14-page-hero-editor`
+Steps 1–9 and 11–14 built, build passed. Branch: `phase-14-page-hero-editor`
 
 ## Steps
 
-- [ ] Step 1 — Add 10 mock data entries to `mock-data.ts` (hero_title + hero_subtitle for blogs, events, newsletter, reading_list, partners)
-- [ ] Step 2 — `PageHeroEditor.tsx` shared component (heading input + subtitle textarea + Save All)
-- [ ] Step 3 — `/admin/pages/events` page
-- [ ] Step 4 — `/admin/pages/blogs` page
-- [ ] Step 5 — `/admin/pages/newsletter` page
-- [ ] Step 6 — `/admin/pages/reading-list` page
-- [ ] Step 7 — `/admin/pages/partners` page
-- [ ] Step 8 — Sidebar + MobileNav update (5 new links under Pages group)
-- [ ] Step 9 — Public listing pages updated (blogs, events, newsletter, reading-list, partners fetch + render hero)
+### Section A — Listing Page Hero Editors (Steps 1–10)
+- [x] Step 1 — Add 10 mock data entries to `mock-data.ts` (hero_title + hero_subtitle for blogs, events, newsletter, reading_list, partners)
+- [x] Step 2 — `PageHeroEditor.tsx` shared component (heading input + subtitle textarea + Save All)
+- [x] Step 3 — `/admin/pages/events` page
+- [x] Step 4 — `/admin/pages/blogs` page
+- [x] Step 5 — `/admin/pages/newsletter` page
+- [x] Step 6 — `/admin/pages/reading-list` page
+- [x] Step 7 — `/admin/pages/partners` page
+- [x] Step 8 — Sidebar + MobileNav update (5 new links under Pages group)
+- [x] Step 9 — Public listing pages updated (blogs, events, newsletter, reading-list, partners fetch + render hero)
 - [ ] Step 10 — Supabase swap (deferred)
+
+### Section B — Home Hero Images & Brand Logo (Steps 11–14)
+- [x] Step 11 — Add `home_hero_image_path` + `home_hero_bg_path` to `mockSiteSettings` in `mock-data.ts`; update `SiteSettings` type in `src/types/index.ts`
+- [x] Step 12 — `/admin/home` page: two image upload panels — "Hero Side Image" (PNG only) and "Hero Background Image" (JPEG/PNG/WebP); each calls `updateSiteSetting()` from `settings.ts`; Remove button clears the value
+- [x] Step 13 — Public home page (`/`): two-column hero when side image set, single-column fallback; independent full-bleed dimmed background when bg image set
+- [x] Step 14 — Brand logo: PNG-only upload in `/admin/settings`; logo renders left of site name in `Header.tsx` when set (fetched via `HeaderServer.tsx`)
+- [ ] Step 15 — Supabase swap (deferred)
 
 ---
 

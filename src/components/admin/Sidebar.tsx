@@ -13,6 +13,9 @@ import {
   Target,
   Settings,
   Newspaper,
+  Calendar,
+  List,
+  Mail,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -64,9 +67,14 @@ const NAV_GROUPS: NavGroup[] = [
   {
     label: 'Pages',
     items: [
-      { label: 'Home',    href: '/admin/home',    icon: Home },
-      { label: 'About',   href: '/admin/about',   icon: Info },
-      { label: 'Mission', href: '/admin/mission', icon: Target },
+      { label: 'Home',              href: '/admin/home',                icon: Home },
+      { label: 'About',             href: '/admin/about',               icon: Info },
+      { label: 'Mission',           href: '/admin/mission',             icon: Target },
+      { label: 'Blogs Page',        href: '/admin/pages/blogs',         icon: FileText },
+      { label: 'Events Page',       href: '/admin/pages/events',        icon: Calendar },
+      { label: 'Newsletter Page',   href: '/admin/pages/newsletter',    icon: Mail },
+      { label: 'Reading List Page', href: '/admin/pages/reading-list',  icon: List },
+      { label: 'Partners Page',     href: '/admin/pages/partners',      icon: Handshake },
     ],
   },
   {

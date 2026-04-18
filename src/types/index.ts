@@ -67,6 +67,9 @@ export interface SiteSettings {
   reading_list_enabled: string
   partners_enabled: string
   newsletter_enabled: string
+  // Home hero images
+  home_hero_image_path: string
+  home_hero_bg_path: string
 }
 
 export interface PageContent {

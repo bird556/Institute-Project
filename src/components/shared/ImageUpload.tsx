@@ -12,6 +12,7 @@ interface ImageUploadProps {
   onUpload: (url: string, path: string) => void
   onRemove: () => void
   label?: string
+  accept?: string
 }
 
 export default function ImageUpload({
@@ -20,6 +21,7 @@ export default function ImageUpload({
   onUpload,
   onRemove,
   label = 'Cover Image',
+  accept = 'image/jpeg,image/png,image/webp,image/svg+xml',
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
@@ -125,7 +127,7 @@ export default function ImageUpload({
       <input
         ref={inputRef}
         type="file"
-        accept="image/jpeg,image/png,image/webp,image/svg+xml"
+        accept={accept}
         className="hidden"
         onChange={handleChange}
       />

@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
-  BookOpen, Home, Info, Target, Settings, Newspaper, Menu, X, LogOut,
+  BookOpen, Home, Info, Target, Settings, Newspaper,
+  Calendar, List, Mail, Menu, X, LogOut,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -51,9 +52,14 @@ const DRAWER_GROUPS: NavGroup[] = [
   {
     label: 'Pages',
     items: [
-      { label: 'Home',    href: '/admin/home',    icon: Home },
-      { label: 'About',   href: '/admin/about',   icon: Info },
-      { label: 'Mission', href: '/admin/mission', icon: Target },
+      { label: 'Home',              href: '/admin/home',               icon: Home },
+      { label: 'About',             href: '/admin/about',              icon: Info },
+      { label: 'Mission',           href: '/admin/mission',            icon: Target },
+      { label: 'Blogs Page',        href: '/admin/pages/blogs',        icon: FileText },
+      { label: 'Events Page',       href: '/admin/pages/events',       icon: Calendar },
+      { label: 'Newsletter Page',   href: '/admin/pages/newsletter',   icon: Mail },
+      { label: 'Reading List Page', href: '/admin/pages/reading-list', icon: List },
+      { label: 'Partners Page',     href: '/admin/pages/partners',     icon: Handshake },
     ],
   },
   {

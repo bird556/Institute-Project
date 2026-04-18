@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getPublishedEditions, getEditionSubmissions } from '@/actions/newsletter'
+import { getPageContent } from '@/actions/page-content'
 import { formatDate } from '@/lib/utils'
 import type { NewsletterEdition } from '@/types'
 
@@ -9,18 +10,23 @@ export const metadata = {
 }
 
 export default async function NewsletterPage() {
-  const { data: editions = [] } = await getPublishedEditions()
+  const [{ data: editions = [] }, { data: sections }] = await Promise.all([
+    getPublishedEditions(),
+    getPageContent('newsletter'),
+  ])
+  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Newsletter'
+  const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
       {/* Header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          Quarterly Newsletter
+          {heroTitle}
         </h1>
-        <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">
-          Scholarly research calls, practitioner notes, and analytical commentaries from educators and researchers across Canada.
-        </p>
+        {heroSubtitle && (
+          <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{heroSubtitle}</p>
+        )}
         <div className="pt-2">
           <Link
             href="/newsletter/submit"

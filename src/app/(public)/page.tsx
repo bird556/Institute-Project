@@ -1,14 +1,23 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { getPageContent } from '@/actions/page-content'
+import { getSiteSettings } from '@/actions/settings'
 import { mockBlogs, mockEvents } from '@/lib/mock-data'
 import { formatDate } from '@/lib/utils'
 
 export default async function HomePage() {
-  const { data: sections } = await getPageContent('home')
+  const [{ data: sections }, { data: settings }] = await Promise.all([
+    getPageContent('home'),
+    getSiteSettings(),
+  ])
 
   const hero  = sections?.find(s => s.section === 'hero')
   const intro = sections?.find(s => s.section === 'intro')
   const cta   = sections?.find(s => s.section === 'cta')
+
+  // TODO: reconstruct full URL via supabase.storage.from('institute-media').getPublicUrl(path)
+  const heroImageUrl = settings?.home_hero_image_path || null
+  const heroBgUrl    = settings?.home_hero_bg_path    || null
 
   const featuredBlogs = mockBlogs
     .filter(b => b.published && b.published_at)
@@ -25,9 +34,44 @@ export default async function HomePage() {
     <div>
       {/* Hero */}
       {hero?.content && (
-        <section className="bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] py-20 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="tiptap-content" dangerouslySetInnerHTML={{ __html: hero.content }} />
+        <section className="relative bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+          {/* Background image (independent of side image) */}
+          {heroBgUrl && (
+            <>
+              <Image
+                src={heroBgUrl}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority
+              />
+              <div className="absolute inset-0 bg-black/50" />
+            </>
+          )}
+
+          <div className="relative max-w-6xl mx-auto">
+            {heroImageUrl ? (
+              /* Two-column layout when side image is set */
+              <div className="flex items-center gap-12">
+                <div className="flex-1 tiptap-content" dangerouslySetInnerHTML={{ __html: hero.content }} />
+                <div className="hidden md:block flex-shrink-0 w-80">
+                  <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/5]">
+                    <Image
+                      src={heroImageUrl}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="320px"
+                      priority
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* Single-column layout (default) */
+              <div className="max-w-4xl tiptap-content" dangerouslySetInnerHTML={{ __html: hero.content }} />
+            )}
           </div>
         </section>
       )}

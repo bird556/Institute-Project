@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { mockPartners } from '@/lib/mock-data'
 import PartnerGrid from '@/components/partners/PartnerGrid'
+import { getPageContent } from '@/actions/page-content'
 
 export const metadata: Metadata = {
   title: 'Partners | Institute Name',
@@ -8,6 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default async function PartnersPage() {
+  const { data: sections } = await getPageContent('partners')
+  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Our Partners'
+  const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
+
   const partners = mockPartners
     .filter((p) => p.published)
     .sort((a, b) => a.sort_order - b.sort_order)
@@ -41,11 +46,11 @@ export default async function PartnersPage() {
       {/* Page header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          Our Partners
+          {heroTitle}
         </h1>
-        <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">
-          Organisations that support and collaborate with the Institute in advancing educational excellence.
-        </p>
+        {heroSubtitle && (
+          <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{heroSubtitle}</p>
+        )}
       </header>
 
       {/* Grid */}
