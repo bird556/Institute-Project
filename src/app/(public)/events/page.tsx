@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { mockEvents } from '@/lib/mock-data'
 import { truncate } from '@/lib/utils'
 import EventGrid from './EventGrid'
+import { getPageContent } from '@/actions/page-content'
 
 export const metadata: Metadata = {
   title: 'Events | Institute Name',
@@ -13,6 +14,10 @@ function stripHtml(html: string): string {
 }
 
 export default async function EventsPage() {
+  const [{ data: sections }] = await Promise.all([getPageContent('events')])
+  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Events'
+  const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
+
   const now = new Date()
 
   const allPublished = mockEvents
@@ -57,11 +62,11 @@ export default async function EventsPage() {
       {/* Page header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          Events
+          {heroTitle}
         </h1>
-        <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">
-          Workshops, panels, summits and reading circles.
-        </p>
+        {heroSubtitle && (
+          <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{heroSubtitle}</p>
+        )}
       </header>
 
       {/* Upcoming */}

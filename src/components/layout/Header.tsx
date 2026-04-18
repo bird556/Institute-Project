@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X, Search } from 'lucide-react'
@@ -11,9 +12,11 @@ import type { SiteVisibility } from '@/lib/site-visibility'
 
 interface HeaderProps {
   visibility: SiteVisibility
+  logoUrl?: string
+  siteName?: string
 }
 
-export function Header({ visibility }: HeaderProps) {
+export function Header({ visibility, logoUrl, siteName = 'Institute' }: HeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -37,9 +40,12 @@ export function Header({ visibility }: HeaderProps) {
           {/* Logo */}
           <Link
             href="/"
-            className="font-display font-700 text-xl text-brand-teal dark:text-white shrink-0"
+            className="flex items-center gap-2 font-display font-700 text-xl text-brand-teal dark:text-white shrink-0"
           >
-            Kustawi Institute
+            {logoUrl && (
+              <Image src={logoUrl} alt={siteName} width={32} height={32} className="h-8 w-auto" />
+            )}
+            <span>{siteName}</span>
           </Link>
 
           {/* Desktop Nav */}

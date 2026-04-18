@@ -78,6 +78,9 @@ export interface MockSiteSettings {
   about_enabled: string
   mission_enabled: string
   blogs_enabled: string
+  // Home hero images
+  home_hero_image_path: string
+  home_hero_bg_path: string
   events_enabled: string
   reading_list_enabled: string
   partners_enabled: string
@@ -98,6 +101,9 @@ export const mockSiteSettings: MockSiteSettings = {
   reading_list_enabled:   'true',
   partners_enabled:       'true',
   newsletter_enabled:     'true',
+  // Home hero images
+  home_hero_image_path:   '',
+  home_hero_bg_path:      '',
 }
 
 // ─── Blog Posts ───────────────────────────────────────────────────────────────
@@ -531,6 +537,18 @@ export const mockPageContent: MockPageContent[] = [
     content: `<h2>Our History</h2><p>The Institute was founded in 2001 by a small group of educators frustrated with the disconnect between education research and classroom practice. What began as a study group has grown into a nationally recognised organisation working with hundreds of schools each year.</p>`,
     updated_at: '2025-02-15T10:00:00Z',
   },
+
+  // ── Listing page heroes ────────────────────────────────────────────────────
+  { id: 'pc-blogs-hero-title',         page: 'blogs',        section: 'hero_title',    content: 'Our Blog',                                                          updated_at: new Date().toISOString() },
+  { id: 'pc-blogs-hero-subtitle',      page: 'blogs',        section: 'hero_subtitle', content: 'Insights, research, and perspectives from the institute.',           updated_at: new Date().toISOString() },
+  { id: 'pc-events-hero-title',        page: 'events',       section: 'hero_title',    content: 'Events',                                                            updated_at: new Date().toISOString() },
+  { id: 'pc-events-hero-subtitle',     page: 'events',       section: 'hero_subtitle', content: 'Upcoming and past events hosted by the institute.',                 updated_at: new Date().toISOString() },
+  { id: 'pc-newsletter-hero-title',    page: 'newsletter',   section: 'hero_title',    content: 'Newsletter',                                                        updated_at: new Date().toISOString() },
+  { id: 'pc-newsletter-hero-subtitle', page: 'newsletter',   section: 'hero_subtitle', content: 'Our quarterly digest of ideas, updates, and community voices.',     updated_at: new Date().toISOString() },
+  { id: 'pc-rl-hero-title',            page: 'reading_list', section: 'hero_title',    content: 'Reading List',                                                      updated_at: new Date().toISOString() },
+  { id: 'pc-rl-hero-subtitle',         page: 'reading_list', section: 'hero_subtitle', content: 'A curated selection of books and resources we recommend.',          updated_at: new Date().toISOString() },
+  { id: 'pc-partners-hero-title',      page: 'partners',     section: 'hero_title',    content: 'Our Partners',                                                      updated_at: new Date().toISOString() },
+  { id: 'pc-partners-hero-subtitle',   page: 'partners',     section: 'hero_subtitle', content: 'Organisations we work with to advance our mission.',                updated_at: new Date().toISOString() },
 
   // ── Mission page ───────────────────────────────────────────────────────────
   {

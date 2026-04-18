@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { mockReadingList } from '@/lib/mock-data'
 import { truncate } from '@/lib/utils'
 import ReadingListGrid from './ReadingListGrid'
+import { getPageContent } from '@/actions/page-content'
 
 export const metadata: Metadata = {
   title: 'Reading List | Institute Name',
@@ -13,6 +14,10 @@ function stripHtml(html: string): string {
 }
 
 export default async function ReadingListPage() {
+  const { data: sections } = await getPageContent('reading_list')
+  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Reading List'
+  const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
+
   const items = mockReadingList
     .filter((r) => r.published)
     .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
@@ -48,11 +53,11 @@ export default async function ReadingListPage() {
       {/* Page header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          Reading List
+          {heroTitle}
         </h1>
-        <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">
-          Curated books, articles and resources recommended by the Institute.
-        </p>
+        {heroSubtitle && (
+          <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{heroSubtitle}</p>
+        )}
       </header>
 
       {/* Grid */}

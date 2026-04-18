@@ -33,6 +33,8 @@ const EMPTY: SiteSettings = {
   reading_list_enabled: 'true',
   partners_enabled: 'true',
   newsletter_enabled: 'true',
+  home_hero_image_path: '',
+  home_hero_bg_path: '',
 }
 
 export default function SettingsClient({ initialSettings }: SettingsClientProps) {
@@ -178,6 +180,7 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
             onUpload={handleLogoUpload}
             onRemove={handleLogoRemove}
             label={logoPath ? 'Current logo' : 'No logo set'}
+            accept="image/png"
           />
         </div>
 

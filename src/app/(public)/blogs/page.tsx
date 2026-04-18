@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { mockBlogs } from '@/lib/mock-data'
 import BlogGrid from '@/components/blog/BlogGrid'
+import { getPageContent } from '@/actions/page-content'
 
 export const metadata: Metadata = {
   title: 'Blog | Institute Name',
@@ -8,6 +9,10 @@ export const metadata: Metadata = {
 }
 
 export default async function BlogsPage() {
+  const { data: sections } = await getPageContent('blogs')
+  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Our Blog'
+  const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
+
   const posts = mockBlogs
     .filter((b) => b.published)
     .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
@@ -39,11 +44,11 @@ export default async function BlogsPage() {
       {/* Page header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          Blog
+          {heroTitle}
         </h1>
-        <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">
-          Insights, research and perspectives from the Institute.
-        </p>
+        {heroSubtitle && (
+          <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{heroSubtitle}</p>
+        )}
       </header>
 
       {/* Grid or empty state */}
