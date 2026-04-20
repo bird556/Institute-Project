@@ -1,6 +1,6 @@
 'use server'
 
-import { mockBlogs, mockEvents, mockReadingList } from '@/lib/mock-data'
+import { mockBlogs, mockEvents, mockReadingList, mockWellnessPosts } from '@/lib/mock-data'
 import type { SearchResult, ActionResult } from '@/types'
 
 // ─── Strip HTML tags for plain-text search matching ──────────────────────────
@@ -43,7 +43,15 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
     // const reading = (readingRes.data ?? []).map(r => ({ ...r, type: 'reading_list' as const, slug: r.id }))
     // return { success: true, data: [...blogs, ...events, ...reading] }
 
-    const [blogs, events, reading] = await Promise.all([
+    // TODO: Supabase swap — add wellness_posts query ↓
+    // const wellnessRes = await supabase
+    //   .from('wellness_posts')
+    //   .select('id, title, slug, excerpt, published_at')
+    //   .eq('published', true)
+    //   .textSearch('search_vector', query, { type: 'plain', config: 'english' })
+    // const wellness = (wellnessRes.data ?? []).map(w => ({ ...w, type: 'wellness' as const }))
+
+    const [blogs, events, reading, wellness] = await Promise.all([
       Promise.resolve(
         mockBlogs
           .filter((b) => {
@@ -102,9 +110,29 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
             excerpt: r.author ? `by ${r.author}` : null,
           }))
       ),
+
+      Promise.resolve(
+        mockWellnessPosts
+          .filter((w) => {
+            if (!w.published) return false
+            return (
+              w.title.toLowerCase().includes(q) ||
+              w.excerpt.toLowerCase().includes(q) ||
+              stripHtml(w.content).toLowerCase().includes(q)
+            )
+          })
+          .map<SearchResult>((w) => ({
+            id: w.id,
+            type: 'wellness',
+            title: w.title,
+            slug: w.id,
+            excerpt: w.excerpt,
+            published_at: w.published_at || null,
+          }))
+      ),
     ])
 
-    return { success: true, data: [...blogs, ...events, ...reading] }
+    return { success: true, data: [...blogs, ...events, ...reading, ...wellness] }
   } catch (err) {
     console.error('[searchContent]', err)
     return { success: false, error: 'Search failed. Please try again.' }

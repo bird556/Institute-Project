@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BookOpen, Calendar, FileText } from 'lucide-react'
+import { BookOpen, Calendar, FileText, Heart } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import type { SearchResult } from '@/types'
 
@@ -24,6 +24,12 @@ const TYPE_CONFIG = {
     label: 'Reading List',
     icon: BookOpen,
     href: (id: string) => `/reading-list/${id}`,
+    color: 'text-[var(--color-brand-teal)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)]',
+  },
+  wellness: {
+    label: 'Health & Wellness',
+    icon: Heart,
+    href: (id: string) => `/health-wellness/${id}`,
     color: 'text-[var(--color-brand-teal)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)]',
   },
 } as const

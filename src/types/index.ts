@@ -70,6 +70,8 @@ export interface SiteSettings {
   // Home hero images
   home_hero_image_path: string
   home_hero_bg_path: string
+  // Section visibility
+  health_wellness_enabled: string
 }
 
 export interface PageContent {
@@ -121,7 +123,34 @@ export interface NewsletterSubmission {
   updated_at: string
 }
 
-export type SearchResultType = 'blog' | 'event' | 'reading_list'
+export const WELLNESS_TAGS = [
+  'Fitness',
+  'Nutrition',
+  'Mental Health',
+  'Mindfulness',
+  'Sleep',
+  'Recovery',
+  'General Wellness',
+] as const
+
+export type WellnessTag = typeof WELLNESS_TAGS[number]
+
+export interface WellnessPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  content: string
+  cover_path: string | null
+  doc_path: string | null     // PDF/DOC/DOCX download — null = no download shown
+  tags: string[]
+  published: boolean
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type SearchResultType = 'blog' | 'event' | 'reading_list' | 'wellness'
 
 export interface SearchResult {
   id: string
