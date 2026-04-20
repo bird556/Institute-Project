@@ -1,4 +1,33 @@
-# Phase 14 — Admin Dashboard: Page Hero Editor
+# Phase 15 — Health & Wellness
+
+> Full spec: `context/features/health-wellness-phase-15.md`
+
+## Phase 15 Status
+
+In progress. Branch: `phase-15-health-wellness`
+
+## Steps
+
+- [ ] Step 1 — Types: `WellnessPost`, `WELLNESS_TAGS`, update `SiteSettings` + `SearchResultType`
+- [ ] Step 2 — Mock data: `MockWellnessPost`, 4 posts, site settings key, page content hero
+- [ ] Step 3 — `src/actions/wellness.ts` (full CRUD)
+- [ ] Step 4 — Update `src/actions/search.ts` to include wellness
+- [ ] Step 5 — Update `src/lib/site-visibility.ts` + `SettingsClient.tsx` toggle
+- [ ] Step 6 — `WellnessCard.tsx` component
+- [ ] Step 7 — Public `/health-wellness` list page + `WellnessGrid.tsx` (tag filter)
+- [ ] Step 8 — Public `/health-wellness/[id]` detail page
+- [ ] Step 9 — Admin `/admin/health-wellness` list page
+- [ ] Step 10 — Admin `/admin/health-wellness/[id]` editor (with tags picker)
+- [ ] Step 11 — Admin `/admin/pages/health-wellness` hero editor
+- [ ] Step 12 — Sidebar + MobileNav update
+- [ ] Step 13 — `Header.tsx` nav link (visibility-gated)
+- [ ] Step 14 — Settings visibility toggle
+- [ ] Step 15 — CLAUDE.md + project-overview.md schema update
+- [ ] Step 16 — Supabase swap (deferred)
+
+---
+
+# Phase 14 — Admin Dashboard: Page Hero Editor — COMPLETE ✅
 
 > Full spec: `context/features/dashboard-admin-phase-10.md`
 

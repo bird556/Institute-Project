@@ -33,6 +33,7 @@ const EMPTY: SiteSettings = {
   reading_list_enabled: 'true',
   partners_enabled: 'true',
   newsletter_enabled: 'true',
+  health_wellness_enabled: 'true',
   home_hero_image_path: '',
   home_hero_bg_path: '',
 }
@@ -115,13 +116,14 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
 
   // ── Page Visibility ─────────────────────────────────────────────────────────
   const [visibility, setVisibility] = useState({
-    about_enabled:        settings.about_enabled        !== 'false',
-    mission_enabled:      settings.mission_enabled      !== 'false',
-    blogs_enabled:        settings.blogs_enabled        !== 'false',
-    events_enabled:       settings.events_enabled       !== 'false',
-    reading_list_enabled: settings.reading_list_enabled !== 'false',
-    partners_enabled:     settings.partners_enabled     !== 'false',
-    newsletter_enabled:   settings.newsletter_enabled   !== 'false',
+    about_enabled:           settings.about_enabled           !== 'false',
+    mission_enabled:         settings.mission_enabled         !== 'false',
+    blogs_enabled:           settings.blogs_enabled           !== 'false',
+    events_enabled:          settings.events_enabled          !== 'false',
+    reading_list_enabled:    settings.reading_list_enabled    !== 'false',
+    partners_enabled:        settings.partners_enabled        !== 'false',
+    newsletter_enabled:      settings.newsletter_enabled      !== 'false',
+    health_wellness_enabled: settings.health_wellness_enabled !== 'false',
   })
 
   async function handleToggleVisibility(key: keyof typeof visibility, enabled: boolean) {
@@ -365,7 +367,8 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
             { key: 'events_enabled',       label: 'Events',       description: 'When hidden, /events and all event pages redirect to home' },
             { key: 'reading_list_enabled', label: 'Reading List', description: 'When hidden, /reading-list and all items redirect to home' },
             { key: 'partners_enabled',     label: 'Partners',     description: 'When hidden, /partners redirects to home' },
-            { key: 'newsletter_enabled',   label: 'Newsletter',   description: 'When hidden, /newsletter and all edition pages redirect to home' },
+            { key: 'newsletter_enabled',      label: 'Newsletter',       description: 'When hidden, /newsletter and all edition pages redirect to home' },
+            { key: 'health_wellness_enabled', label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
           ] as const).map(({ key, label, description }) => (
             <div key={key} className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
               <div>

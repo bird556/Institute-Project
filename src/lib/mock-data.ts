@@ -19,92 +19,94 @@
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface MockBlogPost {
-  id: string
-  title: string
-  slug: string
-  excerpt: string
-  content: string           // HTML string
-  cover_url: string         // Unsplash URL (dev only — real data uses cover_path)
-  published: boolean
-  published_at: string      // ISO date string
-  created_at: string
-  updated_at: string
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string; // HTML string
+  cover_url: string; // Unsplash URL (dev only — real data uses cover_path)
+  published: boolean;
+  published_at: string; // ISO date string
+  created_at: string;
+  updated_at: string;
 }
 
 export interface MockEvent {
-  id: string
-  title: string
-  slug: string
-  description: string       // HTML string
-  cover_url: string
-  location: string
-  event_date: string        // ISO date string
-  external_url: string | null  // Optional link to external registration (e.g. Eventbrite)
-  published: boolean
-  created_at: string
-  updated_at: string
+  id: string;
+  title: string;
+  slug: string;
+  description: string; // HTML string
+  cover_url: string;
+  location: string;
+  event_date: string; // ISO date string
+  external_url: string | null; // Optional link to external registration (e.g. Eventbrite)
+  published: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface MockReadingListItem {
-  id: string
-  title: string
-  author: string
-  description: string       // HTML string
-  cover_url: string
-  external_url: string
-  published: boolean
-  created_at: string
-  updated_at: string
+  id: string;
+  title: string;
+  author: string;
+  description: string; // HTML string
+  cover_url: string;
+  external_url: string;
+  published: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface MockPartner {
-  id: string
-  name: string
-  logo_url: string          // Unsplash or placeholder URL (dev only)
-  description: string
-  website_url: string
-  sort_order: number
-  published: boolean
-  created_at: string
+  id: string;
+  name: string;
+  logo_url: string; // Unsplash or placeholder URL (dev only)
+  description: string;
+  website_url: string;
+  sort_order: number;
+  published: boolean;
+  created_at: string;
 }
 
 export interface MockSiteSettings {
-  site_name: string
-  logo_path: string       // storage key — empty string if no logo set yet
-  contact_email: string
-  contact_phone: string
-  address: string
+  site_name: string;
+  logo_path: string; // storage key — empty string if no logo set yet
+  contact_email: string;
+  contact_phone: string;
+  address: string;
   // Page visibility — stored as 'true' | 'false' strings
-  about_enabled: string
-  mission_enabled: string
-  blogs_enabled: string
+  about_enabled: string;
+  mission_enabled: string;
+  blogs_enabled: string;
+  events_enabled: string;
+  reading_list_enabled: string;
+  partners_enabled: string;
+  newsletter_enabled: string;
+  health_wellness_enabled: string;
   // Home hero images
-  home_hero_image_path: string
-  home_hero_bg_path: string
-  events_enabled: string
-  reading_list_enabled: string
-  partners_enabled: string
-  newsletter_enabled: string
+  home_hero_image_path: string;
+  home_hero_bg_path: string;
 }
 
 export const mockSiteSettings: MockSiteSettings = {
-  site_name: 'Institute Name',
-  logo_path: '',          // no logo yet — shows placeholder
-  contact_email: 'info@institute.ca',
+  site_name: 'Kustawi Institute',
+  logo_path: '', // no logo yet — shows placeholder
+  contact_email: 'tkitossa@brocku.ca',
   contact_phone: '+1 (416) 555-0100',
   address: '123 Education Ave, Toronto, ON M5V 1A1',
   // Page visibility
-  about_enabled:          'true',
-  mission_enabled:        'true',
-  blogs_enabled:          'true',
-  events_enabled:         'true',
-  reading_list_enabled:   'true',
-  partners_enabled:       'true',
-  newsletter_enabled:     'true',
+  about_enabled: 'true',
+  mission_enabled: 'true',
+  blogs_enabled: 'true',
+  events_enabled: 'true',
+  reading_list_enabled: 'true',
+  partners_enabled: 'true',
+  newsletter_enabled: 'true',
   // Home hero images
-  home_hero_image_path:   '',
-  home_hero_bg_path:      '',
-}
+  home_hero_image_path: '',
+  home_hero_bg_path: '',
+  health_wellness_enabled: 'true',
+};
 
 // ─── Blog Posts ───────────────────────────────────────────────────────────────
 
@@ -126,7 +128,8 @@ export const mockBlogs: MockBlogPost[] = [
       <h2>Getting Started</h2>
       <p>Small changes can make a significant difference. Replacing a weekly quiz with a short structured debate, or ending each lesson with an open question rather than a summary, shifts the classroom dynamic in meaningful ways.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80',
     published: true,
     published_at: '2025-03-10T09:00:00Z',
     created_at: '2025-03-08T14:00:00Z',
@@ -146,7 +149,8 @@ export const mockBlogs: MockBlogPost[] = [
       <h2>Evidence from Research</h2>
       <p>Studies consistently show that students who engage in interdisciplinary projects demonstrate stronger transfer of learning — the ability to apply knowledge from one context to another unfamiliar situation.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80',
     published: true,
     published_at: '2025-02-20T10:00:00Z',
     created_at: '2025-02-18T11:00:00Z',
@@ -166,7 +170,8 @@ export const mockBlogs: MockBlogPost[] = [
       <h2>Competency-Based Progression</h2>
       <p>Rather than advancing by age or time-in-seat, competency-based models allow students to move forward once they've demonstrated genuine mastery. This respects individual learning paces and eliminates the anxiety of high-stakes single-point assessment.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80',
     published: true,
     published_at: '2025-01-15T08:30:00Z',
     created_at: '2025-01-13T09:00:00Z',
@@ -186,7 +191,8 @@ export const mockBlogs: MockBlogPost[] = [
       <h2>A Framework for Intentional Use</h2>
       <p>The most effective schools treat technology as one tool among many, chosen deliberately for specific learning goals rather than adopted wholesale because it is new. The question is never "should we use technology?" but "does this tool serve this learning objective better than the alternative?"</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?w=800&q=80',
     published: false,
     published_at: '',
     created_at: '2025-04-01T12:00:00Z',
@@ -206,13 +212,14 @@ export const mockBlogs: MockBlogPost[] = [
       <h2>What Schools Can Do</h2>
       <p>Structural changes — protected planning time, reduced administrative load, peer mentorship, and genuine input into school decisions — have shown measurable effects on retention and job satisfaction. These are not luxury items. They are investments in student outcomes.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1573497019418-b400bb3ab074?w=800&q=80',
     published: true,
     published_at: '2025-03-28T07:00:00Z',
     created_at: '2025-03-25T10:00:00Z',
     updated_at: '2025-03-28T07:00:00Z',
   },
-]
+];
 
 // ─── Events ───────────────────────────────────────────────────────────────────
 
@@ -229,7 +236,8 @@ export const mockEvents: MockEvent[] = [
       <h2>Who Should Attend</h2>
       <p>Principals, heads of department, curriculum leads, and anyone shaping the strategic direction of a school or educational organisation.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
     location: 'The Grand Convention Centre, Toronto',
     event_date: '2026-06-14T09:00:00Z',
     external_url: 'https://www.eventbrite.ca',
@@ -249,7 +257,8 @@ export const mockEvents: MockEvent[] = [
       <h2>Materials</h2>
       <p>All materials provided. Bring a lesson plan you currently use — we'll work with real content from your classroom.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&q=80',
     location: 'Institute Learning Centre, Room 204',
     event_date: '2025-05-08T13:00:00Z',
     external_url: null,
@@ -269,7 +278,8 @@ export const mockEvents: MockEvent[] = [
       <h2>Format</h2>
       <p>45-minute panel, followed by 30 minutes of audience Q&A. Light refreshments provided.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=800&q=80',
     location: 'Virtual — Zoom Webinar',
     event_date: '2025-04-24T18:30:00Z',
     external_url: 'https://zoom.us',
@@ -286,7 +296,8 @@ export const mockEvents: MockEvent[] = [
       <p>This month's reading circle will work through Paulo Freire's foundational text, <em>Pedagogy of the Oppressed</em>. We'll focus on Chapters 1 and 2, exploring Freire's critique of the "banking model" of education and his vision of dialogue as a tool for liberation.</p>
       <p>No prior familiarity with Freire required. All educators welcome.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80',
     location: 'Institute Library, 3rd Floor',
     event_date: '2025-05-01T17:00:00Z',
     external_url: null,
@@ -304,7 +315,8 @@ export const mockEvents: MockEvent[] = [
       <h2>Outcomes</h2>
       <p>Each team leaves with a complete, peer-reviewed unit ready for classroom implementation in September.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=800&q=80',
     location: 'Lakeside Conference Retreat, Muskoka',
     event_date: '2026-07-21T08:00:00Z',
     external_url: 'https://www.eventbrite.ca',
@@ -312,7 +324,7 @@ export const mockEvents: MockEvent[] = [
     created_at: '2025-04-05T09:00:00Z',
     updated_at: '2025-04-05T09:00:00Z',
   },
-]
+];
 
 // ─── Reading List ─────────────────────────────────────────────────────────────
 
@@ -325,8 +337,10 @@ export const mockReadingList: MockReadingListItem[] = [
       <p>One of the most influential works in education philosophy of the 20th century. Freire argues that true education is not the transfer of information from teacher to student — the "banking model" — but a collaborative act of critical inquiry. Essential reading for anyone who wants to understand the relationship between education and power.</p>
       <p><strong>Best for:</strong> Educators interested in social justice, curriculum philosophy, and the ethics of teaching.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80',
-    external_url: 'https://www.goodreads.com/book/show/72657.Pedagogy_of_the_Oppressed',
+    cover_url:
+      'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&q=80',
+    external_url:
+      'https://www.goodreads.com/book/show/72657.Pedagogy_of_the_Oppressed',
     published: true,
     created_at: '2025-01-10T10:00:00Z',
     updated_at: '2025-01-10T10:00:00Z',
@@ -339,8 +353,10 @@ export const mockReadingList: MockReadingListItem[] = [
       <p>Parker Palmer makes a compelling case that good teaching comes from the identity and integrity of the teacher — not merely from technique or methodology. A deeply humane book that speaks honestly about the fear, loneliness, and joy of being an educator.</p>
       <p><strong>Best for:</strong> Teachers at any stage of their career, especially those experiencing burnout or questioning their purpose.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80',
-    external_url: 'https://www.goodreads.com/book/show/77867.The_Courage_to_Teach',
+    cover_url:
+      'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80',
+    external_url:
+      'https://www.goodreads.com/book/show/77867.The_Courage_to_Teach',
     published: true,
     created_at: '2025-01-15T10:00:00Z',
     updated_at: '2025-01-15T10:00:00Z',
@@ -353,7 +369,8 @@ export const mockReadingList: MockReadingListItem[] = [
       <p>Though not an education theory text, Westover's memoir is one of the most powerful accounts of what access to education can mean for an individual life. A reminder of what is at stake in every classroom, and why equity in education is a moral imperative.</p>
       <p><strong>Best for:</strong> Anyone in education who wants to reconnect with the deeper purpose of the work.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&q=80',
     external_url: 'https://www.goodreads.com/book/show/35133922-educated',
     published: true,
     created_at: '2025-02-01T10:00:00Z',
@@ -367,8 +384,10 @@ export const mockReadingList: MockReadingListItem[] = [
       <p>Hattie synthesises over 800 meta-analyses covering millions of students to identify the factors that have the greatest influence on student achievement. A data-driven counterpoint to education fads — some of what we assume works (learning styles, discovery learning) has weak evidence; some of what is overlooked (feedback, teacher-student relationships) is transformative.</p>
       <p><strong>Best for:</strong> School leaders and curriculum designers who want evidence-based grounding for strategic decisions.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80',
-    external_url: 'https://www.goodreads.com/book/show/6059751-visible-learning',
+    cover_url:
+      'https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=400&q=80',
+    external_url:
+      'https://www.goodreads.com/book/show/6059751-visible-learning',
     published: true,
     created_at: '2025-02-10T10:00:00Z',
     updated_at: '2025-02-10T10:00:00Z',
@@ -381,8 +400,10 @@ export const mockReadingList: MockReadingListItem[] = [
       <p>The definitive synthesis of cognitive science research as applied to education. Covers how prior knowledge shapes learning, the importance of metacognition, the role of motivation, and how learning environments need to be structured to support transfer. Dense but rewarding.</p>
       <p><strong>Best for:</strong> Educators who want a rigorous scientific foundation for their instructional decisions. Available free online.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1550399105-c4db5fb85c18?w=400&q=80',
-    external_url: 'https://nap.nationalacademies.org/catalog/24783/how-people-learn-ii',
+    cover_url:
+      'https://images.unsplash.com/photo-1550399105-c4db5fb85c18?w=400&q=80',
+    external_url:
+      'https://nap.nationalacademies.org/catalog/24783/how-people-learn-ii',
     published: true,
     created_at: '2025-03-01T10:00:00Z',
     updated_at: '2025-03-01T10:00:00Z',
@@ -395,13 +416,14 @@ export const mockReadingList: MockReadingListItem[] = [
       <p>Dweck's research on fixed vs. growth mindsets has reshaped how educators think about praise, effort, and the messages we send students about their capabilities. Accessible and practical, with clear implications for classroom culture and feedback practices.</p>
       <p><strong>Best for:</strong> Teachers at all levels, and parents. Widely cited — worth reading the original rather than the summaries.</p>
     `.trim(),
-    cover_url: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&q=80',
     external_url: 'https://www.goodreads.com/book/show/40745.Mindset',
     published: false,
     created_at: '2025-04-01T10:00:00Z',
     updated_at: '2025-04-01T10:00:00Z',
   },
-]
+];
 
 // ─── Partners ─────────────────────────────────────────────────────────────────
 
@@ -409,7 +431,8 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000001',
     name: 'The Learning Foundation',
-    logo_url: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&q=80',
+    logo_url:
+      'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&q=80',
     description:
       'A national charitable foundation dedicated to closing the equity gap in K–12 education through research, advocacy, and direct school grants.',
     website_url: 'https://example.com/learning-foundation',
@@ -420,7 +443,8 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000002',
     name: 'Bright Futures Initiative',
-    logo_url: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80',
+    logo_url:
+      'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80',
     description:
       'A cross-sector initiative connecting schools with local businesses and community organisations to expand experiential learning opportunities for students.',
     website_url: 'https://example.com/bright-futures',
@@ -430,8 +454,9 @@ export const mockPartners: MockPartner[] = [
   },
   {
     id: '44444444-0000-0000-0000-000000000003',
-    name: 'Ontario Teachers\' Federation',
-    logo_url: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80',
+    name: "Ontario Teachers' Federation",
+    logo_url:
+      'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400&q=80',
     description:
       'The provincial federation representing over 160,000 teachers across Ontario, committed to professional development and the advancement of public education.',
     website_url: 'https://example.com/otf',
@@ -442,7 +467,8 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000004',
     name: 'EdTech Collaborative',
-    logo_url: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=80',
+    logo_url:
+      'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?w=400&q=80',
     description:
       'A non-profit collaborative of educators and technologists working to ensure digital tools in schools are evidence-based, equitable, and teacher-informed.',
     website_url: 'https://example.com/edtech-collaborative',
@@ -453,9 +479,10 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000005',
     name: 'University of Toronto — OISE',
-    logo_url: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80',
+    logo_url:
+      'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&q=80',
     description:
-      'The Ontario Institute for Studies in Education — one of Canada\'s leading graduate schools of education and a key research partner for evidence-based practice.',
+      "The Ontario Institute for Studies in Education — one of Canada's leading graduate schools of education and a key research partner for evidence-based practice.",
     website_url: 'https://example.com/oise',
     sort_order: 5,
     published: true,
@@ -464,7 +491,8 @@ export const mockPartners: MockPartner[] = [
   {
     id: '44444444-0000-0000-0000-000000000006',
     name: 'Community Schools Network',
-    logo_url: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80',
+    logo_url:
+      'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400&q=80',
     description:
       'A grassroots network of community schools across Ontario advocating for wraparound support models that address the social determinants of educational outcomes.',
     website_url: 'https://example.com/community-schools',
@@ -472,16 +500,16 @@ export const mockPartners: MockPartner[] = [
     published: false,
     created_at: '2025-01-10T10:00:00Z',
   },
-]
+];
 
 // ─── Page Content (mock — editable sections per page) ────────────────────────
 
 export interface MockPageContent {
-  id: string
-  page: string      // 'home' | 'about' | 'mission'
-  section: string   // e.g. 'hero', 'intro', 'cta'
-  content: string   // HTML string from Tiptap
-  updated_at: string
+  id: string;
+  page: string; // 'home' | 'about' | 'mission'
+  section: string; // e.g. 'hero', 'intro', 'cta'
+  content: string; // HTML string from Tiptap
+  updated_at: string;
 }
 
 export const mockPageContent: MockPageContent[] = [
@@ -539,16 +567,92 @@ export const mockPageContent: MockPageContent[] = [
   },
 
   // ── Listing page heroes ────────────────────────────────────────────────────
-  { id: 'pc-blogs-hero-title',         page: 'blogs',        section: 'hero_title',    content: 'Our Blog',                                                          updated_at: new Date().toISOString() },
-  { id: 'pc-blogs-hero-subtitle',      page: 'blogs',        section: 'hero_subtitle', content: 'Insights, research, and perspectives from the institute.',           updated_at: new Date().toISOString() },
-  { id: 'pc-events-hero-title',        page: 'events',       section: 'hero_title',    content: 'Events',                                                            updated_at: new Date().toISOString() },
-  { id: 'pc-events-hero-subtitle',     page: 'events',       section: 'hero_subtitle', content: 'Upcoming and past events hosted by the institute.',                 updated_at: new Date().toISOString() },
-  { id: 'pc-newsletter-hero-title',    page: 'newsletter',   section: 'hero_title',    content: 'Newsletter',                                                        updated_at: new Date().toISOString() },
-  { id: 'pc-newsletter-hero-subtitle', page: 'newsletter',   section: 'hero_subtitle', content: 'Our quarterly digest of ideas, updates, and community voices.',     updated_at: new Date().toISOString() },
-  { id: 'pc-rl-hero-title',            page: 'reading_list', section: 'hero_title',    content: 'Reading List',                                                      updated_at: new Date().toISOString() },
-  { id: 'pc-rl-hero-subtitle',         page: 'reading_list', section: 'hero_subtitle', content: 'A curated selection of books and resources we recommend.',          updated_at: new Date().toISOString() },
-  { id: 'pc-partners-hero-title',      page: 'partners',     section: 'hero_title',    content: 'Our Partners',                                                      updated_at: new Date().toISOString() },
-  { id: 'pc-partners-hero-subtitle',   page: 'partners',     section: 'hero_subtitle', content: 'Organisations we work with to advance our mission.',                updated_at: new Date().toISOString() },
+  {
+    id: 'pc-blogs-hero-title',
+    page: 'blogs',
+    section: 'hero_title',
+    content: 'Our Blog',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-blogs-hero-subtitle',
+    page: 'blogs',
+    section: 'hero_subtitle',
+    content: 'Insights, research, and perspectives from the institute.',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-events-hero-title',
+    page: 'events',
+    section: 'hero_title',
+    content: 'Events',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-events-hero-subtitle',
+    page: 'events',
+    section: 'hero_subtitle',
+    content: 'Upcoming and past events hosted by the institute.',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-newsletter-hero-title',
+    page: 'newsletter',
+    section: 'hero_title',
+    content: 'Newsletter',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-newsletter-hero-subtitle',
+    page: 'newsletter',
+    section: 'hero_subtitle',
+    content: 'Our quarterly digest of ideas, updates, and community voices.',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-rl-hero-title',
+    page: 'reading_list',
+    section: 'hero_title',
+    content: 'Reading List',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-rl-hero-subtitle',
+    page: 'reading_list',
+    section: 'hero_subtitle',
+    content: 'A curated selection of books and resources we recommend.',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-partners-hero-title',
+    page: 'partners',
+    section: 'hero_title',
+    content: 'Our Partners',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-partners-hero-subtitle',
+    page: 'partners',
+    section: 'hero_subtitle',
+    content: 'Organisations we work with to advance our mission.',
+    updated_at: new Date().toISOString(),
+  },
+
+  // ── Health & Wellness page ─────────────────────────────────────────────────
+  {
+    id: 'pc-wellness-hero-title',
+    page: 'health_wellness',
+    section: 'hero_title',
+    content: 'Health & Wellness',
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: 'pc-wellness-hero-subtitle',
+    page: 'health_wellness',
+    section: 'hero_subtitle',
+    content: 'Resources, guides, and insights to support your wellbeing.',
+    updated_at: new Date().toISOString(),
+  },
 
   // ── Mission page ───────────────────────────────────────────────────────────
   {
@@ -572,55 +676,201 @@ export const mockPageContent: MockPageContent[] = [
     content: `<h2>Our Approach</h2><p>We do not believe in one-size-fits-all solutions. Every school community has a unique context, culture, and set of strengths. Our role is to bring rigorous thinking and proven frameworks to that context — then step back and support educators in doing what they do best.</p>`,
     updated_at: '2025-01-20T10:00:00Z',
   },
-]
+];
 
 // Helper: get all sections for a specific page
 export function getMockPageContent(page: string): MockPageContent[] {
-  return mockPageContent.filter(item => item.page === page)
+  return mockPageContent.filter((item) => item.page === page);
 }
 
 // Helper: get a single section
-export function getMockSection(page: string, section: string): MockPageContent | undefined {
-  return mockPageContent.find(item => item.page === page && item.section === section)
+export function getMockSection(
+  page: string,
+  section: string,
+): MockPageContent | undefined {
+  return mockPageContent.find(
+    (item) => item.page === page && item.section === section,
+  );
 }
 
+// ─── Health & Wellness ────────────────────────────────────────────────────────
 
+export interface MockWellnessPost {
+  id: string;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string; // HTML string
+  cover_url: string; // Unsplash URL (dev only)
+  doc_path: string | null; // storage key for PDF/DOC/DOCX download (null = no download)
+  tags: string[];
+  published: boolean;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const mockWellnessPosts: MockWellnessPost[] = [
+  {
+    id: 'cccccccc-0000-0000-0000-000000000001',
+    title: 'Five Simple Habits for a Stronger Morning Routine',
+    slug: 'five-simple-habits-stronger-morning-routine',
+    excerpt:
+      'Starting your day with intention can dramatically improve your energy, focus, and overall sense of wellbeing throughout the day.',
+    content: `
+      <h2>Why Mornings Matter</h2>
+      <p>The first hour of your day sets the tone for everything that follows. Research consistently shows that people who establish a deliberate morning practice report higher levels of focus, reduced stress, and greater satisfaction with their daily productivity.</p>
+      <h2>1. Hydrate Before Caffeine</h2>
+      <p>After six to eight hours without water, your body is mildly dehydrated. Drinking 500 ml of water before your first coffee helps kickstart your metabolism and flush out overnight toxins.</p>
+      <h2>2. Move for Ten Minutes</h2>
+      <p>You don't need a full workout. A brisk walk, light stretching, or a short yoga flow gets blood moving to your brain and releases endorphins that naturally elevate mood.</p>
+      <h2>3. Eat a Protein-Rich Breakfast</h2>
+      <p>Protein keeps you satiated and helps regulate blood sugar levels, preventing the mid-morning energy crash that comes from carbohydrate-heavy breakfasts.</p>
+      <h2>4. Set One Priority for the Day</h2>
+      <p>Before checking email or social media, write down the one thing that would make today feel successful. This small act of intention dramatically improves task completion rates.</p>
+      <h2>5. Limit Screen Time in the First 30 Minutes</h2>
+      <p>Your brain is most creative and clear in the early morning. Protect that window from the reactive mode that screens trigger.</p>
+    `.trim(),
+    cover_url:
+      'https://images.unsplash.com/photo-1540206351-d6465b3ac5c1?w=800&q=80',
+    doc_path: 'wellness/docs/morning-routine-guide.pdf',
+    tags: ['Fitness', 'General Wellness'],
+    published: true,
+    published_at: '2025-04-01T09:00:00Z',
+    created_at: '2025-03-28T14:00:00Z',
+    updated_at: '2025-04-01T09:00:00Z',
+  },
+  {
+    id: 'cccccccc-0000-0000-0000-000000000002',
+    title: 'Understanding the Gut-Brain Connection',
+    slug: 'understanding-gut-brain-connection',
+    excerpt:
+      'New research is revealing just how powerfully the health of your digestive system shapes your mental and emotional state.',
+    content: `
+      <h2>Your Second Brain</h2>
+      <p>The gut contains over 100 million neurons — more than either the spinal cord or the peripheral nervous system. Scientists now refer to it as the "enteric nervous system" and it communicates constantly with your brain via the vagus nerve.</p>
+      <h2>What the Research Shows</h2>
+      <p>Studies have linked gut microbiome diversity with reduced rates of anxiety, depression, and cognitive decline. Conversely, chronic gut inflammation has been associated with elevated cortisol levels and impaired emotional regulation.</p>
+      <h2>Foods That Support Gut Health</h2>
+      <p>Fermented foods like yogurt, kefir, kimchi, and sauerkraut introduce beneficial bacteria. Prebiotic fibres — found in garlic, onions, leeks, and oats — feed those bacteria and support a diverse microbiome.</p>
+      <h2>Practical Steps</h2>
+      <p>You don't need to overhaul your entire diet overnight. Adding one serving of fermented food daily and increasing your fibre intake by 5 grams per day are achievable changes that compound over time.</p>
+    `.trim(),
+    cover_url:
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&q=80',
+    doc_path: null,
+    tags: ['Nutrition', 'Mental Health'],
+    published: true,
+    published_at: '2025-03-15T10:00:00Z',
+    created_at: '2025-03-12T11:00:00Z',
+    updated_at: '2025-03-15T10:00:00Z',
+  },
+  {
+    id: 'cccccccc-0000-0000-0000-000000000003',
+    title: 'The Science of Sleep: Why Rest Is Not a Luxury',
+    slug: 'science-of-sleep-why-rest-is-not-a-luxury',
+    excerpt:
+      'Sleep deprivation is one of the most underestimated health risks in modern life. Here is what happens to your body and mind when you chronically undersleep.',
+    content: `
+      <h2>What Sleep Actually Does</h2>
+      <p>During sleep, your brain performs critical maintenance: clearing metabolic waste via the glymphatic system, consolidating memories, and regulating hormone production. Skipping sleep doesn't just make you tired — it impairs every major system in your body.</p>
+      <h2>The Cost of Chronic Undersleeping</h2>
+      <p>Adults who sleep fewer than seven hours per night show significantly higher rates of obesity, cardiovascular disease, type 2 diabetes, and depression. Cognitive performance declines sharply after 17 hours of wakefulness — roughly equivalent to a blood alcohol level of 0.05%.</p>
+      <h2>Sleep Hygiene Fundamentals</h2>
+      <p>Consistent wake times, a cool and dark room, and avoiding screens in the hour before bed are the three most evidence-supported interventions for improving sleep quality. Caffeine has a half-life of 5–6 hours — a 3 pm coffee is still active at 9 pm.</p>
+      <h2>When to Seek Help</h2>
+      <p>If you regularly take more than 30 minutes to fall asleep, wake frequently during the night, or feel unrefreshed after 8 hours, speak with a healthcare provider. Cognitive Behavioural Therapy for Insomnia (CBT-I) is highly effective and preferred over medication as a first-line treatment.</p>
+    `.trim(),
+    cover_url:
+      'https://images.unsplash.com/photo-1519003722824-194d4455a60c?w=800&q=80',
+    doc_path: null,
+    tags: ['Sleep', 'General Wellness'],
+    published: true,
+    published_at: '2025-02-20T09:00:00Z',
+    created_at: '2025-02-18T10:00:00Z',
+    updated_at: '2025-02-20T09:00:00Z',
+  },
+  {
+    id: 'cccccccc-0000-0000-0000-000000000004',
+    title: 'Mindfulness Without the Mysticism',
+    slug: 'mindfulness-without-the-mysticism',
+    excerpt:
+      'Stripped of its spiritual trappings, mindfulness is simply the practice of paying attention — and the evidence base for its benefits is substantial.',
+    content: `
+      <h2>What Mindfulness Actually Means</h2>
+      <p>At its core, mindfulness means deliberately directing your attention to the present moment without judgment. That is it. No incense required. No particular beliefs needed. The practice works by training the prefrontal cortex — the part of the brain responsible for executive function and emotional regulation — to override the default-mode network's tendency to ruminate.</p>
+      <h2>What the Evidence Shows</h2>
+      <p>Meta-analyses across hundreds of studies consistently find that regular mindfulness practice reduces symptoms of anxiety, depression, and chronic pain. It lowers cortisol, improves immune function, and increases grey matter density in regions associated with learning and memory.</p>
+      <h2>Starting a Practice</h2>
+      <p>Ten minutes of focused breathing daily for eight weeks produces measurable changes in brain structure. You don't need an app, a class, or a special cushion. Sit comfortably, close your eyes, and simply notice each breath — in and out. When your mind wanders (it will), gently return. That return is the practice.</p>
+    `.trim(),
+    cover_url:
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+    doc_path: null,
+    tags: ['Mindfulness', 'Mental Health'],
+    published: true,
+    published_at: '2025-01-28T10:00:00Z',
+    created_at: '2025-01-25T09:00:00Z',
+    updated_at: '2025-01-28T10:00:00Z',
+  },
+  {
+    id: 'cccccccc-0000-0000-0000-000000000005',
+    title: 'Active Recovery: Why Rest Days Are Training Days',
+    slug: 'active-recovery-rest-days-are-training-days',
+    excerpt:
+      'The muscles you worked yesterday need time to repair. Here is how to make the most of your recovery days without undoing your progress.',
+    content: `
+      <h2>What Happens During Recovery</h2>
+      <p>Exercise creates micro-tears in muscle fibres. The adaptation — getting stronger, faster, more resilient — happens during rest, not during the workout itself. Skipping recovery doesn't just risk injury; it actively prevents the gains you're training for.</p>
+      <h2>Active vs. Passive Recovery</h2>
+      <p>Passive recovery means doing nothing. Active recovery means low-intensity movement — a walk, gentle swimming, light cycling — that increases blood flow to muscles without adding stress. Research shows active recovery reduces delayed-onset muscle soreness (DOMS) by up to 40% compared to complete rest.</p>
+    `.trim(),
+    cover_url:
+      'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&q=80',
+    doc_path: null,
+    tags: ['Fitness', 'Recovery'],
+    published: false,
+    published_at: '',
+    created_at: '2025-04-10T10:00:00Z',
+    updated_at: '2025-04-10T10:00:00Z',
+  },
+];
 
 // ─── Newsletter ───────────────────────────────────────────────────────────────
 
-export type SubmissionType   = 'research_call' | 'research_note' | 'commentary'
-export type SubmissionStatus = 'pending' | 'approved' | 'rejected'
+export type SubmissionType = 'research_call' | 'research_note' | 'commentary';
+export type SubmissionStatus = 'pending' | 'approved' | 'rejected';
 
 export interface MockNewsletterEdition {
-  id: string
-  title: string
-  slug: string
-  intro: string           // HTML from Tiptap
-  cover_url: string
-  published: boolean
-  published_at: string
-  created_at: string
-  updated_at: string
+  id: string;
+  title: string;
+  slug: string;
+  intro: string; // HTML from Tiptap
+  cover_url: string;
+  published: boolean;
+  published_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface MockNewsletterSubmission {
-  id: string
-  type: SubmissionType
-  status: SubmissionStatus
-  title: string
-  content: string         // HTML (admin-edited after approval) or plain text from form
-  abstract: string
-  submitter_name: string
-  submitter_email: string
-  submitter_role: string
-  institution: string
-  admin_note: string
-  reviewed_at: string
-  edition_id: string | null
-  deadline: string | null
-  contact_email: string | null
-  created_at: string
-  updated_at: string
+  id: string;
+  type: SubmissionType;
+  status: SubmissionStatus;
+  title: string;
+  content: string; // HTML (admin-edited after approval) or plain text from form
+  abstract: string;
+  submitter_name: string;
+  submitter_email: string;
+  submitter_role: string;
+  institution: string;
+  admin_note: string;
+  reviewed_at: string;
+  edition_id: string | null;
+  deadline: string | null;
+  contact_email: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export const mockNewsletterEditions: MockNewsletterEdition[] = [
@@ -629,7 +879,8 @@ export const mockNewsletterEditions: MockNewsletterEdition[] = [
     title: 'Volume 3, Q1 2025',
     slug: 'vol-3-q1-2025',
     intro: `<h2>Editorial Introduction</h2><p>Welcome to the first edition of our quarterly newsletter for 2025. This issue features a rich collection of research calls, practitioner notes, and analytical commentaries from educators and scholars across Canada. We are grateful to all who contributed, and we hope these pages spark meaningful dialogue in your communities.</p>`,
-    cover_url: 'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1456324504439-367cee3b3c32?w=800&q=80',
     published: true,
     published_at: '2025-03-15T10:00:00Z',
     created_at: '2025-02-20T09:00:00Z',
@@ -640,7 +891,8 @@ export const mockNewsletterEditions: MockNewsletterEdition[] = [
     title: 'Volume 2, Q4 2024',
     slug: 'vol-2-q4-2024',
     intro: `<h2>Editorial Introduction</h2><p>As we close out 2024, this edition reflects on a year of significant change in Canadian education policy and practice. From Indigenous pedagogy to funding equity, our contributors have offered thoughtful perspectives that we believe will resonate long into the new year.</p>`,
-    cover_url: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80',
+    cover_url:
+      'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80',
     published: true,
     published_at: '2024-12-10T10:00:00Z',
     created_at: '2024-11-15T09:00:00Z',
@@ -657,7 +909,7 @@ export const mockNewsletterEditions: MockNewsletterEdition[] = [
     created_at: '2025-04-01T09:00:00Z',
     updated_at: '2025-04-01T09:00:00Z',
   },
-]
+];
 
 export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
   // ── Research Calls ────────────────────────────────────────────────────────
@@ -666,8 +918,10 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     type: 'research_call',
     status: 'pending',
     title: 'A Call for Papers on Indigenous Pedagogy in Canadian Schools',
-    content: 'We are inviting submissions from scholars and practitioners working at the intersection of Indigenous knowledge systems and formal schooling. We seek papers that examine decolonising approaches to curriculum, land-based learning models, and community-led educational governance.',
-    abstract: 'Inviting papers on Indigenous pedagogy, decolonising curriculum, and land-based learning in Canadian K–12 and post-secondary contexts.',
+    content:
+      'We are inviting submissions from scholars and practitioners working at the intersection of Indigenous knowledge systems and formal schooling. We seek papers that examine decolonising approaches to curriculum, land-based learning models, and community-led educational governance.',
+    abstract:
+      'Inviting papers on Indigenous pedagogy, decolonising curriculum, and land-based learning in Canadian K–12 and post-secondary contexts.',
     submitter_name: 'Dr. Sarah Okafor',
     submitter_email: 's.okafor@umanitoba.ca',
     submitter_role: 'Associate Professor of Education',
@@ -686,7 +940,8 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     status: 'approved',
     title: 'Call for Contributions: Reimagining Teacher Evaluation',
     content: `<p>This research call invites educators, researchers, and policy analysts to submit contributions examining alternatives to standardised teacher evaluation frameworks. We are particularly interested in peer-led review models, portfolio-based approaches, and evaluation systems designed collaboratively with teachers' federations.</p><p>Submissions may take the form of empirical research, policy analysis, or practitioner reflections.</p>`,
-    abstract: 'Inviting contributions on alternative teacher evaluation frameworks — peer review, portfolios, and federation-designed models.',
+    abstract:
+      'Inviting contributions on alternative teacher evaluation frameworks — peer review, portfolios, and federation-designed models.',
     submitter_name: 'Prof. Adaeze Nwosu',
     submitter_email: 'a.nwosu@queensu.ca',
     submitter_role: 'Professor of Educational Leadership',
@@ -704,13 +959,16 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     type: 'research_call',
     status: 'rejected',
     title: 'Research Call: AI Tools in the Elementary Classroom',
-    content: 'Seeking papers on AI-assisted instruction for grades 1–6, focusing on reading and numeracy interventions.',
-    abstract: 'Looking for papers on AI tools in elementary literacy and numeracy instruction.',
+    content:
+      'Seeking papers on AI-assisted instruction for grades 1–6, focusing on reading and numeracy interventions.',
+    abstract:
+      'Looking for papers on AI tools in elementary literacy and numeracy instruction.',
     submitter_name: 'Marcus Chen',
     submitter_email: 'm.chen@example.com',
     submitter_role: 'EdTech Product Manager',
     institution: 'Brightpath Learning Inc.',
-    admin_note: 'Commercial interest apparent — not a strong fit for an independent scholarly publication. Declined.',
+    admin_note:
+      'Commercial interest apparent — not a strong fit for an independent scholarly publication. Declined.',
     reviewed_at: '2025-03-05T11:00:00Z',
     edition_id: null,
     deadline: null,
@@ -725,8 +983,10 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     type: 'research_note',
     status: 'pending',
     title: 'Reflections on Community School Funding Models',
-    content: 'Per-pupil funding formulas consistently disadvantage schools in low-income neighbourhoods. This note draws on budget data from five Ontario school boards to argue for a needs-weighted allocation model that accounts for socioeconomic context, English language learner populations, and special education demands.',
-    abstract: 'A brief exploration of how per-pupil funding fails under-resourced schools, with a case for needs-weighted allocation.',
+    content:
+      'Per-pupil funding formulas consistently disadvantage schools in low-income neighbourhoods. This note draws on budget data from five Ontario school boards to argue for a needs-weighted allocation model that accounts for socioeconomic context, English language learner populations, and special education demands.',
+    abstract:
+      'A brief exploration of how per-pupil funding fails under-resourced schools, with a case for needs-weighted allocation.',
     submitter_name: 'James Tran',
     submitter_email: 'j.tran@tdsb.on.ca',
     submitter_role: 'Curriculum Consultant',
@@ -744,8 +1004,10 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     type: 'research_note',
     status: 'pending',
     title: 'What Restorative Practices Actually Look Like in Secondary Schools',
-    content: 'After three years implementing restorative circles in a Toronto secondary school, I want to share what worked, what failed, and what the research does not prepare you for. The gap between theory and implementation is significant and deserves honest documentation.',
-    abstract: 'A practitioner account of three years implementing restorative justice practices in a Toronto secondary school.',
+    content:
+      'After three years implementing restorative circles in a Toronto secondary school, I want to share what worked, what failed, and what the research does not prepare you for. The gap between theory and implementation is significant and deserves honest documentation.',
+    abstract:
+      'A practitioner account of three years implementing restorative justice practices in a Toronto secondary school.',
     submitter_name: 'Fatimah Al-Hassan',
     submitter_email: 'fal.hassan@email.com',
     submitter_role: 'Vice Principal',
@@ -764,7 +1026,8 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     status: 'approved',
     title: 'Small Schools, Big Outcomes: Evidence from Rural Ontario',
     content: `<p>This note examines outcome data from 22 rural Ontario schools with enrolment under 150 students, comparing literacy and numeracy results against provincial averages. Contrary to assumptions driving school consolidation policy, small schools in this sample outperformed provincial benchmarks in 14 of 22 cases.</p><p>The findings suggest that community embeddedness, staff stability, and student-teacher ratio — all characteristic of small schools — may be underweighted in policy discussions dominated by cost-efficiency arguments.</p>`,
-    abstract: 'Outcome data from 22 rural Ontario schools challenges consolidation policy — small school enrolments correlate with above-average literacy and numeracy results.',
+    abstract:
+      'Outcome data from 22 rural Ontario schools challenges consolidation policy — small school enrolments correlate with above-average literacy and numeracy results.',
     submitter_name: 'Dr. Colette Mercier',
     submitter_email: 'c.mercier@laurentian.ca',
     submitter_role: 'Assistant Professor',
@@ -782,13 +1045,16 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     type: 'research_note',
     status: 'rejected',
     title: 'Why Traditional Phonics Instruction Is Always Best',
-    content: 'This note argues that all progressive literacy approaches are harmful and that schools must return exclusively to explicit phonics instruction.',
-    abstract: 'A case for returning exclusively to traditional phonics methods in all literacy instruction.',
+    content:
+      'This note argues that all progressive literacy approaches are harmful and that schools must return exclusively to explicit phonics instruction.',
+    abstract:
+      'A case for returning exclusively to traditional phonics methods in all literacy instruction.',
     submitter_name: 'Bob Whitmore',
     submitter_email: 'b.whitmore@email.com',
     submitter_role: 'Retired Teacher',
     institution: '',
-    admin_note: 'Overstated claims, no citations, and dismisses a substantial evidence base. Does not meet publication standards.',
+    admin_note:
+      'Overstated claims, no citations, and dismisses a substantial evidence base. Does not meet publication standards.',
     reviewed_at: '2025-03-10T09:30:00Z',
     edition_id: null,
     deadline: null,
@@ -803,8 +1069,10 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     type: 'commentary',
     status: 'pending',
     title: 'Commentary: The Politics of Curriculum Revision in Ontario',
-    content: 'The 2023–2024 curriculum revision cycle in Ontario revealed deep tensions between evidence-based curriculum design and political expediency. This commentary examines three case studies where subject-area expert recommendations were overridden by ministerial directive, and considers what this means for curriculum legitimacy.',
-    abstract: 'An analysis of three Ontario curriculum revision decisions where political considerations overrode expert recommendations.',
+    content:
+      'The 2023–2024 curriculum revision cycle in Ontario revealed deep tensions between evidence-based curriculum design and political expediency. This commentary examines three case studies where subject-area expert recommendations were overridden by ministerial directive, and considers what this means for curriculum legitimacy.',
+    abstract:
+      'An analysis of three Ontario curriculum revision decisions where political considerations overrode expert recommendations.',
     submitter_name: 'Dr. Priya Sharma',
     submitter_email: 'p.sharma@uoft.ca',
     submitter_role: 'PhD Candidate, Curriculum Studies',
@@ -823,7 +1091,8 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     status: 'approved',
     title: 'On the Myth of the "Learning Styles" Framework',
     content: `<p>Despite persistent popularity among practitioners, the learning styles hypothesis — that students learn better when instruction matches their preferred style (visual, auditory, kinaesthetic) — has been repeatedly disconfirmed in controlled studies. This commentary traces why the framework persists in teacher education programmes and professional development despite the evidence, and what this reveals about how educational research is (or is not) translated into practice.</p>`,
-    abstract: 'Why the learning styles myth persists in teacher education despite decades of disconfirming research — and what it reveals about research-to-practice translation.',
+    abstract:
+      'Why the learning styles myth persists in teacher education despite decades of disconfirming research — and what it reveals about research-to-practice translation.',
     submitter_name: 'Dr. Obinna Eze',
     submitter_email: 'o.eze@mcmaster.ca',
     submitter_role: 'Associate Professor of Educational Psychology',
@@ -842,7 +1111,8 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     status: 'approved',
     title: 'Rethinking "Parent Engagement" in High-Needs Schools',
     content: `<p>School effectiveness literature consistently identifies parent engagement as a key driver of student outcomes. Yet standard engagement strategies — evening information nights, report card conferences, volunteer programmes — systematically exclude parents who work shift jobs, lack reliable transportation, or are not fluent in English. This commentary argues that the field needs to shift from measuring engagement by attendance to measuring it by genuine influence on school decisions.</p>`,
-    abstract: 'Standard parent engagement metrics disadvantage high-needs communities — a case for measuring influence rather than attendance.',
+    abstract:
+      'Standard parent engagement metrics disadvantage high-needs communities — a case for measuring influence rather than attendance.',
     submitter_name: 'Yemi Adeyemi',
     submitter_email: 'y.adeyemi@email.com',
     submitter_role: 'Parent Council Chair & Education Advocate',
@@ -855,40 +1125,67 @@ export const mockNewsletterSubmissions: MockNewsletterSubmission[] = [
     created_at: '2024-11-10T09:00:00Z',
     updated_at: '2024-11-20T10:00:00Z',
   },
-]
+];
 
 export const mockDashboardStats = {
   blogs: {
     total: mockBlogs.length,
-    published: mockBlogs.filter(b => b.published).length,
-    drafts: mockBlogs.filter(b => !b.published).length,
+    published: mockBlogs.filter((b) => b.published).length,
+    drafts: mockBlogs.filter((b) => !b.published).length,
   },
   events: {
     total: mockEvents.length,
-    published: mockEvents.filter(e => e.published).length,
-    upcoming: mockEvents.filter(e => e.published && new Date(e.event_date) > new Date()).length,
+    published: mockEvents.filter((e) => e.published).length,
+    upcoming: mockEvents.filter(
+      (e) => e.published && new Date(e.event_date) > new Date(),
+    ).length,
   },
   readingList: {
     total: mockReadingList.length,
-    published: mockReadingList.filter(r => r.published).length,
+    published: mockReadingList.filter((r) => r.published).length,
   },
   partners: {
     total: mockPartners.length,
-    active: mockPartners.filter(p => p.published).length,
+    active: mockPartners.filter((p) => p.published).length,
   },
   newsletter: {
-    editions:      { total: 3, published: 2, drafts: 1 },
-    submissions:   { total: 10, pending: 4, approved: 5, rejected: 1 },
+    editions: { total: 3, published: 2, drafts: 1 },
+    submissions: { total: 10, pending: 4, approved: 5, rejected: 1 },
     pendingReview: 4,
   },
-}
+};
 
 // ─── Recent Activity (mock — last 5 items across all types) ──────────────────
 
 export const mockRecentActivity = [
-  { type: 'blog'         as const, title: mockBlogs[4].title,        date: mockBlogs[4].updated_at,        href: `/admin/blogs/${mockBlogs[4].id}` },
-  { type: 'event'        as const, title: mockEvents[3].title,       date: mockEvents[3].updated_at,       href: `/admin/events/${mockEvents[3].id}` },
-  { type: 'blog'         as const, title: mockBlogs[0].title,        date: mockBlogs[0].updated_at,        href: `/admin/blogs/${mockBlogs[0].id}` },
-  { type: 'reading_list' as const, title: mockReadingList[4].title,  date: mockReadingList[4].updated_at,  href: `/admin/reading-list/${mockReadingList[4].id}` },
-  { type: 'event'        as const, title: mockEvents[0].title,       date: mockEvents[0].updated_at,       href: `/admin/events/${mockEvents[0].id}` },
-]
+  {
+    type: 'blog' as const,
+    title: mockBlogs[4].title,
+    date: mockBlogs[4].updated_at,
+    href: `/admin/blogs/${mockBlogs[4].id}`,
+  },
+  {
+    type: 'event' as const,
+    title: mockEvents[3].title,
+    date: mockEvents[3].updated_at,
+    href: `/admin/events/${mockEvents[3].id}`,
+  },
+  {
+    type: 'blog' as const,
+    title: mockBlogs[0].title,
+    date: mockBlogs[0].updated_at,
+    href: `/admin/blogs/${mockBlogs[0].id}`,
+  },
+  {
+    type: 'reading_list' as const,
+    title: mockReadingList[4].title,
+    date: mockReadingList[4].updated_at,
+    href: `/admin/reading-list/${mockReadingList[4].id}`,
+  },
+  {
+    type: 'event' as const,
+    title: mockEvents[0].title,
+    date: mockEvents[0].updated_at,
+    href: `/admin/events/${mockEvents[0].id}`,
+  },
+];

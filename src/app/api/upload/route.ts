@@ -1,8 +1,14 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
-const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
-const MAX_BYTES = 5 * 1024 * 1024 // 5 MB
+const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
+const ACCEPTED_DOC_TYPES   = new Set([
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+])
+const MAX_IMAGE_BYTES = 5  * 1024 * 1024  // 5 MB
+const MAX_DOC_BYTES   = 20 * 1024 * 1024  // 20 MB
 
 function serviceClient() {
   return createClient(
@@ -21,15 +27,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing file or folder.' }, { status: 400 })
     }
 
-    if (!ACCEPTED_TYPES.has(file.type)) {
+    const isDoc   = folder === 'wellness/docs'
+    const isImage = ACCEPTED_IMAGE_TYPES.has(file.type)
+    const isDocType = ACCEPTED_DOC_TYPES.has(file.type)
+
+    if (isDoc && !isDocType) {
+      return NextResponse.json(
+        { error: 'Unsupported document type. Use PDF, DOC, or DOCX.' },
+        { status: 415 }
+      )
+    }
+
+    if (!isDoc && !isImage) {
       return NextResponse.json(
         { error: 'Unsupported file type. Use JPG, PNG, WebP, or SVG.' },
         { status: 415 }
       )
     }
 
-    if (file.size > MAX_BYTES) {
-      return NextResponse.json({ error: 'File exceeds the 5 MB limit.' }, { status: 413 })
+    const maxBytes = isDoc ? MAX_DOC_BYTES : MAX_IMAGE_BYTES
+    if (file.size > maxBytes) {
+      const limit = isDoc ? '20 MB' : '5 MB'
+      return NextResponse.json({ error: `File exceeds the ${limit} limit.` }, { status: 413 })
     }
 
     const filename = `${Date.now()}-${file.name.replace(/\s+/g, '-')}`
