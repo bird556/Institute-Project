@@ -7,6 +7,9 @@ export interface SiteVisibility {
   partners_enabled:        boolean
   newsletter_enabled:      boolean
   health_wellness_enabled: boolean
+  goal_section_enabled:    boolean
+  impact_section_enabled:  boolean
+  mission_section_enabled: boolean
 }
 
 // Mock phase — returns all sections enabled
@@ -21,6 +24,9 @@ export async function getSiteVisibility(): Promise<SiteVisibility> {
     partners_enabled:        true,
     newsletter_enabled:      true,
     health_wellness_enabled: true,
+    goal_section_enabled:    true,
+    impact_section_enabled:  true,
+    mission_section_enabled: true,
   }
 }
 
@@ -38,6 +44,7 @@ export async function getSiteVisibility(): Promise<SiteVisibility> {
 //         'about_enabled', 'mission_enabled', 'blogs_enabled',
 //         'events_enabled', 'reading_list_enabled',
 //         'partners_enabled', 'newsletter_enabled', 'health_wellness_enabled',
+//         'goal_section_enabled', 'impact_section_enabled', 'mission_section_enabled',
 //       ])
 //     return Object.fromEntries(
 //       (data ?? []).map(row => [row.key, row.value !== 'false'])

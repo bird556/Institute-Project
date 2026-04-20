@@ -11,23 +11,23 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border dark:border-dark-border bg-surface dark:bg-dark-surface mt-auto">
+    <footer className="mt-auto bg-(--color-brand-primary)">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
           {/* Brand */}
           <div>
-            <p className="font-display font-700 text-lg text-brand-teal dark:text-white mb-2">
+            <p className="font-display font-bold text-lg text-white mb-2">
               Kustawi Institute
             </p>
-            <p className="text-sm text-text-muted leading-relaxed">
+            <p className="text-sm text-white/60 leading-relaxed">
               A modern school institute committed to academic excellence and community.
             </p>
           </div>
 
           {/* Navigation */}
           <div>
-            <p className="text-sm font-600 text-text-primary dark:text-white mb-3 uppercase tracking-wider">
+            <p className="text-sm font-semibold text-white mb-3 uppercase tracking-wider">
               Navigate
             </p>
             <ul className="space-y-2">
@@ -35,7 +35,7 @@ export function Footer() {
                 <li key={href}>
                   <Link
                     href={href}
-                    className="text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+                    className="text-sm text-white/60 hover:text-white transition-colors"
                   >
                     {label}
                   </Link>
@@ -46,17 +46,17 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <p className="text-sm font-600 text-text-primary dark:text-white mb-3 uppercase tracking-wider">
+            <p className="text-sm font-semibold text-white mb-3 uppercase tracking-wider">
               Contact
             </p>
-            <div className="space-y-2 text-sm text-text-muted">
+            <div className="space-y-2 text-sm text-white/60">
               <p>contact@kustawi.org</p>
               <p>+000 000 0000</p>
             </div>
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-border dark:border-dark-border text-center text-xs text-text-muted">
+        <div className="mt-8 pt-6 border-t border-white/20 text-center text-xs text-white/40">
           &copy; {new Date().getFullYear()} Kustawi Institute. All rights reserved.
         </div>
       </div>

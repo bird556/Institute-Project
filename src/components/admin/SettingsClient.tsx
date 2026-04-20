@@ -34,6 +34,9 @@ const EMPTY: SiteSettings = {
   partners_enabled: 'true',
   newsletter_enabled: 'true',
   health_wellness_enabled: 'true',
+  goal_section_enabled: 'true',
+  impact_section_enabled: 'true',
+  mission_section_enabled: 'true',
   home_hero_image_path: '',
   home_hero_bg_path: '',
 }
@@ -124,6 +127,9 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
     partners_enabled:        settings.partners_enabled        !== 'false',
     newsletter_enabled:      settings.newsletter_enabled      !== 'false',
     health_wellness_enabled: settings.health_wellness_enabled !== 'false',
+    goal_section_enabled:    settings.goal_section_enabled    !== 'false',
+    impact_section_enabled:  settings.impact_section_enabled  !== 'false',
+    mission_section_enabled: settings.mission_section_enabled !== 'false',
   })
 
   async function handleToggleVisibility(key: keyof typeof visibility, enabled: boolean) {
@@ -369,6 +375,9 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
             { key: 'partners_enabled',     label: 'Partners',     description: 'When hidden, /partners redirects to home' },
             { key: 'newsletter_enabled',      label: 'Newsletter',       description: 'When hidden, /newsletter and all edition pages redirect to home' },
             { key: 'health_wellness_enabled', label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
+            { key: 'goal_section_enabled',    label: 'Home — Our Goal',      description: 'Show/hide the Our Goal section on the home page' },
+            { key: 'impact_section_enabled',  label: 'Home — The Challenge', description: 'Show/hide the Addressing Hidden Crises section on the home page' },
+            { key: 'mission_section_enabled', label: 'Home — What We Do',    description: 'Show/hide the Remembering Creative Power section on the home page' },
           ] as const).map(({ key, label, description }) => (
             <div key={key} className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
               <div>

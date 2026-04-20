@@ -1,39 +1,55 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  /* ─── Brand Palette ─────────────────────────────── */
-  --color-brand-teal:       rgb(55, 77, 79);
-  --color-brand-teal-dark:  rgb(38, 55, 57);
-  --color-brand-teal-light: rgb(88, 120, 123);
+  /* ─── Brand Palette (V2) ─────────────────────────── */
+  --color-brand-primary: hsl(160 40% 14.1%); /* forest green */
+  /* --color-brand-primary:       hsl(160, 40%, 22%);   /* forest green */
+  --color-brand-primary-dark: hsl(160, 40%, 16%);
+  --color-brand-primary-light: hsl(160, 35%, 35%);
+  --color-brand-secondary: hsl(35, 60%, 50%); /* gold / amber */
+  /* V1 aliases — keeps all existing component refs working */
+  --color-brand-teal: var(--color-brand-primary);
+  --color-brand-teal-dark: var(--color-brand-primary-dark);
+  --color-brand-teal-light: var(--color-brand-primary-light);
 
   /* ─── Light Mode Surfaces ───────────────────────── */
-  --color-background:       #ffffff;
-  --color-surface:          #f7f8f8;
-  --color-surface-hover:    #eef1f1;
-  --color-border:           #dde3e3;
+  --color-background: hsl(40, 20%, 97%);
+  --color-surface: hsl(40, 25%, 95%);
+  --color-surface-hover: hsl(40, 20%, 92%);
+  --color-border: hsl(40, 15%, 85%);
 
   /* ─── Dark Mode Surfaces ────────────────────────── */
-  --color-dark-background:  #0f1617;
-  --color-dark-surface:     #182022;
-  --color-dark-surface-hover: #1f2a2c;
-  --color-dark-border:      #2c3c3e;
+  --color-dark-background: hsl(160, 25%, 6%);
+  --color-dark-surface: hsl(160, 20%, 10%);
+  --color-dark-surface-hover: hsl(160, 15%, 15%);
+  --color-dark-border: hsl(160, 15%, 18%);
 
   /* ─── Text ──────────────────────────────────────── */
-  --color-text-primary:     #1a2223;
-  --color-text-muted:       #5c7071;
-  --color-text-on-brand:    #ffffff;
+  --color-text-primary: hsl(160, 30%, 10%);
+  --color-text-muted: hsl(160, 10%, 40%);
+  --color-text-on-brand: #ffffff;
 
   /* ─── Semantic Aliases ──────────────────────────── */
-  --color-accent:           var(--color-brand-teal);
-  --color-accent-hover:     var(--color-brand-teal-dark);
+  --color-secondary: hsl(35, 60%, 50%); /* gold — always, both modes */
+  --color-accent: var(--color-brand-secondary);
+  --color-accent-hover: hsl(35, 65%, 45%);
 
   /* ─── Typography ────────────────────────────────── */
-  --font-sans:    var(--font-dm-sans), 'DM Sans', sans-serif;
-  --font-display: var(--font-fraunces), 'Fraunces', serif;
+  --font-sans: var(--font-inter), 'Inter', sans-serif;
+  --font-display: var(--font-playfair), 'Playfair Display', serif;
+}
+
+/* ─── Hero forced-white text (over dark bg image) ── */
+.hero-tiptap h1,
+.hero-tiptap h2,
+.hero-tiptap h3,
+.hero-tiptap p,
+.hero-tiptap a {
+  color: #ffffff !important;
 }
 
 /* ─── Base ───────────────────────────────────────── */
@@ -45,7 +61,7 @@ body {
 
 .dark body {
   background: var(--color-dark-background);
-  color: #e8ecec;
+  color: hsl(40, 20%, 95%);
 }
 
 /* ─── Tiptap Editor Canvas ───────────────────────── */
@@ -58,7 +74,7 @@ body {
   outline: none;
 }
 .dark .tiptap-editor {
-  color: #e8ecec;
+  color: hsl(40, 20%, 95%);
   background: var(--color-dark-surface);
 }
 
@@ -67,166 +83,213 @@ body {
   font-family: var(--font-sans);
   color: var(--color-text-primary);
 }
-.dark .tiptap-content { color: #e8ecec; }
+.dark .tiptap-content {
+  color: hsl(40, 20%, 95%);
+}
 
 /* ─── Shared Tiptap Element Styles ──────────────── */
-.tiptap-editor h1, .tiptap-content h1,
-.tiptap-editor h2, .tiptap-content h2,
-.tiptap-editor h3, .tiptap-content h3 {
-  font-family: var(--font-display);
-  color: var(--color-brand-teal);
+.tiptap-editor h1,
+.tiptap-content h1,
+.tiptap-editor h2,
+.tiptap-content h2,
+.tiptap-editor h3,
+.tiptap-content h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--color-brand-primary);
   font-weight: 700;
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
   line-height: 1.25;
 }
-.dark .tiptap-editor h1, .dark .tiptap-content h1,
-.dark .tiptap-editor h2, .dark .tiptap-content h2,
-.dark .tiptap-editor h3, .dark .tiptap-content h3 {
+.dark .tiptap-editor h1,
+.dark .tiptap-content h1,
+.dark .tiptap-editor h2,
+.dark .tiptap-content h2,
+.dark .tiptap-editor h3,
+.dark .tiptap-content h3 {
   color: #ffffff;
 }
-.tiptap-editor h1, .tiptap-content h1 { font-size: 2.5rem; }
-.tiptap-editor h2, .tiptap-content h2 { font-size: 1.875rem; }
-.tiptap-editor h3, .tiptap-content h3 { font-size: 1.375rem; }
-.tiptap-editor p,  .tiptap-content p  { margin-bottom: 0.875rem; line-height: 1.75; }
-.tiptap-editor a,  .tiptap-content a  { color: var(--color-brand-teal); text-decoration: underline; }
-.tiptap-editor img,.tiptap-content img { max-width: 100%; border-radius: 0.5rem; margin: 1rem 0; }
-.tiptap-editor ul, .tiptap-content ul,
-.tiptap-editor ol, .tiptap-content ol  { padding-left: 1.5rem; margin-bottom: 0.875rem; }
-.tiptap-editor li, .tiptap-content li  { margin-bottom: 0.25rem; }
-.tiptap-editor blockquote, .tiptap-content blockquote {
-  border-left: 3px solid var(--color-brand-teal-light);
+.tiptap-editor h1,
+.tiptap-content h1 {
+  font-size: 2.5rem;
+}
+.tiptap-editor h2,
+.tiptap-content h2 {
+  font-size: 1.875rem;
+}
+.tiptap-editor h3,
+.tiptap-content h3 {
+  font-size: 1.375rem;
+}
+.tiptap-editor p,
+.tiptap-content p {
+  margin-bottom: 0.875rem;
+  line-height: 1.75;
+}
+.tiptap-editor a,
+.tiptap-content a {
+  color: var(--color-brand-primary);
+  text-decoration: underline;
+}
+.tiptap-editor img,
+.tiptap-content img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+}
+.tiptap-editor ul,
+.tiptap-content ul,
+.tiptap-editor ol,
+.tiptap-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 0.875rem;
+}
+.tiptap-editor li,
+.tiptap-content li {
+  margin-bottom: 0.25rem;
+}
+.tiptap-editor blockquote,
+.tiptap-content blockquote {
+  border-left: 3px solid var(--color-brand-primary-light);
   padding-left: 1rem;
   color: var(--color-text-muted);
   font-style: italic;
   margin: 1rem 0;
 }
-.tiptap-editor code, .tiptap-content code {
+.tiptap-editor code,
+.tiptap-content code {
   font-size: 0.875em;
   background: var(--color-surface);
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
 }
 .dark .tiptap-editor code,
-.dark .tiptap-content code { background: var(--color-dark-surface-hover); }
-.tiptap-editor hr, .tiptap-content hr {
+.dark .tiptap-content code {
+  background: var(--color-dark-surface-hover);
+}
+.tiptap-editor hr,
+.tiptap-content hr {
   border: none;
   border-top: 2px solid var(--color-border);
   margin: 1.5rem 0;
 }
 .dark .tiptap-editor hr,
-.dark .tiptap-content hr { border-top-color: var(--color-dark-border); }
-
-@theme inline {
-  --font-heading:       var(--font-sans);
-  --font-sans:       var(--font-sans);
-  --color-sidebar-ring:       var(--sidebar-ring);
-  --color-sidebar-border:       var(--sidebar-border);
-  --color-sidebar-accent-foreground:       var(--sidebar-accent-foreground);
-  --color-sidebar-accent:       var(--sidebar-accent);
-  --color-sidebar-primary-foreground:       var(--sidebar-primary-foreground);
-  --color-sidebar-primary:       var(--sidebar-primary);
-  --color-sidebar-foreground:       var(--sidebar-foreground);
-  --color-sidebar:       var(--sidebar);
-  --color-chart-5:       var(--chart-5);
-  --color-chart-4:       var(--chart-4);
-  --color-chart-3:       var(--chart-3);
-  --color-chart-2:       var(--chart-2);
-  --color-chart-1:       var(--chart-1);
-  --color-ring:       var(--ring);
-  --color-input:       var(--input);
-  --color-border:       var(--border);
-  --color-destructive:       var(--destructive);
-  --color-accent-foreground:       var(--accent-foreground);
-  --color-accent:       var(--accent);
-  --color-muted-foreground:       var(--muted-foreground);
-  --color-muted:       var(--muted);
-  --color-secondary-foreground:       var(--secondary-foreground);
-  --color-secondary:       var(--secondary);
-  --color-primary-foreground:       var(--primary-foreground);
-  --color-primary:       var(--primary);
-  --color-popover-foreground:       var(--popover-foreground);
-  --color-popover:       var(--popover);
-  --color-card-foreground:       var(--card-foreground);
-  --color-card:       var(--card);
-  --color-foreground:       var(--foreground);
-  --color-background:       var(--background);
-  --radius-sm:       calc(var(--radius) * 0.6);
-  --radius-md:       calc(var(--radius) * 0.8);
-  --radius-lg:       var(--radius);
-  --radius-xl:       calc(var(--radius) * 1.4);
-  --radius-2xl:       calc(var(--radius) * 1.8);
-  --radius-3xl:       calc(var(--radius) * 2.2);
-  --radius-4xl:       calc(var(--radius) * 2.6);
+.dark .tiptap-content hr {
+  border-top-color: var(--color-dark-border);
 }
 
+@theme inline {
+  --font-heading: var(--font-display);
+  --font-sans: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  /* Note: --color-secondary is defined statically in @theme above (always gold) */
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* ─── Shadcn CSS Variables (V2 — forest green + gold) ── */
 :root {
-  --background:       oklch(1 0 0);
-  --foreground:       oklch(0.145 0 0);
-  --card:       oklch(1 0 0);
-  --card-foreground:       oklch(0.145 0 0);
-  --popover:       oklch(1 0 0);
-  --popover-foreground:       oklch(0.145 0 0);
-  --primary:       oklch(0.205 0 0);
-  --primary-foreground:       oklch(0.985 0 0);
-  --secondary:       oklch(0.97 0 0);
-  --secondary-foreground:       oklch(0.205 0 0);
-  --muted:       oklch(0.97 0 0);
-  --muted-foreground:       oklch(0.556 0 0);
-  --accent:       oklch(0.97 0 0);
-  --accent-foreground:       oklch(0.205 0 0);
-  --destructive:       oklch(0.577 0.245 27.325);
-  --border:       oklch(0.922 0 0);
-  --input:       oklch(0.922 0 0);
-  --ring:       oklch(0.708 0 0);
-  --chart-1:       oklch(0.87 0 0);
-  --chart-2:       oklch(0.556 0 0);
-  --chart-3:       oklch(0.439 0 0);
-  --chart-4:       oklch(0.371 0 0);
-  --chart-5:       oklch(0.269 0 0);
-  --radius:       0.625rem;
-  --sidebar:       oklch(0.985 0 0);
-  --sidebar-foreground:       oklch(0.145 0 0);
-  --sidebar-primary:       oklch(0.205 0 0);
-  --sidebar-primary-foreground:       oklch(0.985 0 0);
-  --sidebar-accent:       oklch(0.97 0 0);
-  --sidebar-accent-foreground:       oklch(0.205 0 0);
-  --sidebar-border:       oklch(0.922 0 0);
-  --sidebar-ring:       oklch(0.708 0 0);
+  --background: hsl(40, 20%, 97%);
+  --foreground: hsl(160, 30%, 10%);
+  --card: hsl(40, 25%, 95%);
+  --card-foreground: hsl(160, 30%, 10%);
+  --popover: hsl(40, 20%, 97%);
+  --popover-foreground: hsl(160, 30%, 10%);
+  --primary: hsl(160, 40%, 22%);
+  --primary-foreground: hsl(40, 30%, 95%);
+  --secondary: hsl(35, 60%, 50%);
+  --secondary-foreground: hsl(40, 30%, 95%);
+  --muted: hsl(40, 15%, 90%);
+  --muted-foreground: hsl(160, 10%, 40%);
+  --accent: hsl(35, 70%, 55%);
+  --accent-foreground: hsl(160, 30%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --border: hsl(40, 15%, 85%);
+  --input: hsl(40, 15%, 85%);
+  --ring: hsl(160, 40%, 22%);
+  --radius: 0.75rem;
+  --chart-1: hsl(160, 40%, 35%);
+  --chart-2: hsl(35, 60%, 50%);
+  --chart-3: hsl(160, 25%, 55%);
+  --chart-4: hsl(35, 45%, 65%);
+  --chart-5: hsl(160, 15%, 70%);
+  --sidebar: hsl(40, 20%, 97%);
+  --sidebar-foreground: hsl(160, 30%, 10%);
+  --sidebar-primary: hsl(160, 40%, 22%);
+  --sidebar-primary-foreground: hsl(40, 30%, 95%);
+  --sidebar-accent: hsl(40, 25%, 95%);
+  --sidebar-accent-foreground: hsl(160, 30%, 10%);
+  --sidebar-border: hsl(40, 15%, 85%);
+  --sidebar-ring: hsl(160, 40%, 22%);
 }
 
 .dark {
-  --background:       oklch(0.145 0 0);
-  --foreground:       oklch(0.985 0 0);
-  --card:       oklch(0.205 0 0);
-  --card-foreground:       oklch(0.985 0 0);
-  --popover:       oklch(0.205 0 0);
-  --popover-foreground:       oklch(0.985 0 0);
-  --primary:       oklch(0.922 0 0);
-  --primary-foreground:       oklch(0.205 0 0);
-  --secondary:       oklch(0.269 0 0);
-  --secondary-foreground:       oklch(0.985 0 0);
-  --muted:       oklch(0.269 0 0);
-  --muted-foreground:       oklch(0.708 0 0);
-  --accent:       oklch(0.269 0 0);
-  --accent-foreground:       oklch(0.985 0 0);
-  --destructive:       oklch(0.704 0.191 22.216);
-  --border:       oklch(1 0 0 / 10%);
-  --input:       oklch(1 0 0 / 15%);
-  --ring:       oklch(0.556 0 0);
-  --chart-1:       oklch(0.87 0 0);
-  --chart-2:       oklch(0.556 0 0);
-  --chart-3:       oklch(0.439 0 0);
-  --chart-4:       oklch(0.371 0 0);
-  --chart-5:       oklch(0.269 0 0);
-  --sidebar:       oklch(0.205 0 0);
-  --sidebar-foreground:       oklch(0.985 0 0);
-  --sidebar-primary:       oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground:       oklch(0.985 0 0);
-  --sidebar-accent:       oklch(0.269 0 0);
-  --sidebar-accent-foreground:       oklch(0.985 0 0);
-  --sidebar-border:       oklch(1 0 0 / 10%);
-  --sidebar-ring:       oklch(0.556 0 0);
+  --background: hsl(160, 25%, 6%);
+  --foreground: hsl(40, 20%, 95%);
+  --card: hsl(160, 20%, 10%);
+  --card-foreground: hsl(40, 20%, 95%);
+  --popover: hsl(160, 25%, 6%);
+  --popover-foreground: hsl(40, 20%, 95%);
+  --primary: hsl(35, 60%, 50%);
+  --primary-foreground: hsl(160, 30%, 10%);
+  --secondary: hsl(160, 30%, 20%);
+  --secondary-foreground: hsl(40, 20%, 95%);
+  --muted: hsl(160, 15%, 15%);
+  --muted-foreground: hsl(40, 10%, 60%);
+  --accent: hsl(35, 70%, 55%);
+  --accent-foreground: hsl(160, 30%, 10%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --border: hsl(160, 15%, 18%);
+  --input: hsl(160, 15%, 18%);
+  --ring: hsl(35, 60%, 50%);
+  --chart-1: hsl(35, 60%, 55%);
+  --chart-2: hsl(160, 35%, 45%);
+  --chart-3: hsl(35, 40%, 65%);
+  --chart-4: hsl(160, 20%, 55%);
+  --chart-5: hsl(35, 25%, 70%);
+  --sidebar: hsl(160, 20%, 10%);
+  --sidebar-foreground: hsl(40, 20%, 95%);
+  --sidebar-primary: hsl(35, 60%, 50%);
+  --sidebar-primary-foreground: hsl(160, 30%, 10%);
+  --sidebar-accent: hsl(160, 15%, 15%);
+  --sidebar-accent-foreground: hsl(40, 20%, 95%);
+  --sidebar-border: hsl(160, 15%, 18%);
+  --sidebar-ring: hsl(35, 60%, 50%);
 }
 
 @layer base {

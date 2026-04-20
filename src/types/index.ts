@@ -72,6 +72,41 @@ export interface SiteSettings {
   home_hero_bg_path: string
   // Section visibility
   health_wellness_enabled: string
+  // Home section visibility
+  goal_section_enabled:    string
+  impact_section_enabled:  string
+  mission_section_enabled: string
+}
+
+export interface GoalPillar {
+  num: string
+  label: string
+  desc: string
+}
+export interface GoalSectionContent {
+  label: string
+  title: string
+  description: string
+  pillars: GoalPillar[]
+}
+
+export interface ImpactSectionContent {
+  label: string
+  title: string
+  description: string
+  items: string[]
+}
+
+export interface MissionPillar {
+  icon_name: 'Heart' | 'BookOpen' | 'Shield' | 'Users'
+  title: string
+  desc: string
+}
+export interface MissionSectionContent {
+  label: string
+  title: string
+  description: string
+  pillars: MissionPillar[]
 }
 
 export interface PageContent {

@@ -2,27 +2,66 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { getPageContent } from '@/actions/page-content'
 import { getSiteSettings } from '@/actions/settings'
-import { mockBlogs, mockEvents } from '@/lib/mock-data'
+import { getSiteVisibility } from '@/lib/site-visibility'
+import { mockEvents } from '@/lib/mock-data'
 import { formatDate } from '@/lib/utils'
+import GoalSection from '@/components/home/GoalSection'
+import ImpactSection from '@/components/home/ImpactSection'
+import MissionSection from '@/components/home/MissionSection'
+import type { GoalSectionContent, ImpactSectionContent, MissionSectionContent, PageContent } from '@/types'
+
+function parseSection<T>(sections: PageContent[] | null | undefined, key: string, fallback: T): T {
+  const row = sections?.find(s => s.section === key)
+  if (!row?.content) return fallback
+  try { return JSON.parse(row.content) as T } catch { return fallback }
+}
+
+const GOAL_FALLBACK: GoalSectionContent = {
+  label: 'Our Goal',
+  title: 'Thriving With Purpose',
+  description: "Kustawi strives to promote engagement, disseminate knowledge and conduct research that will enable African descent boys, men and those who love them to thrive and continue their life's journey with an enriched sense of themselves endowed by the Grantor of Dominion (GoD).",
+  pillars: [
+    { num: '01', label: 'Engagement', desc: 'Building meaningful connections and community.' },
+    { num: '02', label: 'Knowledge',  desc: 'Disseminating research and education.' },
+    { num: '03', label: 'Research',   desc: 'Conducting transformative studies.' },
+  ],
+}
+
+const IMPACT_FALLBACK: ImpactSectionContent = {
+  label: 'The Challenge',
+  title: 'Addressing Hidden Crises',
+  description: 'The Institute will play an important role in raising awareness and offering solutions to the hidden crisis of the sexual abuse of African descent boys and men. Unaddressed and unacknowledged trauma results in:',
+  items: ['Academic underperformance', 'Externalized and internalized aggression', 'Low self-esteem', 'Negative self-perception', 'Psychological distress', 'Stigma and shame'],
+}
+
+const MISSION_FALLBACK: MissionSectionContent = {
+  label: 'What We Do',
+  title: 'Remembering Creative Power',
+  description: 'The Institute recognizes that many African descent boys and men are impacted by misandrist dehumanizing stereotypes, unspoken trauma, and the silencing of their emotional lives.',
+  pillars: [
+    { icon_name: 'Heart',    title: 'Advocacy',      desc: 'Championing the emotional well-being and dignity of African descent boys and men.' },
+    { icon_name: 'BookOpen', title: 'Education',     desc: 'Community education and knowledge dissemination for healing and empowerment.' },
+    { icon_name: 'Shield',   title: 'Research',      desc: 'Conducting critical research on trauma, identity, and resilience.' },
+    { icon_name: 'Users',    title: 'Psychotherapy', desc: 'Supporting men and boys in reclaiming creative power and voice.' },
+  ],
+}
 
 export default async function HomePage() {
-  const [{ data: sections }, { data: settings }] = await Promise.all([
+  const [{ data: sections }, { data: settings }, visibility] = await Promise.all([
     getPageContent('home'),
     getSiteSettings(),
+    getSiteVisibility(),
   ])
 
-  const hero  = sections?.find(s => s.section === 'hero')
-  const intro = sections?.find(s => s.section === 'intro')
-  const cta   = sections?.find(s => s.section === 'cta')
+  const hero = sections?.find(s => s.section === 'hero')
+  const cta  = sections?.find(s => s.section === 'cta')
 
-  // TODO: reconstruct full URL via supabase.storage.from('institute-media').getPublicUrl(path)
-  const heroImageUrl = settings?.home_hero_image_path || null
-  const heroBgUrl    = settings?.home_hero_bg_path    || null
+  const heroImageUrl = settings?.home_hero_image_path || '/assets/hero-image.jpg'
+  const heroBgUrl    = settings?.home_hero_bg_path    || '/assets/forest-bg.jpg'
 
-  const featuredBlogs = mockBlogs
-    .filter(b => b.published && b.published_at)
-    .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-    .slice(0, 3)
+  const goalData    = parseSection(sections, 'goal_section',    GOAL_FALLBACK)
+  const impactData  = parseSection(sections, 'impact_section',  IMPACT_FALLBACK)
+  const missionData = parseSection(sections, 'mission_section', MISSION_FALLBACK)
 
   const now = new Date()
   const upcomingEvents = mockEvents
@@ -32,64 +71,76 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* Hero */}
-      {hero?.content && (
-        <section className="relative bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          {/* Background image (independent of side image) */}
-          {heroBgUrl && (
-            <>
-              <Image
-                src={heroBgUrl}
-                alt=""
-                fill
-                className="object-cover"
-                sizes="100vw"
-                priority
-              />
-              <div className="absolute inset-0 bg-black/50" />
-            </>
-          )}
+      {/* Hero — always rendered with defaults */}
+      <section className="relative bg-surface dark:bg-dark-surface py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        <Image
+          src={heroBgUrl}
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority
+        />
+        <div className="absolute inset-0 bg-black/50" />
 
-          <div className="relative max-w-6xl mx-auto">
-            {heroImageUrl ? (
-              /* Two-column layout when side image is set */
-              <div className="flex items-center gap-12">
-                <div className="flex-1 tiptap-content" dangerouslySetInnerHTML={{ __html: hero.content }} />
-                <div className="hidden md:block flex-shrink-0 w-80">
-                  <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/5]">
-                    <Image
-                      src={heroImageUrl}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="320px"
-                      priority
-                    />
-                  </div>
-                </div>
+        <div className="relative max-w-6xl mx-auto">
+          <div className="flex items-center gap-12">
+            <div className="flex-1">
+              <div
+                className="hero-tiptap tiptap-content"
+                dangerouslySetInnerHTML={{ __html: hero?.content ?? '' }}
+              />
+              <div className="flex flex-wrap gap-3 mt-6">
+                <a
+                  href="/mission"
+                  className="inline-block px-6 py-3 rounded-lg bg-[hsl(35_60%_50%)] text-white font-semibold text-sm hover:bg-[hsl(35_65%_45%)] transition-colors"
+                >
+                  Our Mission
+                </a>
+                <a
+                  href="/events"
+                  className="inline-block px-6 py-3 rounded-lg border border-white text-white font-semibold text-sm hover:bg-white/10 transition-colors"
+                >
+                  Upcoming Events
+                </a>
               </div>
-            ) : (
-              /* Single-column layout (default) */
-              <div className="max-w-4xl tiptap-content" dangerouslySetInnerHTML={{ __html: hero.content }} />
-            )}
+            </div>
+            <div className="hidden md:block flex-shrink-0 w-80">
+              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/5]">
+                <Image
+                  src={heroImageUrl}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="320px"
+                  priority
+                />
+              </div>
+            </div>
           </div>
-        </section>
+        </div>
+      </section>
+
+      {/* Goal Section */}
+      {visibility.goal_section_enabled && (
+        <GoalSection data={goalData} />
       )}
 
-      {/* Intro */}
-      {intro?.content && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="tiptap-content" dangerouslySetInnerHTML={{ __html: intro.content }} />
-          </div>
-        </section>
+      {/* Impact Section */}
+      {visibility.impact_section_enabled && (
+        <ImpactSection data={impactData} />
+      )}
+
+      {/* Mission Section */}
+      {visibility.mission_section_enabled && (
+        <MissionSection data={missionData} />
       )}
 
       {/* Upcoming Events */}
       {upcomingEvents.length > 0 && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)]">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-(--color-brand-primary)">
           <div className="max-w-6xl mx-auto">
-            <h2 className="font-display text-3xl font-bold text-[var(--color-brand-teal)] dark:text-white mb-8">
+            <h2 className="font-display text-3xl font-bold text-white mb-8">
               Upcoming Events
             </h2>
             <div className="grid sm:grid-cols-2 gap-6">
@@ -97,55 +148,20 @@ export default async function HomePage() {
                 <Link
                   key={event.id}
                   href={`/events/${event.id}`}
-                  className="group block rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] p-6 hover:border-[var(--color-brand-teal)] transition-colors"
+                  className="group block rounded-xl border border-white/20 bg-white/10 p-6 hover:bg-white/20 transition-colors"
                 >
-                  <p className="text-xs text-[var(--color-text-muted)] mb-2">
+                  <p className="text-xs text-white/60 mb-2">
                     {formatDate(event.event_date)} · {event.location}
                   </p>
-                  <h3 className="font-display text-lg font-bold text-[var(--color-text-primary)] dark:text-white group-hover:text-[var(--color-brand-teal)] transition-colors">
+                  <h3 className="font-display text-lg font-bold text-white">
                     {event.title}
                   </h3>
                 </Link>
               ))}
             </div>
             <div className="mt-8">
-              <Link href="/events" className="text-sm font-medium text-[var(--color-brand-teal)] hover:underline">
+              <Link href="/events" className="text-sm font-medium text-[hsl(35_60%_50%)] hover:underline">
                 View all events →
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Featured Blogs */}
-      {featuredBlogs.length > 0 && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="font-display text-3xl font-bold text-[var(--color-brand-teal)] dark:text-white mb-8">
-              Latest from the Blog
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featuredBlogs.map(blog => (
-                <Link
-                  key={blog.id}
-                  href={`/blogs/${blog.id}`}
-                  className="group block rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] p-6 hover:border-[var(--color-brand-teal)] transition-colors"
-                >
-                  <p className="text-xs text-[var(--color-text-muted)] mb-2">
-                    {formatDate(blog.published_at)}
-                  </p>
-                  <h3 className="font-display text-lg font-bold text-[var(--color-text-primary)] dark:text-white group-hover:text-[var(--color-brand-teal)] transition-colors mb-2">
-                    {blog.title}
-                  </h3>
-                  <p className="text-sm text-[var(--color-text-muted)] line-clamp-2">
-                    {blog.excerpt}
-                  </p>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-8">
-              <Link href="/blogs" className="text-sm font-medium text-[var(--color-brand-teal)] hover:underline">
-                View all posts →
               </Link>
             </div>
           </div>

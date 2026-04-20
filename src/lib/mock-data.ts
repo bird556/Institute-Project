@@ -83,6 +83,10 @@ export interface MockSiteSettings {
   partners_enabled: string;
   newsletter_enabled: string;
   health_wellness_enabled: string;
+  // Home section visibility
+  goal_section_enabled: string;
+  impact_section_enabled: string;
+  mission_section_enabled: string;
   // Home hero images
   home_hero_image_path: string;
   home_hero_bg_path: string;
@@ -102,10 +106,14 @@ export const mockSiteSettings: MockSiteSettings = {
   reading_list_enabled: 'true',
   partners_enabled: 'true',
   newsletter_enabled: 'true',
+  health_wellness_enabled: 'true',
+  // Home section visibility
+  goal_section_enabled: 'true',
+  impact_section_enabled: 'true',
+  mission_section_enabled: 'true',
   // Home hero images
   home_hero_image_path: '',
   home_hero_bg_path: '',
-  health_wellness_enabled: 'true',
 };
 
 // ─── Blog Posts ───────────────────────────────────────────────────────────────
@@ -518,7 +526,7 @@ export const mockPageContent: MockPageContent[] = [
     id: 'pc-home-hero',
     page: 'home',
     section: 'hero',
-    content: `<h1>Advancing Education Through Research & Practice</h1><p>We are a leading institute dedicated to transforming how educators teach and students learn — bridging the gap between academic research and classroom reality.</p>`,
+    content: `<h1>Advancing Education Through Research & Practice</h1><p>Kustawi creates a space that contributes to the thriving of African descent boys, men, and those who love them. It is a shared space to explore healing, restore dignity and build resilience for individual, household and collective actualization through knowledge dissemination.</p>`,
     updated_at: '2025-03-01T10:00:00Z',
   },
   {
@@ -533,6 +541,89 @@ export const mockPageContent: MockPageContent[] = [
     page: 'home',
     section: 'cta',
     content: `<h2>Get Involved</h2><p>Whether you are an educator looking to grow, a school leader seeking strategic support, or an organisation interested in partnership — we want to hear from you.</p>`,
+    updated_at: '2025-03-01T10:00:00Z',
+  },
+  {
+    id: 'pc-home-goal-section',
+    page: 'home',
+    section: 'goal_section',
+    content: JSON.stringify({
+      label: 'Our Goal',
+      title: 'Thriving With Purpose',
+      description:
+        "Kustawi strives to promote engagement, disseminate knowledge and conduct research that will enable African descent boys, men and those who love them to thrive and continue their life's journey with an enriched sense of themselves endowed by the Grantor of Dominion (GoD).",
+      pillars: [
+        {
+          num: '01',
+          label: 'Engagement',
+          desc: 'Building meaningful connections and community.',
+        },
+        {
+          num: '02',
+          label: 'Knowledge',
+          desc: 'Disseminating research and education.',
+        },
+        {
+          num: '03',
+          label: 'Research',
+          desc: 'Conducting transformative studies.',
+        },
+      ],
+    }),
+    updated_at: '2025-03-01T10:00:00Z',
+  },
+  {
+    id: 'pc-home-impact-section',
+    page: 'home',
+    section: 'impact_section',
+    content: JSON.stringify({
+      label: 'The Challenge',
+      title: 'Addressing Hidden Crises',
+      description:
+        'The Institute will play an important role in raising awareness and offering solutions to the hidden crisis of the sexual abuse of African descent boys and men. Unaddressed and unacknowledged trauma results in:',
+      items: [
+        'Academic underperformance',
+        'Externalized and internalized aggression',
+        'Low self-esteem',
+        'Negative self-perception',
+        'Psychological distress',
+        'Stigma and shame',
+      ],
+    }),
+    updated_at: '2025-03-01T10:00:00Z',
+  },
+  {
+    id: 'pc-home-mission-section',
+    page: 'home',
+    section: 'mission_section',
+    content: JSON.stringify({
+      label: 'What We Do',
+      title: 'Remembering Creative Power',
+      description:
+        'The Institute recognizes that many African descent boys and men are impacted by misandrist dehumanizing stereotypes, unspoken trauma, and the silencing of their emotional lives.',
+      pillars: [
+        {
+          icon_name: 'Heart',
+          title: 'Advocacy',
+          desc: 'Championing the emotional well-being and dignity of African descent boys and men.',
+        },
+        {
+          icon_name: 'BookOpen',
+          title: 'Education',
+          desc: 'Community education and knowledge dissemination for healing and empowerment.',
+        },
+        {
+          icon_name: 'Shield',
+          title: 'Research',
+          desc: 'Conducting critical research on trauma, identity, and resilience.',
+        },
+        {
+          icon_name: 'Users',
+          title: 'Psychotherapy',
+          desc: 'Supporting men and boys in reclaiming creative power and voice.',
+        },
+      ],
+    }),
     updated_at: '2025-03-01T10:00:00Z',
   },
 

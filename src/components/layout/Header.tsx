@@ -45,14 +45,13 @@ export function Header({ visibility, logoUrl, siteName = 'Institute' }: HeaderPr
         <div className="flex items-center justify-between h-16">
 
           {/* Logo */}
-          <Link
-            href="/"
-            className="flex items-center gap-2 font-display font-700 text-xl text-brand-teal dark:text-white shrink-0"
-          >
+          <Link href="/" className="flex items-center gap-2 shrink-0">
             {logoUrl && (
               <Image src={logoUrl} alt={siteName} width={32} height={32} className="h-8 w-auto" />
             )}
-            <span>{siteName}</span>
+            <span className="font-serif text-xl font-bold tracking-tight text-text-primary dark:text-white">
+              Kustawi <span className="text-[hsl(35_60%_50%)]">Institute</span>
+            </span>
           </Link>
 
           {/* Desktop Nav */}
