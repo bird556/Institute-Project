@@ -1,12 +1,12 @@
-import type { ImpactSectionContent } from '@/types'
+import type { ImpactSectionContent } from '@/types';
 
 interface ImpactSectionProps {
-  data: ImpactSectionContent
+  data: ImpactSectionContent;
 }
 
 export default function ImpactSection({ data }: ImpactSectionProps) {
   return (
-    <section className="py-24 bg-(--color-brand-primary)">
+    <section className="py-24 bg-(--color-brand-primary) dark:bg-dark-surface">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div>
@@ -36,5 +36,5 @@ export default function ImpactSection({ data }: ImpactSectionProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

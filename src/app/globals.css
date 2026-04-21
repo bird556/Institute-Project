@@ -6,7 +6,7 @@
 
 @theme {
   /* ─── Brand Palette (V2) ─────────────────────────── */
-  --color-brand-primary: hsl(160 40% 14.1%); /* forest green */
+  --color-brand-primary: hsl(160 40% 25.1%); /* forest green */
   /* --color-brand-primary:       hsl(160, 40%, 22%);   /* forest green */
   --color-brand-primary-dark: hsl(160, 40%, 16%);
   --color-brand-primary-light: hsl(160, 35%, 35%);
