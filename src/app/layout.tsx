@@ -21,7 +21,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: 'Kustawi Institute',
+  title: 'Kustawi Institute - Modern Academic Website',
   description: 'A modern institute website',
 };
 

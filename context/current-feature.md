@@ -1,27 +1,67 @@
-# Phase 16 — V2 Redesign: Color Scheme, Typography & Home Page Sections
+# Phase 16 — V2 Redesign: Color Scheme, Typography & Home Page Sections — COMPLETE ✅
 
 > Full spec: `context/features/v2-redesign-phase-16.md`
 
 ## Phase 16 Status
 
-In progress. Branch: `phase-16-v2-redesign`
+Complete. Branch: `phase-16-v2-redesign` (open — not yet merged to `main`)
 
 ## Steps
 
-- [ ] Step 1 — Assets: copy `forest-bg.jpg` + `hero-image.jpg` → `public/assets/`
-- [ ] Step 2 — Color scheme: update `globals.css` with v2 tokens (forest green + gold)
-- [ ] Step 3 — Typography: swap to Inter (body) + Playfair Display (headings) in `layout.tsx` + `globals.css`
-- [ ] Step 4 — Header: logo image alongside "Kustawi **Institute**" text treatment
-- [ ] Step 5 — Hero defaults: `/assets/forest-bg.jpg` + `/assets/hero-image.jpg` as fallbacks
-- [ ] Step 6 — Section visibility: 3 new keys in `SiteSettings`, mock data, `site-visibility.ts`, `SettingsClient.tsx`
-- [ ] Step 7 — Types: `GoalSectionContent`, `ImpactSectionContent`, `MissionSectionContent`
-- [ ] Step 8 — Mock data: 3 new `page_content` entries with reference copy as JSON
-- [ ] Step 9 — `GoalSection.tsx` public component
-- [ ] Step 10 — `ImpactSection.tsx` public component
-- [ ] Step 11 — `MissionSection.tsx` public component
-- [ ] Step 12 — Home page: insert 3 sections with visibility gates + hero defaults
-- [ ] Step 13 — Admin `/admin/home`: `GoalEditor.tsx`, `ImpactEditor.tsx`, `MissionEditor.tsx`
-- [ ] Step 14 — Supabase setup: new seed rows in `setups/supabase-setup.md`
+- [x] Step 1 — Assets: `forest-bg.jpg` + `hero-image.jpg` copied to `public/assets/`
+- [x] Step 2 — Color scheme: `globals.css` updated with v2 forest green + gold tokens; `--color-brand-primary` lightened to `hsl(160 40% 25.1%)` for better dark-bg contrast
+- [x] Step 3 — Typography: Inter (body) + Playfair Display (headings) wired in `layout.tsx` + `globals.css`
+- [x] Step 4 — Header: logo image alongside dynamic site name; `renderSiteName()` helper colors the word "Institute" in gold (`hsl(35 60% 50%)`) whenever it appears in the name
+- [x] Step 5 — Hero defaults: `/assets/forest-bg.jpg` + `/assets/hero-image.jpg` as fallbacks
+- [x] Step 6 — Section visibility: 3 new keys (`goal_section_enabled`, `impact_section_enabled`, `mission_section_enabled`) in `SiteSettings`, mock data, `site-visibility.ts`, `SettingsClient.tsx`
+- [x] Step 7 — Types: `GoalSectionContent`, `ImpactSectionContent`, `MissionSectionContent` added to `src/types/index.ts`
+- [x] Step 8 — Mock data: 3 new `page_content` entries with reference copy as JSON; seed SQL added to `supabase-setup.md`
+- [x] Step 9 — `GoalSection.tsx` public component
+- [x] Step 10 — `ImpactSection.tsx` public component — dark mode bg fixed to `dark:bg-dark-surface`
+- [x] Step 11 — `MissionSection.tsx` public component
+- [x] Step 12 — Home page: 3 sections with visibility gates + hero defaults; upcoming events section hidden when no future events
+- [x] Step 13 — Admin `/admin/home`: `GoalEditor.tsx`, `ImpactEditor.tsx`, `MissionEditor.tsx`
+- [x] Step 14 — Supabase setup: seed rows added to `setups/supabase-setup.md`
+
+## Additional Work Completed in Phase 16
+
+### Site Settings — New Keys
+
+All new keys added to `src/types/index.ts` (`SiteSettings`), `src/lib/mock-data.ts` (`MockSiteSettings` + `mockSiteSettings`), `src/components/admin/SettingsClient.tsx` (`EMPTY` constant + UI), and `setups/supabase-setup.md` (seed SQL):
+
+| Key | Default | Purpose |
+|---|---|---|
+| `site_name` | `'Institute Name'` | Site name — "Institute" word is colored gold in header + footer |
+| `site_description` | `''` | Short tagline shown under the site name in the footer brand column |
+| `admin_name` | `'Tamari of Kitossa'` | Administrator full name — shown in footer Contact column |
+| `admin_title` | `'Professor, Sociology — Brock University'` | Professional title — shown below name in footer |
+| `admin_email` | `'tkitossa@brocku.ca'` | Administrator email — shown in gold (`hsl(35 60% 50%)`) in footer |
+| `admin_name_visible` | `'true'` | Toggle admin name visibility in footer |
+| `admin_title_visible` | `'true'` | Toggle admin title visibility in footer |
+| `admin_email_visible` | `'true'` | Toggle admin email visibility in footer |
+
+### Footer Redesign (`src/components/layout/Footer.tsx`)
+
+- Converted to async Server Component — fetches settings directly
+- **Brand column**: dynamic `renderSiteName()` with gold "Institute" coloring + editable `site_description` tagline below
+- **Contact column**: admin name (white), title (white/60), email (gold) — individually visibility-toggled; followed by `contact_email` + `contact_phone` if set
+- Copyright line uses dynamic `siteName`
+
+### Admin Settings (`/admin/settings`)
+
+- New **Administrator** section (section 3) — Name, Professional Title, Email inputs each with an inline visible/hidden toggle switch
+- New **Footer Description** textarea under Site Name section
+- All 3 admin field toggles save immediately via `toggleSectionVisibility()`; name/title/email save together via Save button
+
+### Dark Mode Link Fix
+
+All public-facing links using `text-[var(--color-brand-teal)]` or `hover:text-[var(--color-brand-teal)]` were nearly invisible on dark backgrounds (brand primary is dark forest green). Fixed across:
+
+- `newsletter/page.tsx` — "Read Edition →": `dark:text-white dark:hover:text-white/80`
+- `newsletter/[slug]/page.tsx` — back link: `dark:hover:text-white`; contact email: `dark:text-white`
+- `blogs/[id]/page.tsx`, `events/[id]/page.tsx`, `reading-list/[id]/page.tsx`, `health-wellness/[id]/page.tsx` — all back links: `dark:hover:text-white`
+- `ReadingListCard.tsx` — external link hover: `dark:hover:text-white`
+- `PartnerCard.tsx` — "Visit Website": upgraded from `dark:text-teal-light` (still too dark) → `dark:text-white`
 
 ---
 

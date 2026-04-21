@@ -1,4 +1,17 @@
 import Link from 'next/link';
+import { getSiteSettings } from '@/actions/settings';
+
+function renderSiteName(name: string) {
+  const idx = name.indexOf('Institute');
+  if (idx === -1) return <>{name}</>;
+  return (
+    <>
+      {name.slice(0, idx)}
+      <span className="text-[hsl(35_60%_50%)]">Institute</span>
+      {name.slice(idx + 'Institute'.length)}
+    </>
+  );
+}
 
 const footerLinks = [
   { href: '/about', label: 'About' },
@@ -9,7 +22,18 @@ const footerLinks = [
   { href: '/partners', label: 'Partners' },
 ];
 
-export function Footer() {
+export async function Footer() {
+  const { data: settings } = await getSiteSettings();
+
+  const siteName = settings?.site_name || 'Kustawi Institute';
+  const siteDescription = settings?.site_description || '';
+  const adminName =
+    settings?.admin_name_visible !== 'false' ? settings?.admin_name : null;
+  const adminTitle =
+    settings?.admin_title_visible !== 'false' ? settings?.admin_title : null;
+  const adminEmail =
+    settings?.admin_email_visible !== 'false' ? settings?.admin_email : null;
+
   return (
     <footer className="mt-auto bg-(--color-brand-primary) dark:bg-dark-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -17,12 +41,13 @@ export function Footer() {
           {/* Brand */}
           <div>
             <p className="font-display font-bold text-lg text-white mb-2">
-              Kustawi Institute
+              {renderSiteName(siteName)}
             </p>
-            <p className="text-sm text-white/60 leading-relaxed">
-              A modern school institute committed to academic excellence and
-              community.
-            </p>
+            {siteDescription && (
+              <p className="text-sm text-white/60 leading-relaxed">
+                {siteDescription}
+              </p>
+            )}
           </div>
 
           {/* Navigation */}
@@ -49,16 +74,24 @@ export function Footer() {
             <p className="text-sm font-semibold text-white mb-3 uppercase tracking-wider">
               Contact
             </p>
-            <div className="space-y-2 text-sm text-white/60">
-              <p>contact@kustawi.org</p>
-              <p>+000 000 0000</p>
+            <div className="space-y-1">
+              {adminName && <p className="text-sm text-white">{adminName}</p>}
+              {adminTitle && (
+                <p className="text-sm text-white/60">{adminTitle}</p>
+              )}
+              {adminEmail && (
+                <p className="text-sm text-[hsl(35_60%_50%)]">{adminEmail}</p>
+              )}
+              {(settings?.contact_email || settings?.contact_phone) &&
+                (adminName || adminTitle || adminEmail) && (
+                  <div className="pt-2" />
+                )}
             </div>
           </div>
         </div>
 
         <div className="mt-8 pt-6 border-t border-white/20 text-center text-xs text-white/40">
-          &copy; {new Date().getFullYear()} Kustawi Institute. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} {siteName}. All rights reserved.
         </div>
       </div>
     </footer>

@@ -1,15 +1,15 @@
-import { Heart, BookOpen, Shield, Users } from 'lucide-react'
-import type { MissionSectionContent, MissionPillar } from '@/types'
+import { Heart, BookOpen, Shield, Users } from 'lucide-react';
+import type { MissionSectionContent, MissionPillar } from '@/types';
 
 const ICON_MAP = {
   Heart,
   BookOpen,
   Shield,
   Users,
-} satisfies Record<MissionPillar['icon_name'], React.ElementType>
+} satisfies Record<MissionPillar['icon_name'], React.ElementType>;
 
 interface MissionSectionProps {
-  data: MissionSectionContent
+  data: MissionSectionContent;
 }
 
 export default function MissionSection({ data }: MissionSectionProps) {
@@ -29,14 +29,14 @@ export default function MissionSection({ data }: MissionSectionProps) {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {data.pillars.map((pillar) => {
-            const Icon = ICON_MAP[pillar.icon_name]
+            const Icon = ICON_MAP[pillar.icon_name];
             return (
               <div
                 key={pillar.title}
                 className="group p-6 rounded-xl bg-card border border-border hover:border-[hsl(35_60%_50%/0.4)] hover:shadow-lg transition-all duration-300"
               >
                 <div className="w-12 h-12 rounded-lg bg-(--color-brand-primary)/10 flex items-center justify-center mb-4 group-hover:bg-[hsl(35_60%_50%)] transition-colors">
-                  <Icon className="w-6 h-6 text-(--color-brand-primary) group-hover:text-white transition-colors" />
+                  <Icon className="w-6 h-6 text-(--color-brand-primary) dark:text-white group-hover:text-white transition-colors" />
                 </div>
                 <h3 className="font-serif text-lg font-semibold text-foreground mb-2">
                   {pillar.title}
@@ -45,10 +45,10 @@ export default function MissionSection({ data }: MissionSectionProps) {
                   {pillar.desc}
                 </p>
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }

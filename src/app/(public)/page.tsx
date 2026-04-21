@@ -172,7 +172,7 @@ export default async function HomePage() {
                   alt=""
                   fill
                   className="object-cover"
-                  sizes="320px"
+                  sizes="(max-width: 1024px) 0px, 320px"
                   priority
                 />
               </div>

@@ -85,7 +85,7 @@ export default async function EventDetailPage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/events"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
       >
         ← Back to Events
       </Link>

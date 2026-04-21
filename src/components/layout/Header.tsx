@@ -16,6 +16,18 @@ interface HeaderProps {
   siteName?: string
 }
 
+function renderSiteName(name: string) {
+  const idx = name.indexOf('Institute')
+  if (idx === -1) return <>{name}</>
+  return (
+    <>
+      {name.slice(0, idx)}
+      <span className="text-[hsl(35_60%_50%)]">Institute</span>
+      {name.slice(idx + 'Institute'.length)}
+    </>
+  )
+}
+
 export function Header({ visibility, logoUrl, siteName = 'Institute' }: HeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -50,7 +62,7 @@ export function Header({ visibility, logoUrl, siteName = 'Institute' }: HeaderPr
               <Image src={logoUrl} alt={siteName} width={32} height={32} className="h-8 w-auto" />
             )}
             <span className="font-serif text-xl font-bold tracking-tight text-text-primary dark:text-white">
-              Kustawi <span className="text-[hsl(35_60%_50%)]">Institute</span>
+              {renderSiteName(siteName)}
             </span>
           </Link>
 

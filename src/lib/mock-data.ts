@@ -70,10 +70,19 @@ export interface MockPartner {
 
 export interface MockSiteSettings {
   site_name: string;
+  site_description: string;
   logo_path: string; // storage key — empty string if no logo set yet
   contact_email: string;
   contact_phone: string;
   address: string;
+  // Administrator info — shown in footer
+  admin_name: string;
+  admin_title: string;
+  admin_email: string;
+  // Administrator field visibility — stored as 'true' | 'false' strings
+  admin_name_visible: string;
+  admin_title_visible: string;
+  admin_email_visible: string;
   // Page visibility — stored as 'true' | 'false' strings
   about_enabled: string;
   mission_enabled: string;
@@ -94,10 +103,17 @@ export interface MockSiteSettings {
 
 export const mockSiteSettings: MockSiteSettings = {
   site_name: 'Kustawi Institute',
+  site_description: 'A modern school institute committed to academic excellence and community.',
   logo_path: '', // no logo yet — shows placeholder
   contact_email: 'tkitossa@brocku.ca',
   contact_phone: '+1 (416) 555-0100',
   address: '123 Education Ave, Toronto, ON M5V 1A1',
+  admin_name: 'Tamari of Kitossa',
+  admin_title: 'Professor, Sociology — Brock University',
+  admin_email: 'tkitossa@brocku.ca',
+  admin_name_visible: 'true',
+  admin_title_visible: 'true',
+  admin_email_visible: 'true',
   // Page visibility
   about_enabled: 'true',
   mission_enabled: 'true',
@@ -247,7 +263,7 @@ export const mockEvents: MockEvent[] = [
     cover_url:
       'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
     location: 'The Grand Convention Centre, Toronto',
-    event_date: '2026-06-14T09:00:00Z',
+    event_date: '2025-06-14T09:00:00Z',
     external_url: 'https://www.eventbrite.ca',
     published: true,
     created_at: '2025-02-01T10:00:00Z',
@@ -326,7 +342,7 @@ export const mockEvents: MockEvent[] = [
     cover_url:
       'https://images.unsplash.com/photo-1591115765373-5207764f72e7?w=800&q=80',
     location: 'Lakeside Conference Retreat, Muskoka',
-    event_date: '2026-07-21T08:00:00Z',
+    event_date: '2025-07-21T08:00:00Z',
     external_url: 'https://www.eventbrite.ca',
     published: true,
     created_at: '2025-04-05T09:00:00Z',
@@ -526,7 +542,7 @@ export const mockPageContent: MockPageContent[] = [
     id: 'pc-home-hero',
     page: 'home',
     section: 'hero',
-    content: `<h1>Advancing Education Through Research & Practice</h1><p>Kustawi creates a space that contributes to the thriving of African descent boys, men, and those who love them. It is a shared space to explore healing, restore dignity and build resilience for individual, household and collective actualization through knowledge dissemination.</p>`,
+    content: `<h1>Kustawi is KiSwahili for “thriving.”</h1><p>Kustawi creates a space that contributes to the thriving of African descent boys, men, and those who love them. It is a shared space to explore healing, restore dignity and build resilience for individual, household and collective actualization through knowledge dissemination.</p>`,
     updated_at: '2025-03-01T10:00:00Z',
   },
   {

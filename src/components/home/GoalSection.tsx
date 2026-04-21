@@ -1,7 +1,7 @@
-import type { GoalSectionContent } from '@/types'
+import type { GoalSectionContent } from '@/types';
 
 interface GoalSectionProps {
-  data: GoalSectionContent
+  data: GoalSectionContent;
 }
 
 export default function GoalSection({ data }: GoalSectionProps) {
@@ -20,7 +20,7 @@ export default function GoalSection({ data }: GoalSectionProps) {
         <div className="grid sm:grid-cols-3 gap-8">
           {data.pillars.map((pillar) => (
             <div key={pillar.num} className="text-left">
-              <span className="text-5xl font-serif font-bold text-[hsl(35_60%_50%/0.3)]">
+              <span className="text-5xl font-serif font-bold text-[hsl(35_60%_50%/0.3)] dark:text-text-on-brand/85">
                 {pillar.num}
               </span>
               <h3 className="font-serif text-xl font-semibold text-foreground mt-2 mb-2">
@@ -34,5 +34,5 @@ export default function GoalSection({ data }: GoalSectionProps) {
         </div>
       </div>
     </section>
-  )
+  );
 }

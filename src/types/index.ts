@@ -55,10 +55,19 @@ export interface SiteSetting {
 
 export interface SiteSettings {
   site_name: string
+  site_description: string
   logo_path: string
   contact_email: string
   contact_phone: string
   address: string
+  // Administrator info — shown in footer
+  admin_name: string
+  admin_title: string
+  admin_email: string
+  // Administrator field visibility — stored as 'true' | 'false' strings
+  admin_name_visible: string
+  admin_title_visible: string
+  admin_email_visible: string
   // Page visibility — stored as 'true' | 'false' strings
   about_enabled: string
   mission_enabled: string

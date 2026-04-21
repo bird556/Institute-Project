@@ -103,7 +103,7 @@ async function EditionCard({ edition }: { edition: NewsletterEdition }) {
 
         <Link
           href={`/newsletter/${edition.slug}`}
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand-teal)] hover:text-[var(--color-brand-teal-dark)] transition-colors"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand-teal)] dark:text-white hover:text-[var(--color-brand-teal-dark)] dark:hover:text-white/80 transition-colors"
         >
           Read Edition →
         </Link>
