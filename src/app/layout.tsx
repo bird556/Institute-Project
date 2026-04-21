@@ -1,39 +1,47 @@
-import type { Metadata } from 'next'
-import { DM_Sans, Fraunces } from 'next/font/google'
-import { ThemeProvider } from 'next-themes'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import { Toaster } from 'sonner'
-import './globals.css'
+import type { Metadata } from 'next';
+import { Inter, Playfair_Display } from 'next/font/google';
+import { ThemeProvider } from 'next-themes';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { Toaster } from 'sonner';
+import './globals.css';
 
-const dmSans = DM_Sans({
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-inter',
+  display: 'swap',
+});
+
+const playfair = Playfair_Display({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-dm-sans',
-  display: 'swap',
-})
-
-const fraunces = Fraunces({
-  subsets: ['latin'],
-  weight: ['400', '600', '700', '800'],
   style: ['normal', 'italic'],
-  variable: '--font-fraunces',
+  variable: '--font-playfair',
   display: 'swap',
-})
+});
 
 export const metadata: Metadata = {
-  title: 'Kustawi Institute',
+  title: 'Kustawi Institute - Modern Academic Website',
   description: 'A modern institute website',
-}
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${dmSans.variable} ${fraunces.variable}`}>
-      <body className={dmSans.className}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${inter.variable} ${playfair.variable}`}
+    >
+      <body className={inter.className}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+        >
           <TooltipProvider>
             {children}
             <Toaster richColors />
@@ -41,5 +49,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

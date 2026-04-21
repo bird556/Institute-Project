@@ -73,7 +73,7 @@ export default function PartnerCard({
           href={website_url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand-teal)] dark:text-[var(--color-brand-teal-light)] hover:underline mt-auto"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-[var(--color-brand-teal)] dark:text-white hover:underline mt-auto"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           Visit website

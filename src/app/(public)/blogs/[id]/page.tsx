@@ -76,7 +76,7 @@ export default async function BlogDetailPage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/blogs"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
       >
         ← Back to Blog
       </Link>

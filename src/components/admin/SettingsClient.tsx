@@ -22,10 +22,17 @@ interface SettingsClientProps {
 
 const EMPTY: SiteSettings = {
   site_name: '',
+  site_description: '',
   logo_path: '',
   contact_email: '',
   contact_phone: '',
   address: '',
+  admin_name: '',
+  admin_title: '',
+  admin_email: '',
+  admin_name_visible: 'true',
+  admin_title_visible: 'true',
+  admin_email_visible: 'true',
   about_enabled: 'true',
   mission_enabled: 'true',
   blogs_enabled: 'true',
@@ -34,6 +41,9 @@ const EMPTY: SiteSettings = {
   partners_enabled: 'true',
   newsletter_enabled: 'true',
   health_wellness_enabled: 'true',
+  goal_section_enabled: 'true',
+  impact_section_enabled: 'true',
+  mission_section_enabled: 'true',
   home_hero_image_path: '',
   home_hero_bg_path: '',
 }
@@ -69,8 +79,9 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
     })
   }
 
-  // ── Site Name ───────────────────────────────────────────────────────────────
+  // ── Site Name + Description ─────────────────────────────────────────────────
   const [siteName, setSiteName] = useState(settings.site_name)
+  const [siteDescription, setSiteDescription] = useState(settings.site_description)
   const [savingSiteName, setSavingSiteName] = useState(false)
 
   async function handleSaveSiteName() {
@@ -79,12 +90,36 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
       return
     }
     setSavingSiteName(true)
-    const res = await updateSiteSetting('site_name', siteName.trim())
+    const res = await updateSiteSettings({
+      site_name: siteName.trim(),
+      site_description: siteDescription.trim(),
+    })
     setSavingSiteName(false)
     if (res.success) {
       toast.success('Site name updated')
     } else {
       toast.error(res.error ?? 'Failed to update site name')
+    }
+  }
+
+  // ── Administrator ───────────────────────────────────────────────────────────
+  const [adminName, setAdminName] = useState(settings.admin_name)
+  const [adminTitle, setAdminTitle] = useState(settings.admin_title)
+  const [adminEmail, setAdminEmail] = useState(settings.admin_email)
+  const [savingAdmin, setSavingAdmin] = useState(false)
+
+  async function handleSaveAdmin() {
+    setSavingAdmin(true)
+    const res = await updateSiteSettings({
+      admin_name: adminName.trim(),
+      admin_title: adminTitle.trim(),
+      admin_email: adminEmail.trim(),
+    })
+    setSavingAdmin(false)
+    if (res.success) {
+      toast.success('Administrator info updated')
+    } else {
+      toast.error(res.error ?? 'Failed to update administrator info')
     }
   }
 
@@ -124,6 +159,12 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
     partners_enabled:        settings.partners_enabled        !== 'false',
     newsletter_enabled:      settings.newsletter_enabled      !== 'false',
     health_wellness_enabled: settings.health_wellness_enabled !== 'false',
+    goal_section_enabled:    settings.goal_section_enabled    !== 'false',
+    impact_section_enabled:  settings.impact_section_enabled  !== 'false',
+    mission_section_enabled: settings.mission_section_enabled !== 'false',
+    admin_name_visible:      settings.admin_name_visible      !== 'false',
+    admin_title_visible:     settings.admin_title_visible     !== 'false',
+    admin_email_visible:     settings.admin_email_visible     !== 'false',
   })
 
   async function handleToggleVisibility(key: keyof typeof visibility, enabled: boolean) {
@@ -217,6 +258,18 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
           />
         </div>
 
+        <div className="space-y-2">
+          <Label htmlFor="site-description">Footer Description</Label>
+          <Textarea
+            id="site-description"
+            rows={2}
+            value={siteDescription}
+            onChange={e => setSiteDescription(e.target.value)}
+            placeholder="A short tagline shown under the site name in the footer."
+            maxLength={200}
+          />
+        </div>
+
         <div className="flex justify-end">
           <Button onClick={handleSaveSiteName} disabled={savingSiteName} className="cursor-pointer">
             {savingSiteName ? 'Saving…' : 'Save'}
@@ -226,7 +279,90 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
 
       <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
 
-      {/* ── Section 3: Contact Information ───────────────────────────────── */}
+      {/* ── Section 3: Administrator ──────────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Administrator
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Displayed in the public footer. Toggle visibility to show or hide each field.
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="admin-name">Name</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-text-muted)]">Visible</span>
+                <Switch
+                  checked={visibility.admin_name_visible}
+                  onCheckedChange={(checked) => handleToggleVisibility('admin_name_visible', checked)}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+            <Input
+              id="admin-name"
+              value={adminName}
+              onChange={e => setAdminName(e.target.value)}
+              placeholder="e.g. Tamari of Kitossa"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="admin-title">Professional Title</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-text-muted)]">Visible</span>
+                <Switch
+                  checked={visibility.admin_title_visible}
+                  onCheckedChange={(checked) => handleToggleVisibility('admin_title_visible', checked)}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+            <Input
+              id="admin-title"
+              value={adminTitle}
+              onChange={e => setAdminTitle(e.target.value)}
+              placeholder="e.g. Professor, Sociology — Brock University"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="admin-email">Email</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-text-muted)]">Visible</span>
+                <Switch
+                  checked={visibility.admin_email_visible}
+                  onCheckedChange={(checked) => handleToggleVisibility('admin_email_visible', checked)}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+            <Input
+              id="admin-email"
+              type="email"
+              value={adminEmail}
+              onChange={e => setAdminEmail(e.target.value)}
+              placeholder="e.g. name@university.ca"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={handleSaveAdmin} disabled={savingAdmin} className="cursor-pointer">
+            {savingAdmin ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 4: Contact Information ───────────────────────────────── */}
       <section className="space-y-4">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
@@ -369,6 +505,9 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
             { key: 'partners_enabled',     label: 'Partners',     description: 'When hidden, /partners redirects to home' },
             { key: 'newsletter_enabled',      label: 'Newsletter',       description: 'When hidden, /newsletter and all edition pages redirect to home' },
             { key: 'health_wellness_enabled', label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
+            { key: 'goal_section_enabled',    label: 'Home — Our Goal',      description: 'Show/hide the Our Goal section on the home page' },
+            { key: 'impact_section_enabled',  label: 'Home — The Challenge', description: 'Show/hide the Addressing Hidden Crises section on the home page' },
+            { key: 'mission_section_enabled', label: 'Home — What We Do',    description: 'Show/hide the Remembering Creative Power section on the home page' },
           ] as const).map(({ key, label, description }) => (
             <div key={key} className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
               <div>

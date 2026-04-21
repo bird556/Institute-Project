@@ -24,7 +24,7 @@ export default async function EditionDetailPage({ params }: Props) {
       {/* Back link */}
       <Link
         href="/newsletter"
-        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] transition-colors"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
       >
         ← All Editions
       </Link>
@@ -163,7 +163,7 @@ function SubmissionCard({ submission: s }: { submission: NewsletterSubmission })
             {s.contact_email && (
               <span>
                 <span className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">Contact:</span>{' '}
-                <a href={`mailto:${s.contact_email}`} className="text-[var(--color-brand-teal)] hover:underline">
+                <a href={`mailto:${s.contact_email}`} className="text-[var(--color-brand-teal)] dark:text-white hover:underline">
                   {s.contact_email}
                 </a>
               </span>

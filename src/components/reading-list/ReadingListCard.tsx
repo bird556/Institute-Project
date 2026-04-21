@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import Image from 'next/image'
-import { ExternalLink } from 'lucide-react'
-import { motion } from 'framer-motion'
+import Link from 'next/link';
+import Image from 'next/image';
+import { ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 export interface ReadingListCardProps {
-  id: string
-  title: string
-  author: string
-  description_excerpt: string
-  cover_url: string
-  external_url?: string | null
+  id: string;
+  title: string;
+  author: string;
+  description_excerpt: string;
+  cover_url: string;
+  external_url?: string | null;
 }
 
 export default function ReadingListCard({
@@ -26,11 +26,17 @@ export default function ReadingListCard({
     <motion.div
       className="group h-full"
       whileHover={{ y: -2 }}
-      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+      transition={{
+        duration: 0.25,
+        ease: [0.22, 1, 0.36, 1] as [number, number, number, number],
+      }}
     >
       <div className="flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg hover:border-[var(--color-brand-teal-light)] dark:hover:border-[var(--color-brand-teal)] transition-all duration-300">
         {/* Cover — portrait 3:4 */}
-        <div className="relative w-full overflow-hidden" style={{ aspectRatio: '3/4' }}>
+        <div
+          className="relative w-full overflow-hidden"
+          style={{ aspectRatio: '3/4' }}
+        >
           {cover_url ? (
             <Image
               src={cover_url}
@@ -62,7 +68,7 @@ export default function ReadingListCard({
           <div className="flex items-center gap-3 pt-2">
             <Link
               href={`/reading-list/${id}`}
-              className="text-sm font-medium text-[var(--color-brand-teal)] dark:text-[var(--color-brand-teal-light)] hover:underline"
+              className="text-sm font-medium text-[var(--color-brand-teal)] dark:text-white hover:underline"
             >
               View →
             </Link>
@@ -71,7 +77,7 @@ export default function ReadingListCard({
                 href={external_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] transition-colors"
+                className="inline-flex items-center gap-1 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ExternalLink className="w-3.5 h-3.5" />
@@ -82,5 +88,5 @@ export default function ReadingListCard({
         </div>
       </div>
     </motion.div>
-  )
+  );
 }

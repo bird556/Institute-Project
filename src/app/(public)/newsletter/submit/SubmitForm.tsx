@@ -1,102 +1,128 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { toast } from 'sonner'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { submitToNewsletter } from '@/actions/newsletter'
-import type { SubmissionType } from '@/types'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { submitToNewsletter } from '@/actions/newsletter';
+import type { SubmissionType } from '@/types';
 
-type Tab = SubmissionType
+type Tab = SubmissionType;
 
 const TABS: { type: Tab; label: string; description: string }[] = [
   {
     type: 'research_call',
     label: 'Research Call',
-    description: 'For scholars inviting contributions to a research project or publication.',
+    description:
+      'For scholars inviting contributions to a research project or publication.',
   },
   {
     type: 'research_note',
     label: 'Research Note',
-    description: 'A practitioner reflection, short study, or evidence-based observation.',
+    description:
+      'A practitioner reflection, short study, or evidence-based observation.',
   },
   {
     type: 'commentary',
     label: 'Analytical Commentary',
-    description: 'A critical analysis of a policy, trend, or issue in education.',
+    description:
+      'A critical analysis of a policy, trend, or issue in education.',
   },
-]
+];
 
 const ABSTRACT_MAX: Record<Tab, number> = {
   research_call: 500,
   research_note: 300,
-  commentary:    300,
-}
+  commentary: 300,
+};
 
 interface FormState {
-  name: string
-  email: string
-  role: string
-  institution: string
-  title: string
-  abstract: string
-  content: string
-  deadline: string
-  contactEmail: string
+  name: string;
+  email: string;
+  role: string;
+  institution: string;
+  title: string;
+  abstract: string;
+  content: string;
+  deadline: string;
+  contactEmail: string;
 }
 
 const EMPTY: FormState = {
-  name: '', email: '', role: '', institution: '',
-  title: '', abstract: '', content: '',
-  deadline: '', contactEmail: '',
-}
+  name: '',
+  email: '',
+  role: '',
+  institution: '',
+  title: '',
+  abstract: '',
+  content: '',
+  deadline: '',
+  contactEmail: '',
+};
 
 export default function SubmitForm() {
-  const router = useRouter()
-  const [activeTab, setActiveTab]   = useState<Tab>('research_call')
-  const [form, setForm]             = useState<FormState>(EMPTY)
-  const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess]       = useState(false)
-  const [leaveOpen, setLeaveOpen]   = useState(false)
+  const router = useRouter();
+  const [activeTab, setActiveTab] = useState<Tab>('research_call');
+  const [form, setForm] = useState<FormState>(EMPTY);
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
 
-  const maxAbstract = ABSTRACT_MAX[activeTab]
-  const isDirty     = Object.values(form).some((v) => v.trim() !== '')
+  const maxAbstract = ABSTRACT_MAX[activeTab];
+  const isDirty = Object.values(form).some((v) => v.trim() !== '');
 
   // Warn browser on refresh / tab close when form has content
   useEffect(() => {
-    if (!isDirty) return
-    const handler = (e: BeforeUnloadEvent) => { e.preventDefault() }
-    window.addEventListener('beforeunload', handler)
-    return () => window.removeEventListener('beforeunload', handler)
-  }, [isDirty])
+    if (!isDirty) return;
+    const handler = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
 
   function handleBackClick() {
     if (isDirty) {
-      setLeaveOpen(true)
+      setLeaveOpen(true);
     } else {
-      router.push('/newsletter')
+      router.push('/newsletter');
     }
   }
 
   function handleChange(field: keyof FormState, value: string) {
-    setForm((prev) => ({ ...prev, [field]: value }))
+    setForm((prev) => ({ ...prev, [field]: value }));
   }
 
   function validate(): boolean {
-    if (!form.name.trim())     { toast.error('Name is required.'); return false }
-    if (!form.email.trim())    { toast.error('Email is required.'); return false }
-    if (!form.title.trim())    { toast.error('Title is required.'); return false }
-    if (!form.abstract.trim()) { toast.error('Abstract is required.'); return false }
-    if (!form.content.trim())  { toast.error('Please provide a full description or text.'); return false }
-    return true
+    if (!form.name.trim()) {
+      toast.error('Name is required.');
+      return false;
+    }
+    if (!form.email.trim()) {
+      toast.error('Email is required.');
+      return false;
+    }
+    if (!form.title.trim()) {
+      toast.error('Title is required.');
+      return false;
+    }
+    if (!form.abstract.trim()) {
+      toast.error('Abstract is required.');
+      return false;
+    }
+    if (!form.content.trim()) {
+      toast.error('Please provide a full description or text.');
+      return false;
+    }
+    return true;
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!validate()) return
-    setSubmitting(true)
+    e.preventDefault();
+    if (!validate()) return;
+    setSubmitting(true);
 
     const result = await submitToNewsletter({
       type: activeTab,
@@ -111,16 +137,16 @@ export default function SubmitForm() {
         deadline: form.deadline || undefined,
         contact_email: form.contactEmail || undefined,
       }),
-    })
+    });
 
-    setSubmitting(false)
+    setSubmitting(false);
 
     if (!result.success) {
-      toast.error(result.error ?? 'Submission failed. Please try again.')
-      return
+      toast.error(result.error ?? 'Submission failed. Please try again.');
+      return;
     }
 
-    setSuccess(true)
+    setSuccess(true);
   }
 
   // ── Success state ───────────────────────────────────────────────────────────
@@ -129,19 +155,33 @@ export default function SubmitForm() {
     return (
       <div className="rounded-2xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] p-10 text-center space-y-4">
         <div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center mx-auto">
-          <svg className="h-6 w-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          <svg
+            className="h-6 w-6 text-emerald-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              d="M5 13l4 4L19 7"
+            />
           </svg>
         </div>
         <h2 className="font-display text-xl font-bold text-[var(--color-text-primary)] dark:text-white">
           Submission Received
         </h2>
         <p className="text-[var(--color-text-muted)]">
-          Thank you — your submission has been received and is under review. We&apos;ll be in touch.
+          Thank you — your submission has been received and is under review.
+          We&apos;ll be in touch.
         </p>
         <div className="flex gap-3 justify-center pt-2 flex-wrap">
           <Button
-            onClick={() => { setForm(EMPTY); setSuccess(false) }}
+            onClick={() => {
+              setForm(EMPTY);
+              setSuccess(false);
+            }}
             variant="outline"
             className="cursor-pointer"
           >
@@ -155,7 +195,7 @@ export default function SubmitForm() {
           </Button>
         </div>
       </div>
-    )
+    );
   }
 
   // ── Form state ──────────────────────────────────────────────────────────────
@@ -167,7 +207,7 @@ export default function SubmitForm() {
         <button
           type="button"
           onClick={handleBackClick}
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] dark:text-white hover:text-[var(--color-brand-teal)] transition-colors cursor-pointer"
         >
           ← Back to Newsletter
         </button>
@@ -178,7 +218,10 @@ export default function SubmitForm() {
             <button
               key={tab.type}
               type="button"
-              onClick={() => { setActiveTab(tab.type); setForm(EMPTY) }}
+              onClick={() => {
+                setActiveTab(tab.type);
+                setForm(EMPTY);
+              }}
               className={`px-4 py-2.5 rounded-lg text-sm font-medium border transition-colors cursor-pointer ${
                 activeTab === tab.type
                   ? 'bg-[var(--color-brand-teal)] text-white border-transparent'
@@ -266,7 +309,8 @@ export default function SubmitForm() {
                 id="abstract"
                 value={form.abstract}
                 onChange={(e) => {
-                  if (e.target.value.length <= maxAbstract) handleChange('abstract', e.target.value)
+                  if (e.target.value.length <= maxAbstract)
+                    handleChange('abstract', e.target.value);
                 }}
                 placeholder="A brief summary of your submission…"
                 rows={4}
@@ -277,9 +321,11 @@ export default function SubmitForm() {
 
             <Field
               label={
-                activeTab === 'research_call' ? 'Full Description *'
-                : activeTab === 'research_note' ? 'Full Note *'
-                : 'Commentary *'
+                activeTab === 'research_call'
+                  ? 'Full Description *'
+                  : activeTab === 'research_note'
+                    ? 'Full Note *'
+                    : 'Commentary *'
               }
               id="content"
             >
@@ -311,7 +357,9 @@ export default function SubmitForm() {
                     id="contact-email"
                     type="email"
                     value={form.contactEmail}
-                    onChange={(e) => handleChange('contactEmail', e.target.value)}
+                    onChange={(e) =>
+                      handleChange('contactEmail', e.target.value)
+                    }
                     placeholder="contact@example.com"
                   />
                 </Field>
@@ -320,7 +368,8 @@ export default function SubmitForm() {
           </fieldset>
 
           <p className="text-xs text-[var(--color-text-muted)]">
-            By submitting, you agree that your contribution may be published in our quarterly newsletter subject to editorial review.
+            By submitting, you agree that your contribution may be published in
+            our quarterly newsletter subject to editorial review.
           </p>
 
           <Button
@@ -341,7 +390,8 @@ export default function SubmitForm() {
               Leave this page?
             </h2>
             <p className="text-sm text-[var(--color-text-muted)]">
-              You have unsaved content in your form. If you leave now, your work will be lost.
+              You have unsaved content in your form. If you leave now, your work
+              will be lost.
             </p>
             <div className="flex gap-2 justify-end">
               <Button
@@ -362,7 +412,7 @@ export default function SubmitForm() {
         </div>
       )}
     </>
-  )
+  );
 }
 
 // ─── Field wrapper ─────────────────────────────────────────────────────────────
@@ -373,20 +423,25 @@ function Field({
   hint,
   children,
 }: {
-  label: string
-  id: string
-  hint?: string
-  children: React.ReactNode
+  label: string;
+  id: string;
+  hint?: string;
+  children: React.ReactNode;
 }) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <Label htmlFor={id} className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec]">
+        <Label
+          htmlFor={id}
+          className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec]"
+        >
           {label}
         </Label>
-        {hint && <span className="text-xs text-[var(--color-text-muted)]">{hint}</span>}
+        {hint && (
+          <span className="text-xs text-[var(--color-text-muted)]">{hint}</span>
+        )}
       </div>
       {children}
     </div>
-  )
+  );
 }

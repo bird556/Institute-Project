@@ -1,29 +1,150 @@
-# Phase 15 — Health & Wellness
+# Phase 16 — V2 Redesign: Color Scheme, Typography & Home Page Sections — COMPLETE ✅
+
+> Full spec: `context/features/v2-redesign-phase-16.md`
+
+## Phase 16 Status
+
+Complete. Branch: `phase-16-v2-redesign` (open — not yet merged to `main`)
+
+## Steps
+
+- [x] Step 1 — Assets: `forest-bg.jpg` + `hero-image.jpg` copied to `public/assets/`
+- [x] Step 2 — Color scheme: `globals.css` updated with v2 forest green + gold tokens; `--color-brand-primary` lightened to `hsl(160 40% 25.1%)` for better dark-bg contrast
+- [x] Step 3 — Typography: Inter (body) + Playfair Display (headings) wired in `layout.tsx` + `globals.css`
+- [x] Step 4 — Header: logo image alongside dynamic site name; `renderSiteName()` helper colors the word "Institute" in gold (`hsl(35 60% 50%)`) whenever it appears in the name
+- [x] Step 5 — Hero defaults: `/assets/forest-bg.jpg` + `/assets/hero-image.jpg` as fallbacks
+- [x] Step 6 — Section visibility: 3 new keys (`goal_section_enabled`, `impact_section_enabled`, `mission_section_enabled`) in `SiteSettings`, mock data, `site-visibility.ts`, `SettingsClient.tsx`
+- [x] Step 7 — Types: `GoalSectionContent`, `ImpactSectionContent`, `MissionSectionContent` added to `src/types/index.ts`
+- [x] Step 8 — Mock data: 3 new `page_content` entries with reference copy as JSON; seed SQL added to `supabase-setup.md`
+- [x] Step 9 — `GoalSection.tsx` public component
+- [x] Step 10 — `ImpactSection.tsx` public component — dark mode bg fixed to `dark:bg-dark-surface`
+- [x] Step 11 — `MissionSection.tsx` public component
+- [x] Step 12 — Home page: 3 sections with visibility gates + hero defaults; upcoming events section hidden when no future events
+- [x] Step 13 — Admin `/admin/home`: `GoalEditor.tsx`, `ImpactEditor.tsx`, `MissionEditor.tsx`
+- [x] Step 14 — Supabase setup: seed rows added to `setups/supabase-setup.md`
+
+## Additional Work Completed in Phase 16
+
+### Site Settings — New Keys
+
+All new keys added to `src/types/index.ts` (`SiteSettings`), `src/lib/mock-data.ts` (`MockSiteSettings` + `mockSiteSettings`), `src/components/admin/SettingsClient.tsx` (`EMPTY` constant + UI), and `setups/supabase-setup.md` (seed SQL):
+
+| Key | Default | Purpose |
+|---|---|---|
+| `site_name` | `'Institute Name'` | Site name — "Institute" word is colored gold in header + footer |
+| `site_description` | `''` | Short tagline shown under the site name in the footer brand column |
+| `admin_name` | `'Tamari of Kitossa'` | Administrator full name — shown in footer Contact column |
+| `admin_title` | `'Professor, Sociology — Brock University'` | Professional title — shown below name in footer |
+| `admin_email` | `'tkitossa@brocku.ca'` | Administrator email — shown in gold (`hsl(35 60% 50%)`) in footer |
+| `admin_name_visible` | `'true'` | Toggle admin name visibility in footer |
+| `admin_title_visible` | `'true'` | Toggle admin title visibility in footer |
+| `admin_email_visible` | `'true'` | Toggle admin email visibility in footer |
+
+### Footer Redesign (`src/components/layout/Footer.tsx`)
+
+- Converted to async Server Component — fetches settings directly
+- **Brand column**: dynamic `renderSiteName()` with gold "Institute" coloring + editable `site_description` tagline below
+- **Contact column**: admin name (white), title (white/60), email (gold) — individually visibility-toggled; followed by `contact_email` + `contact_phone` if set
+- Copyright line uses dynamic `siteName`
+
+### Admin Settings (`/admin/settings`)
+
+- New **Administrator** section (section 3) — Name, Professional Title, Email inputs each with an inline visible/hidden toggle switch
+- New **Footer Description** textarea under Site Name section
+- All 3 admin field toggles save immediately via `toggleSectionVisibility()`; name/title/email save together via Save button
+
+### Dark Mode Link Fix
+
+All public-facing links using `text-[var(--color-brand-teal)]` or `hover:text-[var(--color-brand-teal)]` were nearly invisible on dark backgrounds (brand primary is dark forest green). Fixed across:
+
+- `newsletter/page.tsx` — "Read Edition →": `dark:text-white dark:hover:text-white/80`
+- `newsletter/[slug]/page.tsx` — back link: `dark:hover:text-white`; contact email: `dark:text-white`
+- `blogs/[id]/page.tsx`, `events/[id]/page.tsx`, `reading-list/[id]/page.tsx`, `health-wellness/[id]/page.tsx` — all back links: `dark:hover:text-white`
+- `ReadingListCard.tsx` — external link hover: `dark:hover:text-white`
+- `PartnerCard.tsx` — "Visit Website": upgraded from `dark:text-teal-light` (still too dark) → `dark:text-white`
+
+---
+
+## V1 Color & Font Snapshot (revert reference)
+
+> Saved from `src/app/globals.css` and `src/app/layout.tsx` before Phase 16 changes.
+> To revert: restore the `@theme` block below into `globals.css` and restore the font imports in `layout.tsx`.
+
+### `layout.tsx` — V1 Font Imports
+```ts
+import { DM_Sans, Fraunces } from 'next/font/google'
+
+const dmSans = DM_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  style: ['normal', 'italic'],
+  variable: '--font-fraunces',
+  display: 'swap',
+})
+// className on <html>: `${dmSans.variable} ${fraunces.variable}`
+```
+
+### `globals.css` — V1 `@theme` Block
+```css
+@theme {
+  /* ─── Brand Palette ─────────────────────────────── */
+  --color-brand-teal:       rgb(55, 77, 79);
+  --color-brand-teal-dark:  rgb(38, 55, 57);
+  --color-brand-teal-light: rgb(88, 120, 123);
+
+  /* ─── Light Mode Surfaces ───────────────────────── */
+  --color-background:       #ffffff;
+  --color-surface:          #f7f8f8;
+  --color-surface-hover:    #eef1f1;
+  --color-border:           #dde3e3;
+
+  /* ─── Dark Mode Surfaces ────────────────────────── */
+  --color-dark-background:  #0f1617;
+  --color-dark-surface:     #182022;
+  --color-dark-surface-hover: #1f2a2c;
+  --color-dark-border:      #2c3c3e;
+
+  /* ─── Text ──────────────────────────────────────── */
+  --color-text-primary:     #1a2223;
+  --color-text-muted:       #5c7071;
+  --color-text-on-brand:    #ffffff;
+
+  /* ─── Semantic Aliases ──────────────────────────── */
+  --color-accent:           var(--color-brand-teal);
+  --color-accent-hover:     var(--color-brand-teal-dark);
+
+  /* ─── Typography ────────────────────────────────── */
+  --font-sans:    var(--font-dm-sans), 'DM Sans', sans-serif;
+  --font-display: var(--font-fraunces), 'Fraunces', serif;
+}
+```
+
+### `globals.css` — V1 Tiptap Heading Color
+```css
+.tiptap-editor h1, .tiptap-content h1,
+.tiptap-editor h2, .tiptap-content h2,
+.tiptap-editor h3, .tiptap-content h3 {
+  font-family: var(--font-display);  /* Fraunces */
+  color: var(--color-brand-teal);
+}
+```
+
+---
+
+# Phase 15 — Health & Wellness — COMPLETE ✅
 
 > Full spec: `context/features/health-wellness-phase-15.md`
 
 ## Phase 15 Status
 
-In progress. Branch: `phase-15-health-wellness`
-
-## Steps
-
-- [ ] Step 1 — Types: `WellnessPost`, `WELLNESS_TAGS`, update `SiteSettings` + `SearchResultType`
-- [ ] Step 2 — Mock data: `MockWellnessPost`, 4 posts, site settings key, page content hero
-- [ ] Step 3 — `src/actions/wellness.ts` (full CRUD)
-- [ ] Step 4 — Update `src/actions/search.ts` to include wellness
-- [ ] Step 5 — Update `src/lib/site-visibility.ts` + `SettingsClient.tsx` toggle
-- [ ] Step 6 — `WellnessCard.tsx` component
-- [ ] Step 7 — Public `/health-wellness` list page + `WellnessGrid.tsx` (tag filter)
-- [ ] Step 8 — Public `/health-wellness/[id]` detail page
-- [ ] Step 9 — Admin `/admin/health-wellness` list page
-- [ ] Step 10 — Admin `/admin/health-wellness/[id]` editor (with tags picker)
-- [ ] Step 11 — Admin `/admin/pages/health-wellness` hero editor
-- [ ] Step 12 — Sidebar + MobileNav update
-- [ ] Step 13 — `Header.tsx` nav link (visibility-gated)
-- [ ] Step 14 — Settings visibility toggle
-- [ ] Step 15 — CLAUDE.md + project-overview.md schema update
-- [ ] Step 16 — Supabase swap (deferred)
+Complete. Branch merged to `main` (2026-04-20).
 
 ---
 
