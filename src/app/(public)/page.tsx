@@ -169,11 +169,11 @@ export default async function HomePage() {
               <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/5]">
                 <Image
                   src={heroImageUrl}
-                  alt=""
+                  alt="heroImageUrl"
                   fill
                   className="object-cover"
-                  sizes="(max-width: 1024px) 0px, 320px"
                   priority
+                  quality={100}
                 />
               </div>
             </div>

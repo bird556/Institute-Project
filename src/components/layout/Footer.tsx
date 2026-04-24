@@ -80,7 +80,13 @@ export async function Footer() {
                 <p className="text-sm text-white/60">{adminTitle}</p>
               )}
               {adminEmail && (
-                <p className="text-sm text-[hsl(35_60%_50%)]">{adminEmail}</p>
+                // <p className="text-sm text-[hsl(35_60%_50%)]">{adminEmail}</p>
+                <a
+                  href={`mailto:${adminEmail}`}
+                  className="text-sm text-[hsl(35_60%_50%)] hover:underline"
+                >
+                  {adminEmail}
+                </a>
               )}
               {(settings?.contact_email || settings?.contact_phone) &&
                 (adminName || adminTitle || adminEmail) && (
