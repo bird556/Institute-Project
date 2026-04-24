@@ -1,5 +1,6 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import { mockPartners } from '@/lib/mock-data'
 import type { Partner, ActionResult } from '@/types'
 
@@ -20,7 +21,7 @@ let store: Partner[] = mockPartners.map((p) => ({
 export async function getAdminPartners(): Promise<ActionResult<Partner[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('partners')
     //   .select('*')
@@ -40,7 +41,7 @@ export async function getAdminPartners(): Promise<ActionResult<Partner[]>> {
 export async function getPartnerById(id: string): Promise<ActionResult<Partner>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('partners')
     //   .select('*')
@@ -62,7 +63,7 @@ export async function getPartnerById(id: string): Promise<ActionResult<Partner>>
 export async function createPartner(): Promise<ActionResult<{ id: string }>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const maxOrder = await supabase
     //   .from('partners')
     //   .select('sort_order')
@@ -105,7 +106,7 @@ export async function updatePartner(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('partners')
     //   .update(fields)
@@ -129,7 +130,7 @@ export async function updatePartnerSortOrder(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // await Promise.all(
     //   updates.map(({ id, sort_order }) =>
     //     supabase.from('partners').update({ sort_order }).eq('id', id)
@@ -155,7 +156,7 @@ export async function togglePartnerPublished(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('partners')
     //   .update({ published })
@@ -177,7 +178,7 @@ export async function togglePartnerPublished(
 export async function deletePartner(id: string): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('partners')
     //   .delete()

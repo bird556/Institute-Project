@@ -173,7 +173,7 @@ export default async function HomePage() {
                   fill
                   className="object-cover"
                   priority
-                  quality={100}
+                  quality={75}
                 />
               </div>
             </div>

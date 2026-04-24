@@ -1,5 +1,6 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import { mockBlogs } from '@/lib/mock-data'
 import { slugify } from '@/lib/utils'
 import type { BlogPost, ActionResult } from '@/types'
@@ -23,7 +24,7 @@ let store: BlogPost[] = mockBlogs.map((b) => ({
 export async function getAdminBlogs(): Promise<ActionResult<BlogPost[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('blog_posts')
     //   .select('*')
@@ -45,7 +46,7 @@ export async function getAdminBlogs(): Promise<ActionResult<BlogPost[]>> {
 export async function getBlogById(id: string): Promise<ActionResult<BlogPost>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('blog_posts')
     //   .select('*')
@@ -67,7 +68,7 @@ export async function getBlogById(id: string): Promise<ActionResult<BlogPost>> {
 export async function createBlog(): Promise<ActionResult<{ id: string }>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('blog_posts')
     //   .insert({ title: 'Untitled', slug: `untitled-${Date.now()}`, content: '' })
@@ -105,7 +106,7 @@ export async function updateBlog(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('blog_posts')
     //   .update({ ...fields, updated_at: new Date().toISOString() })
@@ -137,7 +138,7 @@ export async function toggleBlogPublished(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('blog_posts')
     //   .update({
@@ -169,7 +170,7 @@ export async function toggleBlogPublished(
 export async function deleteBlog(id: string): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('blog_posts')
     //   .delete()

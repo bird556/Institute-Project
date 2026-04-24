@@ -1,3 +1,79 @@
+# Supabase Data Wiring — IN PROGRESS 🔧
+
+> Branch: `supabase-setup-phase`
+
+## Goal
+
+Swap every action file from mock data to real Supabase queries, then test all CRUD flows end-to-end with live data. Input real page content and confirm the public site reflects it.
+
+## Steps
+
+- [ ] Step 1 — Wire `src/actions/settings.ts` (getSiteSettings, updateSiteSetting, updateSiteSettings, toggleSectionVisibility)
+- [ ] Step 2 — Wire `src/actions/page-content.ts` (getPageContent, upsertPageContent)
+- [ ] Step 3 — Wire `src/actions/blogs.ts` (all CRUD actions)
+- [ ] Step 4 — Wire `src/actions/events.ts` (all CRUD actions)
+- [ ] Step 5 — Wire `src/actions/reading-list.ts` (all CRUD actions)
+- [ ] Step 6 — Wire `src/actions/partners.ts` (all CRUD actions)
+- [ ] Step 7 — Wire `src/actions/newsletter.ts` (editions + submissions)
+- [ ] Step 8 — Wire `src/actions/wellness.ts` (all CRUD actions)
+- [ ] Step 9 — Wire `src/actions/search.ts` (Supabase FTS across blog_posts, events, reading_list)
+- [ ] Step 10 — Input real site settings (site name, contact info, admin name/title/email)
+- [ ] Step 11 — Input real page content (home, about, mission sections via Tiptap editors)
+- [ ] Step 12 — Create a test blog post, event, reading list item, partner — verify publish/unpublish/delete
+- [ ] Step 13 — Test public pages reflect live Supabase data
+- [ ] Step 14 — Test search returns real results
+- [ ] Step 15 — Wire `/api/upload` to use real Supabase Storage (test image upload on blog cover)
+
+---
+
+# Auth Activation & Testing — COMPLETE ✅
+
+> Branch: `supabase-setup-phase`
+> Admin account created via Supabase Dashboard → Add user (email + password directly, no invite link).
+
+## Background
+
+The dev bypass is being removed. Three auth guards are commented out and will be uncommented now that a real Supabase project and admin account exist. Once guards are active, the full login/logout/password flows will be tested end-to-end.
+
+## Already Fixed This Session
+
+- [x] `src/app/(admin-auth)/admin/reset-password/page.tsx` — Rewrote to use browser client `setSession` directly from URL hash (implicit flow). `@supabase/ssr`'s `createBrowserClient` does not auto-detect hash tokens, so the page now manually parses `#access_token` + `#refresh_token` and calls `supabase.auth.setSession()`. Shows "Verifying link…" on the button while session loads; "Link verified — set your password." toast on success. Server action removed — password update now runs entirely on the browser client.
+
+## Steps
+
+- [x] Step 1 — Uncomment auth guard in `src/proxy.ts` (redirects unauthenticated `/admin` requests to `/admin`)
+- [x] Step 2 — Uncomment session check in `src/app/(admin)/layout.tsx` (only renders `<AdminShell>` when session exists)
+- [x] Step 3 — Uncomment session check + `<LoginForm />` in `src/app/(admin)/admin/page.tsx` (renders login form when unauthenticated, dashboard when authenticated)
+- [x] Step 4 — Test: visiting `/admin` while logged out → redirected to login form ✓
+- [x] Step 5 — Test: login with correct credentials → dashboard renders ✓
+- [x] Step 6 — Test: logout → redirected back to login ✓
+- [x] Step 7 — Test: change password from `/admin/settings` while logged in ✓
+- [x] Step 8 — Test: forgot password flow → email received → reset link → new password set ✓
+
+---
+
+# Supabase Setup Phase — Pre-Launch Wiring & Bug Fixes — COMPLETE ✅
+
+> Full spec: `context/features/supabase-setup-phase.md`
+> Branch: `supabase-setup-phase`
+
+## Steps
+
+- [x] Step 1 — Fix seed SQL: add `about_enabled` + `mission_enabled` to `setups/supabase-setup.md`
+- [x] Step 2 — Fix proxy: add `/health-wellness` to `SECTION_ROUTES` and `config.matcher` in `src/proxy.ts`
+- [x] Step 3 — Fix CLAUDE.md: reading_list schema `link` → `external_url`
+- [x] Step 4 — Fix `setups/supabase-setup.md` Step 6 checklist: list all 9 tables
+- [x] Step 5 — Clean up `admin/page.tsx` commented auth block to use `createClient` from `@/lib/supabase/server`
+- [x] Step 6 — `.env.local` already has all correct key names + both files are git-ignored via `.env*`
+
+### Audit Fixes (found during full codebase review)
+- [x] Added `// import { createClient } from '@/lib/supabase/server'` to all 7 action files that were missing it (`blogs`, `events`, `reading-list`, `partners`, `wellness`, `search`, `newsletter`, `settings`)
+- [x] Fixed `createServerClient()` → `await createClient()` in all TODO comment blocks across all action files (was wrong function name — would have broken on uncomment)
+- [x] Fixed `createBrowserClient()` → `await createClient()` in `newsletter.ts` `submitToNewsletter` — Server Actions cannot use the browser client
+- [x] Removed unused `slugify` import from `newsletter.ts` (TypeScript error)
+
+---
+
 # Phase 16 — V2 Redesign: Color Scheme, Typography & Home Page Sections — COMPLETE ✅
 
 > Full spec: `context/features/v2-redesign-phase-16.md`

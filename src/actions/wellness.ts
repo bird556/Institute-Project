@@ -1,5 +1,6 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import { mockWellnessPosts } from '@/lib/mock-data'
 import type { WellnessPost, ActionResult } from '@/types'
 
@@ -24,7 +25,7 @@ let store: WellnessPost[] = mockWellnessPosts.map((w) => ({
 export async function getAdminWellnessPosts(): Promise<ActionResult<WellnessPost[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('wellness_posts')
     //   .select('*')
@@ -46,7 +47,7 @@ export async function getAdminWellnessPosts(): Promise<ActionResult<WellnessPost
 export async function getWellnessById(id: string): Promise<ActionResult<WellnessPost>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('wellness_posts')
     //   .select('*')
@@ -68,7 +69,7 @@ export async function getWellnessById(id: string): Promise<ActionResult<Wellness
 export async function createWellnessPost(): Promise<ActionResult<{ id: string }>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('wellness_posts')
     //   .insert({ title: 'Untitled', slug: `untitled-${Date.now()}`, content: '', tags: [] })
@@ -108,7 +109,7 @@ export async function updateWellnessPost(
 ): Promise<ActionResult<WellnessPost>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const { data: updated, error } = await supabase
     //   .from('wellness_posts')
     //   .update({ ...data, updated_at: new Date().toISOString() })
@@ -135,7 +136,7 @@ export async function toggleWellnessPublished(
 ): Promise<ActionResult<WellnessPost>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const now = published ? new Date().toISOString() : null
     // const { data, error } = await supabase
     //   .from('wellness_posts')
@@ -166,7 +167,7 @@ export async function toggleWellnessPublished(
 export async function deleteWellnessPost(id: string): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('wellness_posts')
     //   .delete()

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
 import { getSiteVisibility, type SiteVisibility } from '@/lib/site-visibility'
 
 const PUBLIC_ADMIN_ROUTES = [
@@ -9,13 +10,14 @@ const PUBLIC_ADMIN_ROUTES = [
 
 // Maps each public section route prefix → its visibility key
 const SECTION_ROUTES: Record<string, keyof SiteVisibility> = {
-  '/about':        'about_enabled',
-  '/mission':      'mission_enabled',
-  '/blogs':        'blogs_enabled',
-  '/events':       'events_enabled',
-  '/reading-list': 'reading_list_enabled',
-  '/partners':     'partners_enabled',
-  '/newsletter':   'newsletter_enabled',
+  '/about':             'about_enabled',
+  '/mission':           'mission_enabled',
+  '/blogs':             'blogs_enabled',
+  '/events':            'events_enabled',
+  '/reading-list':      'reading_list_enabled',
+  '/partners':          'partners_enabled',
+  '/newsletter':        'newsletter_enabled',
+  '/health-wellness':   'health_wellness_enabled',
 }
 
 export async function proxy(request: NextRequest) {
@@ -26,30 +28,29 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // TODO: Re-enable auth guard once Supabase is wired up
-  // if (pathname.startsWith('/admin')) {
-  //   const response = NextResponse.next()
-  //   const supabase = createServerClient(
-  //     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  //     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-  //     {
-  //       cookies: {
-  //         getAll: () => request.cookies.getAll(),
-  //         setAll: (cookiesToSet) => {
-  //           cookiesToSet.forEach(({ name, value, options }) =>
-  //             response.cookies.set(name, value, options)
-  //           )
-  //         },
-  //       },
-  //     }
-  //   )
-  //   const { data: { session } } = await supabase.auth.getSession()
-  //   if (!session) {
-  //     const loginUrl = new URL('/admin', request.url)
-  //     return NextResponse.redirect(loginUrl)
-  //   }
-  //   return response
-  // }
+  if (pathname.startsWith('/admin')) {
+    const response = NextResponse.next()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll: () => request.cookies.getAll(),
+          setAll: (cookiesToSet) => {
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            )
+          },
+        },
+      }
+    )
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) {
+      const loginUrl = new URL('/admin', request.url)
+      return NextResponse.redirect(loginUrl)
+    }
+    return response
+  }
 
   // Redirect to home if a public section is disabled
   for (const [routePrefix, visibilityKey] of Object.entries(SECTION_ROUTES)) {
@@ -75,5 +76,6 @@ export const config = {
     '/reading-list/:path*',
     '/partners',
     '/newsletter/:path*',
+    '/health-wellness/:path*',
   ],
 }

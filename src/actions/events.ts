@@ -1,5 +1,6 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import { mockEvents } from '@/lib/mock-data'
 import { slugify } from '@/lib/utils'
 import type { Event, ActionResult } from '@/types'
@@ -24,7 +25,7 @@ let store: Event[] = mockEvents.map((e) => ({
 export async function getAdminEvents(): Promise<ActionResult<Event[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('events')
     //   .select('*')
@@ -46,7 +47,7 @@ export async function getAdminEvents(): Promise<ActionResult<Event[]>> {
 export async function getEventById(id: string): Promise<ActionResult<Event>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('events')
     //   .select('*')
@@ -68,7 +69,7 @@ export async function getEventById(id: string): Promise<ActionResult<Event>> {
 export async function createEvent(): Promise<ActionResult<{ id: string }>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('events')
     //   .insert({
@@ -113,7 +114,7 @@ export async function updateEvent(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('events')
     //   .update({ ...fields, updated_at: new Date().toISOString() })
@@ -144,7 +145,7 @@ export async function toggleEventPublished(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('events')
     //   .update({ published, updated_at: new Date().toISOString() })
@@ -171,7 +172,7 @@ export async function toggleEventPublished(
 export async function deleteEvent(id: string): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('events')
     //   .delete()

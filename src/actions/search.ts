@@ -1,5 +1,6 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import { mockBlogs, mockEvents, mockReadingList, mockWellnessPosts } from '@/lib/mock-data'
 import type { SearchResult, ActionResult } from '@/types'
 
@@ -16,7 +17,7 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
     const q = query.toLowerCase()
 
     // TODO: Supabase FTS swap ↓ — replace the three mock arrays below with:
-    // const supabase = await createServerClient()
+    // const supabase = await createClient()
     // const tsQuery = `plainto_tsquery('english', '${query}')`
     //
     // const [blogsRes, eventsRes, readingRes] = await Promise.all([

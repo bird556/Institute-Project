@@ -1,5 +1,6 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import { mockReadingList } from '@/lib/mock-data'
 import type { ReadingListItem, ActionResult } from '@/types'
 
@@ -21,7 +22,7 @@ let store: ReadingListItem[] = mockReadingList.map((r) => ({
 export async function getAdminReadingList(): Promise<ActionResult<ReadingListItem[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('reading_list')
     //   .select('*')
@@ -43,7 +44,7 @@ export async function getAdminReadingList(): Promise<ActionResult<ReadingListIte
 export async function getReadingListItemById(id: string): Promise<ActionResult<ReadingListItem>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('reading_list')
     //   .select('*')
@@ -65,7 +66,7 @@ export async function getReadingListItemById(id: string): Promise<ActionResult<R
 export async function createReadingListItem(): Promise<ActionResult<{ id: string }>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('reading_list')
     //   .insert({ title: 'Untitled', description: '' })
@@ -102,7 +103,7 @@ export async function updateReadingListItem(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('reading_list')
     //   .update({ ...fields, updated_at: new Date().toISOString() })
@@ -128,7 +129,7 @@ export async function toggleReadingListPublished(
 ): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('reading_list')
     //   .update({ published, updated_at: new Date().toISOString() })
@@ -155,7 +156,7 @@ export async function toggleReadingListPublished(
 export async function deleteReadingListItem(id: string): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase
     //   .from('reading_list')
     //   .delete()

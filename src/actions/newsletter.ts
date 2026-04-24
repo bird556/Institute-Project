@@ -1,12 +1,12 @@
 'use server'
 
+// import { createClient } from '@/lib/supabase/server'
 import {
   mockNewsletterEditions,
   mockNewsletterSubmissions,
   type SubmissionType,
   type SubmissionStatus,
 } from '@/lib/mock-data'
-import { slugify } from '@/lib/utils'
 import type {
   NewsletterEdition,
   NewsletterSubmission,
@@ -53,7 +53,7 @@ let submissionStore: NewsletterSubmission[] = mockNewsletterSubmissions.map((s) 
 export async function getAdminEditions(): Promise<ActionResult<NewsletterEdition[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .select('*')
@@ -73,7 +73,7 @@ export async function getAdminEditions(): Promise<ActionResult<NewsletterEdition
 export async function getEditionById(id: string): Promise<ActionResult<NewsletterEdition>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .select('*')
@@ -93,7 +93,7 @@ export async function getEditionById(id: string): Promise<ActionResult<Newslette
 export async function createEdition(): Promise<ActionResult<NewsletterEdition>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .insert({ title: 'Untitled Edition', slug: `edition-${Date.now()}`, intro: '', published: false })
@@ -127,7 +127,7 @@ export async function updateEdition(
 ): Promise<ActionResult<NewsletterEdition>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .update({ ...fields, updated_at: new Date().toISOString() })
@@ -154,7 +154,7 @@ export async function toggleEditionPublished(
 ): Promise<ActionResult<NewsletterEdition>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .update({ published, published_at: published ? new Date().toISOString() : null, updated_at: new Date().toISOString() })
@@ -181,7 +181,7 @@ export async function toggleEditionPublished(
 export async function deleteEdition(id: string): Promise<ActionResult> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { error } = await supabase.from('newsletter_editions').delete().eq('id', id)
     // if (error) throw error
     // return { success: true }
@@ -206,7 +206,7 @@ export async function getAdminSubmissions(filters?: {
 }): Promise<ActionResult<NewsletterSubmission[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // let query = supabase.from('newsletter_submissions').select('*').order('created_at', { ascending: false })
     // if (filters?.type)      query = query.eq('type', filters.type)
     // if (filters?.status)    query = query.eq('status', filters.status)
@@ -230,7 +230,7 @@ export async function getAdminSubmissions(filters?: {
 export async function getSubmissionById(id: string): Promise<ActionResult<NewsletterSubmission>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .select('*')
@@ -260,8 +260,8 @@ export async function submitToNewsletter(data: {
   contact_email?: string
 }): Promise<ActionResult<NewsletterSubmission>> {
   try {
-    // TODO: Supabase swap ↓ (use anon key — RLS allows public insert without auth)
-    // const supabase = createBrowserClient()
+    // TODO: Supabase swap ↓ (RLS allows public INSERT — anon key via server client is correct)
+    // const supabase = await createClient()
     // const { data: row, error } = await supabase
     //   .from('newsletter_submissions')
     //   .insert({ ...data, status: 'pending' })
@@ -304,7 +304,7 @@ export async function approveSubmission(
 ): Promise<ActionResult<NewsletterSubmission>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .update({ status: 'approved', reviewed_at: new Date().toISOString(), admin_note: adminNote ?? null })
@@ -335,7 +335,7 @@ export async function rejectSubmission(
 ): Promise<ActionResult<NewsletterSubmission>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .update({ status: 'rejected', reviewed_at: new Date().toISOString(), admin_note: adminNote })
@@ -366,7 +366,7 @@ export async function updateSubmissionContent(
 ): Promise<ActionResult<NewsletterSubmission>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .update({ content, updated_at: new Date().toISOString() })
@@ -393,7 +393,7 @@ export async function updateSubmissionAdminNote(
 ): Promise<ActionResult<NewsletterSubmission>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .update({ admin_note: adminNote, updated_at: new Date().toISOString() })
@@ -420,7 +420,7 @@ export async function assignToEdition(
 ): Promise<ActionResult<NewsletterSubmission>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .update({ edition_id: editionId, updated_at: new Date().toISOString() })
@@ -448,7 +448,7 @@ export async function getEditionSubmissions(
 ): Promise<ActionResult<NewsletterSubmission[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_submissions')
     //   .select('*')
@@ -478,7 +478,7 @@ export async function getEditionSubmissions(
 export async function getPublishedEditions(): Promise<ActionResult<NewsletterEdition[]>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .select('*')
@@ -505,7 +505,7 @@ export async function getPublishedEditionBySlug(
 ): Promise<ActionResult<NewsletterEdition>> {
   try {
     // TODO: Supabase swap ↓
-    // const supabase = createServerClient()
+    // const supabase = await createClient()
     // const { data, error } = await supabase
     //   .from('newsletter_editions')
     //   .select('*')

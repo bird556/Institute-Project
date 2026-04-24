@@ -1,5 +1,6 @@
 'use server'
 
+import { createClient } from '@/lib/supabase/server'
 import { mockSiteSettings } from '@/lib/mock-data'
 import type { SiteSettings } from '@/types'
 
@@ -81,12 +82,10 @@ export async function toggleSectionVisibility(
 
 export async function changeAdminPassword(
   _currentPassword: string,
-  _newPassword: string,
+  newPassword: string,
 ): Promise<{ success: boolean; error?: string }> {
-  // TODO: replace with Supabase Auth
-  // const supabase = await createClient()
-  // const { error } = await supabase.auth.updateUser({ password: newPassword })
-  // if (error) return { success: false, error: error.message }
-  // return { success: true }
+  const supabase = await createClient()
+  const { error } = await supabase.auth.updateUser({ password: newPassword })
+  if (error) return { success: false, error: error.message }
   return { success: true }
 }
