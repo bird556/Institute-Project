@@ -8,16 +8,16 @@ Swap every action file from mock data to real Supabase queries, then test all CR
 
 ## Steps
 
-- [ ] Step 1 — Wire `src/actions/settings.ts` (getSiteSettings, updateSiteSetting, updateSiteSettings, toggleSectionVisibility)
-- [ ] Step 2 — Wire `src/actions/page-content.ts` (getPageContent, upsertPageContent)
-- [ ] Step 3 — Wire `src/actions/blogs.ts` (all CRUD actions)
-- [ ] Step 4 — Wire `src/actions/events.ts` (all CRUD actions)
-- [ ] Step 5 — Wire `src/actions/reading-list.ts` (all CRUD actions)
-- [ ] Step 6 — Wire `src/actions/partners.ts` (all CRUD actions)
-- [ ] Step 7 — Wire `src/actions/newsletter.ts` (editions + submissions)
-- [ ] Step 8 — Wire `src/actions/wellness.ts` (all CRUD actions)
-- [ ] Step 9 — Wire `src/actions/search.ts` (Supabase FTS across blog_posts, events, reading_list)
-- [ ] Step 10 — Input real site settings (site name, contact info, admin name/title/email)
+- [x] Step 1 — Wire `src/actions/settings.ts` (getSiteSettings, updateSiteSetting, updateSiteSettings, toggleSectionVisibility)
+- [x] Step 2 — Wire `src/actions/page-content.ts` (getPageContent, upsertPageContent)
+- [x] Step 3 — Wire `src/actions/blogs.ts` (all CRUD actions)
+- [x] Step 4 — Wire `src/actions/events.ts` (all CRUD actions)
+- [x] Step 5 — Wire `src/actions/reading-list.ts` (all CRUD actions)
+- [x] Step 6 — Wire `src/actions/partners.ts` (all CRUD actions)
+- [x] Step 7 — Wire `src/actions/newsletter.ts` (editions + submissions)
+- [x] Step 8 — Wire `src/actions/wellness.ts` (all CRUD actions)
+- [x] Step 9 — Wire `src/actions/search.ts` (Supabase FTS across blog_posts, events, reading_list)
+- [x] Step 10 — Input real site settings (site name, contact info, admin name/title/email)
 - [ ] Step 11 — Input real page content (home, about, mission sections via Tiptap editors)
 - [ ] Step 12 — Create a test blog post, event, reading list item, partner — verify publish/unpublish/delete
 - [ ] Step 13 — Test public pages reflect live Supabase data

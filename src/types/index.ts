@@ -64,10 +64,12 @@ export interface SiteSettings {
   admin_name: string
   admin_title: string
   admin_email: string
-  // Administrator field visibility — stored as 'true' | 'false' strings
+  // Footer field visibility — stored as 'true' | 'false' strings
   admin_name_visible: string
   admin_title_visible: string
   admin_email_visible: string
+  contact_phone_visible: string
+  address_visible: string
   // Page visibility — stored as 'true' | 'false' strings
   about_enabled: string
   mission_enabled: string

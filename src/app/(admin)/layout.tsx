@@ -10,5 +10,12 @@ export default async function AdminLayout({
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) return <>{children}</>;
 
-  return <AdminShell>{children}</AdminShell>;
+  const { data: nameSetting } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', 'admin_name')
+    .single();
+  const adminInitial = nameSetting?.value?.trim().charAt(0)?.toUpperCase() || 'A';
+
+  return <AdminShell adminInitial={adminInitial}>{children}</AdminShell>;
 }

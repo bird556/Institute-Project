@@ -39,7 +39,7 @@ function getPageTitle(pathname: string): string {
     .join(' ')
 }
 
-export function AdminHeader() {
+export function AdminHeader({ adminInitial = 'A' }: { adminInitial?: string }) {
   const pathname = usePathname()
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -84,7 +84,7 @@ export function AdminHeader() {
             className="flex items-center justify-center w-8 h-8 rounded-full bg-[var(--color-brand-teal)] text-white text-xs font-bold shrink-0 outline-none cursor-pointer"
             aria-label="Admin menu"
           >
-            A
+            {adminInitial}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-44">
             <DropdownMenuItem

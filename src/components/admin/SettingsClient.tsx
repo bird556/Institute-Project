@@ -33,6 +33,8 @@ const EMPTY: SiteSettings = {
   admin_name_visible: 'true',
   admin_title_visible: 'true',
   admin_email_visible: 'true',
+  contact_phone_visible: 'true',
+  address_visible: 'true',
   about_enabled: 'true',
   mission_enabled: 'true',
   blogs_enabled: 'true',
@@ -102,50 +104,28 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
     }
   }
 
-  // ── Administrator ───────────────────────────────────────────────────────────
+  // ── Footer Info ─────────────────────────────────────────────────────────────
   const [adminName, setAdminName] = useState(settings.admin_name)
   const [adminTitle, setAdminTitle] = useState(settings.admin_title)
   const [adminEmail, setAdminEmail] = useState(settings.admin_email)
-  const [savingAdmin, setSavingAdmin] = useState(false)
+  const [contactPhone, setContactPhone] = useState(settings.contact_phone)
+  const [address, setAddress] = useState(settings.address)
+  const [savingFooter, setSavingFooter] = useState(false)
 
-  async function handleSaveAdmin() {
-    setSavingAdmin(true)
+  async function handleSaveFooter() {
+    setSavingFooter(true)
     const res = await updateSiteSettings({
       admin_name: adminName.trim(),
       admin_title: adminTitle.trim(),
       admin_email: adminEmail.trim(),
-    })
-    setSavingAdmin(false)
-    if (res.success) {
-      toast.success('Administrator info updated')
-    } else {
-      toast.error(res.error ?? 'Failed to update administrator info')
-    }
-  }
-
-  // ── Contact Info ────────────────────────────────────────────────────────────
-  const [contactEmail, setContactEmail] = useState(settings.contact_email)
-  const [contactPhone, setContactPhone] = useState(settings.contact_phone)
-  const [address, setAddress] = useState(settings.address)
-  const [savingContact, setSavingContact] = useState(false)
-
-  async function handleSaveContact() {
-    const emailTrimmed = contactEmail.trim()
-    if (emailTrimmed && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed)) {
-      toast.error('Please enter a valid email address')
-      return
-    }
-    setSavingContact(true)
-    const res = await updateSiteSettings({
-      contact_email: emailTrimmed,
       contact_phone: contactPhone.trim(),
       address: address.trim(),
     })
-    setSavingContact(false)
+    setSavingFooter(false)
     if (res.success) {
-      toast.success('Contact information updated')
+      toast.success('Footer information updated')
     } else {
-      toast.error(res.error ?? 'Failed to update contact information')
+      toast.error(res.error ?? 'Failed to update footer information')
     }
   }
 
@@ -165,6 +145,8 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
     admin_name_visible:      settings.admin_name_visible      !== 'false',
     admin_title_visible:     settings.admin_title_visible     !== 'false',
     admin_email_visible:     settings.admin_email_visible     !== 'false',
+    contact_phone_visible:   settings.contact_phone_visible   !== 'false',
+    address_visible:         settings.address_visible         !== 'false',
   })
 
   async function handleToggleVisibility(key: keyof typeof visibility, enabled: boolean) {
@@ -279,18 +261,23 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
 
       <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
 
-      {/* ── Section 3: Administrator ──────────────────────────────────────── */}
-      <section className="space-y-4">
+      {/* ── Section 3: Footer Information ────────────────────────────────── */}
+      <section className="space-y-6">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
-            Administrator
+            Footer Information
           </h2>
           <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
-            Displayed in the public footer. Toggle visibility to show or hide each field.
+            All content displayed in the public footer.
           </p>
         </div>
 
+        {/* Administrator sub-group */}
         <div className="space-y-4">
+          <p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-text-muted)]">
+            Administrator — toggle visibility to show or hide each field
+          </p>
+
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <Label htmlFor="admin-name">Name</Label>
@@ -351,45 +338,19 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
               placeholder="e.g. name@university.ca"
             />
           </div>
-        </div>
-
-        <div className="flex justify-end">
-          <Button onClick={handleSaveAdmin} disabled={savingAdmin} className="cursor-pointer">
-            {savingAdmin ? 'Saving…' : 'Save'}
-          </Button>
-        </div>
-      </section>
-
-      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
-
-      {/* ── Section 4: Contact Information ───────────────────────────────── */}
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
-            Contact Information
-          </h2>
-          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
-            Displayed in the public footer. Leave any field blank to hide it from the site.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="contact-email">Email</Label>
-            <Input
-              id="contact-email"
-              type="email"
-              value={contactEmail}
-              onChange={e => setContactEmail(e.target.value)}
-              placeholder="info@institute.ca"
-            />
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Leave blank to hide from the footer.
-            </p>
-          </div>
 
           <div className="space-y-2">
-            <Label htmlFor="contact-phone">Phone</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="contact-phone">Phone</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-text-muted)]">Visible</span>
+                <Switch
+                  checked={visibility.contact_phone_visible}
+                  onCheckedChange={(checked) => handleToggleVisibility('contact_phone_visible', checked)}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
             <Input
               id="contact-phone"
               type="tel"
@@ -397,13 +358,21 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
               onChange={e => setContactPhone(e.target.value)}
               placeholder="+1 (416) 555-0100"
             />
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Leave blank to hide from the footer.
-            </p>
+            <p className="text-xs text-[var(--color-text-muted)]">Leave blank to hide from the footer.</p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="address">Address</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-text-muted)]">Visible</span>
+                <Switch
+                  checked={visibility.address_visible}
+                  onCheckedChange={(checked) => handleToggleVisibility('address_visible', checked)}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
             <Textarea
               id="address"
               rows={3}
@@ -411,16 +380,14 @@ export default function SettingsClient({ initialSettings }: SettingsClientProps)
               onChange={e => setAddress(e.target.value)}
               placeholder="123 Education Ave, Toronto, ON M5V 1A1"
             />
-            <p className="text-xs text-[var(--color-text-muted)]">
-              Leave blank to hide from the footer.
-            </p>
+            <p className="text-xs text-[var(--color-text-muted)]">Leave blank to hide from the footer.</p>
           </div>
-        </div>
 
-        <div className="flex justify-end">
-          <Button onClick={handleSaveContact} disabled={savingContact} className="cursor-pointer">
-            {savingContact ? 'Saving…' : 'Save'}
-          </Button>
+          <div className="flex justify-end">
+            <Button onClick={handleSaveFooter} disabled={savingFooter} className="cursor-pointer">
+              {savingFooter ? 'Saving…' : 'Save'}
+            </Button>
+          </div>
         </div>
       </section>
 

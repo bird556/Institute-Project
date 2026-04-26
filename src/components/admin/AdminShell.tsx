@@ -21,7 +21,7 @@ export function useSidebar(): SidebarContextValue {
   return ctx;
 }
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function AdminShell({ children, adminInitial }: { children: React.ReactNode; adminInitial?: string }) {
   // Default false on both server and client first render to avoid hydration
   // mismatch. localStorage is read post-mount and may flip this to true.
   const [collapsed, setCollapsed] = useState(false);
@@ -48,7 +48,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
             collapsed ? 'lg:ml-16' : 'lg:ml-64',
           )}
         >
-          <AdminHeader />
+          <AdminHeader adminInitial={adminInitial} />
           <main className="flex-1 p-4 md:p-6 lg:p-8 pb-20 lg:pb-8 bg-[var(--color-background)]">
             {children}
           </main>
