@@ -60,7 +60,7 @@ export default function LoginForm() {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
             {loading ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
@@ -68,7 +68,7 @@ export default function LoginForm() {
         <div className="mt-4 text-center">
           <Link
             href="/admin/forgot-password"
-            className="text-sm text-[var(--color-text-muted)] hover:text-[var(--color-accent)] transition-colors"
+            className="text-sm text-[var(--color-text-muted)] dark:text-white dark:hover:text-white/50 hover:text-[var(--color-accent)] transition-colors"
           >
             Forgot your password?
           </Link>

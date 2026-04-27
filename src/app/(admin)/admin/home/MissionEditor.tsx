@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { updatePageSection } from '@/actions/page-content'
+import SectionVisibilityToggle from '@/components/admin/SectionVisibilityToggle'
 import type { MissionSectionContent, MissionPillar } from '@/types'
 
 const ICON_MAP = {
@@ -19,9 +20,11 @@ const ICON_MAP = {
 
 interface MissionEditorProps {
   initialData: MissionSectionContent
+  visibilityKey?: string
+  initialVisible?: boolean
 }
 
-export default function MissionEditor({ initialData }: MissionEditorProps) {
+export default function MissionEditor({ initialData, visibilityKey, initialVisible = true }: MissionEditorProps) {
   const [data, setData] = useState<MissionSectionContent>(initialData)
   const [saved, setSaved] = useState(JSON.stringify(initialData))
   const [saving, setSaving] = useState(false)
@@ -125,7 +128,10 @@ export default function MissionEditor({ initialData }: MissionEditorProps) {
         })}
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3">
+        {visibilityKey && (
+          <SectionVisibilityToggle visibilityKey={visibilityKey} initialVisible={initialVisible} />
+        )}
         <Button onClick={handleSave} disabled={saving || !isDirty} className="cursor-pointer">
           {saving ? 'Saving…' : 'Save'}
         </Button>

@@ -84,6 +84,8 @@ export interface SiteSettings {
   // Section visibility
   health_wellness_enabled: string
   // Home section visibility
+  intro_section_enabled:   string
+  cta_section_enabled:     string
   goal_section_enabled:    string
   impact_section_enabled:  string
   mission_section_enabled: string

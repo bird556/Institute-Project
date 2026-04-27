@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { mockEvents } from '@/lib/mock-data'
+import { createClient } from '@/lib/supabase/server'
 import { truncate } from '@/lib/utils'
 import EventGrid from './EventGrid'
 import { getPageContent } from '@/actions/page-content'
@@ -14,52 +14,39 @@ function stripHtml(html: string): string {
 }
 
 export default async function EventsPage() {
-  const [{ data: sections }] = await Promise.all([getPageContent('events')])
+  const [{ data: sections }, supabase] = await Promise.all([
+    getPageContent('events'),
+    createClient(),
+  ])
   const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Events'
   const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
 
+  const { data } = await supabase
+    .from('events')
+    .select('id, title, description, cover_path, location, event_date')
+    .eq('published', true)
+    .order('event_date', { ascending: true })
+
   const now = new Date()
+  const allPublished = (data ?? []).map((e) => ({
+    id: e.id,
+    title: e.title,
+    description_excerpt: truncate(stripHtml(e.description), 150),
+    cover_url: e.cover_path
+      ? supabase.storage.from('institute-media').getPublicUrl(e.cover_path).data.publicUrl
+      : '',
+    location: e.location,
+    event_date: e.event_date,
+    isPast: new Date(e.event_date) < now,
+  }))
 
-  const allPublished = mockEvents
-    .filter((e) => e.published)
-    .map((e) => ({
-      id: e.id,
-      title: e.title,
-      description_excerpt: truncate(stripHtml(e.description), 150),
-      cover_url: e.cover_url,
-      location: e.location,
-      event_date: e.event_date,
-      isPast: new Date(e.event_date) < now,
-    }))
-
-  // TODO: replace with:
-  // const supabase = await createClient()
-  // const { data } = await supabase
-  //   .from('events')
-  //   .select('id, title, description, cover_path, location, event_date')
-  //   .eq('published', true)
-  //   .order('event_date', { ascending: true })
-  // const now = new Date()
-  // const allPublished = (data ?? []).map((e) => ({
-  //   ...e,
-  //   description_excerpt: truncate(stripHtml(e.description), 150),
-  //   cover_url: e.cover_path
-  //     ? supabase.storage.from('institute-media').getPublicUrl(e.cover_path).data.publicUrl
-  //     : '',
-  //   isPast: new Date(e.event_date) < now,
-  // }))
-
-  const upcoming = allPublished
-    .filter((e) => !e.isPast)
-    .sort((a, b) => new Date(a.event_date).getTime() - new Date(b.event_date).getTime())
-
+  const upcoming = allPublished.filter((e) => !e.isPast)
   const past = allPublished
     .filter((e) => e.isPast)
     .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
-      {/* Page header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
           {heroTitle}
@@ -69,7 +56,6 @@ export default async function EventsPage() {
         )}
       </header>
 
-      {/* Upcoming */}
       <section className="space-y-6">
         <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
           Upcoming Events
@@ -83,7 +69,6 @@ export default async function EventsPage() {
         )}
       </section>
 
-      {/* Past */}
       {past.length > 0 && (
         <section className="space-y-6">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">

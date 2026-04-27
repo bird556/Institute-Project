@@ -7,12 +7,6 @@ import ImpactEditor from './ImpactEditor'
 import MissionEditor from './MissionEditor'
 import type { GoalSectionContent, ImpactSectionContent, MissionSectionContent } from '@/types'
 
-const HOME_SECTIONS = [
-  { key: 'hero',  label: 'Hero Section' },
-  { key: 'intro', label: 'Introduction Section' },
-  { key: 'cta',   label: 'Call to Action Section' },
-]
-
 function parseSection<T>(content: string | undefined, fallback: T): T {
   if (!content) return fallback
   try { return JSON.parse(content) as T } catch { return fallback }
@@ -47,9 +41,20 @@ export default async function AdminHomePage() {
     getSiteSettings(),
   ])
 
-  const goalContent    = sections?.find(s => s.section === 'goal_section')?.content
-  const impactContent  = sections?.find(s => s.section === 'impact_section')?.content
-  const missionContent = sections?.find(s => s.section === 'mission_section')?.content
+  const s = (key: string) => sections?.find(sec => sec.section === key)
+
+  const goalContent    = s('goal_section')?.content
+  const impactContent  = s('impact_section')?.content
+  const missionContent = s('mission_section')?.content
+
+  // Visibility flags — default to enabled if key not yet in DB
+  const vis = {
+    intro:   settings?.intro_section_enabled   !== 'false',
+    cta:     settings?.cta_section_enabled     !== 'false',
+    goal:    settings?.goal_section_enabled    !== 'false',
+    impact:  settings?.impact_section_enabled  !== 'false',
+    mission: settings?.mission_section_enabled !== 'false',
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 p-6">
@@ -62,36 +67,71 @@ export default async function AdminHomePage() {
         </p>
       </div>
 
-      {HOME_SECTIONS.map(({ key, label }) => {
-        const s = sections?.find(sec => sec.section === key)
-        return (
-          <PageSectionEditor
-            key={key}
-            label={label}
-            page="home"
-            section={key}
-            initialContent={s?.content ?? ''}
-            updatedAt={s?.updated_at}
-          />
-        )
-      })}
+      {/* 1. Hero Section */}
+      <PageSectionEditor
+        label="Hero Section"
+        page="home"
+        section="hero"
+        initialContent={s('hero')?.content ?? ''}
+        updatedAt={s('hero')?.updated_at}
+      />
 
-      <div>
-        <h2 className="text-lg font-semibold text-[var(--color-text-primary)] dark:text-white mb-1">
+      {/* 2. Hero Images — right after hero */}
+      <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] p-6 space-y-4">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
           Hero Images
         </h2>
-        <p className="text-sm text-[var(--color-text-muted)] mb-4">
+        <p className="text-sm text-[var(--color-text-muted)]">
           Optionally add a side image and background to the home hero section.
         </p>
         <HomeHeroImagePanels
-          initialHeroImageUrl={settings?.home_hero_image_path ? undefined : undefined}
-          initialBgImageUrl={settings?.home_hero_bg_path ? undefined : undefined}
+          initialHeroImageUrl={undefined}
+          initialBgImageUrl={undefined}
         />
       </div>
 
-      <GoalEditor initialData={parseSection(goalContent, GOAL_FALLBACK)} />
-      <ImpactEditor initialData={parseSection(impactContent, IMPACT_FALLBACK)} />
-      <MissionEditor initialData={parseSection(missionContent, MISSION_FALLBACK)} />
+      {/* 3. Introduction Section */}
+      <PageSectionEditor
+        label="Introduction Section"
+        page="home"
+        section="intro"
+        initialContent={s('intro')?.content ?? ''}
+        updatedAt={s('intro')?.updated_at}
+        visibilityKey="intro_section_enabled"
+        initialVisible={vis.intro}
+      />
+
+      {/* 4. Our Goal Section */}
+      <GoalEditor
+        initialData={parseSection(goalContent, GOAL_FALLBACK)}
+        visibilityKey="goal_section_enabled"
+        initialVisible={vis.goal}
+      />
+
+      {/* 5. The Challenge Section */}
+      <ImpactEditor
+        initialData={parseSection(impactContent, IMPACT_FALLBACK)}
+        visibilityKey="impact_section_enabled"
+        initialVisible={vis.impact}
+      />
+
+      {/* 6. What We Do Section */}
+      <MissionEditor
+        initialData={parseSection(missionContent, MISSION_FALLBACK)}
+        visibilityKey="mission_section_enabled"
+        initialVisible={vis.mission}
+      />
+
+      {/* 7. Call to Action Section */}
+      <PageSectionEditor
+        label="Call to Action Section"
+        page="home"
+        section="cta"
+        initialContent={s('cta')?.content ?? ''}
+        updatedAt={s('cta')?.updated_at}
+        visibilityKey="cta_section_enabled"
+        initialVisible={vis.cta}
+      />
     </div>
   )
 }

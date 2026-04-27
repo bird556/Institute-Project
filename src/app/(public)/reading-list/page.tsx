@@ -1,5 +1,5 @@
 import type { Metadata } from 'next'
-import { mockReadingList } from '@/lib/mock-data'
+import { createClient } from '@/lib/supabase/server'
 import { truncate } from '@/lib/utils'
 import ReadingListGrid from './ReadingListGrid'
 import { getPageContent } from '@/actions/page-content'
@@ -14,43 +14,32 @@ function stripHtml(html: string): string {
 }
 
 export default async function ReadingListPage() {
-  const { data: sections } = await getPageContent('reading_list')
+  const [{ data: sections }, supabase] = await Promise.all([
+    getPageContent('reading_list'),
+    createClient(),
+  ])
   const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Reading List'
   const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
 
-  const items = mockReadingList
-    .filter((r) => r.published)
-    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    .map((r) => ({
-      id: r.id,
-      title: r.title,
-      author: r.author,
-      description_excerpt: truncate(stripHtml(r.description), 120),
-      cover_url: r.cover_url,
-      external_url: r.external_url,
-    }))
+  const { data } = await supabase
+    .from('reading_list')
+    .select('id, title, author, description, cover_path, external_url')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
 
-  // TODO: replace with:
-  // const supabase = await createClient()
-  // const { data } = await supabase
-  //   .from('reading_list')
-  //   .select('id, title, author, description, cover_path, external_url')
-  //   .eq('published', true)
-  //   .order('created_at', { ascending: false })
-  // const items = (data ?? []).map((r) => ({
-  //   id: r.id,
-  //   title: r.title,
-  //   author: r.author ?? '',
-  //   description_excerpt: truncate(stripHtml(r.description ?? ''), 120),
-  //   cover_url: r.cover_path
-  //     ? supabase.storage.from('institute-media').getPublicUrl(r.cover_path).data.publicUrl
-  //     : '',
-  //   external_url: r.external_url,
-  // }))
+  const items = (data ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    author: r.author ?? '',
+    description_excerpt: truncate(stripHtml(r.description ?? ''), 120),
+    cover_url: r.cover_path
+      ? supabase.storage.from('institute-media').getPublicUrl(r.cover_path).data.publicUrl
+      : '',
+    external_url: r.external_url,
+  }))
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
-      {/* Page header */}
       <header className="space-y-3">
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
           {heroTitle}
@@ -60,7 +49,6 @@ export default async function ReadingListPage() {
         )}
       </header>
 
-      {/* Grid */}
       {items.length === 0 ? (
         <p className="text-[var(--color-text-muted)] py-8">
           No items yet — check back soon.

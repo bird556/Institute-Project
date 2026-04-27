@@ -1,9 +1,10 @@
+import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Metadata } from 'next'
 import { Download } from 'lucide-react'
-import { mockWellnessPosts } from '@/lib/mock-data'
+import { createClient } from '@/lib/supabase/server'
 import WellnessCard from '@/components/wellness/WellnessCard'
 import { formatDate } from '@/lib/utils'
 
@@ -11,22 +12,20 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
-function getPost(id: string) {
-  return mockWellnessPosts.find((w) => w.id === id && w.published) ?? null
-  // TODO: replace with:
-  // const supabase = await createClient()
-  // const { data } = await supabase
-  //   .from('wellness_posts')
-  //   .select('*')
-  //   .eq('id', id)
-  //   .eq('published', true)
-  //   .single()
-  // return data ?? null
-}
+const getPost = cache(async (id: string) => {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('wellness_posts')
+    .select('*')
+    .eq('id', id)
+    .eq('published', true)
+    .single()
+  return data ?? null
+})
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
-  const post = getPost(id)
+  const post = await getPost(id)
   if (!post) return {}
   return {
     title: `${post.title} | Health & Wellness | Institute Name`,
@@ -34,40 +33,46 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: post.title,
       description: post.excerpt ?? undefined,
-      images: post.cover_url ? [{ url: post.cover_url }] : [],
     },
   }
 }
 
 export default async function WellnessDetailPage({ params }: Props) {
   const { id } = await params
-  const post = getPost(id)
+  const post = await getPost(id)
   if (!post) notFound()
 
-  const morePosts = mockWellnessPosts
-    .filter((w) => w.published && w.id !== post.id)
-    .sort((a, b) => new Date(b.published_at).getTime() - new Date(a.published_at).getTime())
-    .slice(0, 3)
-    .map((w) => ({
-      id:           w.id,
-      title:        w.title,
-      excerpt:      w.excerpt,
-      cover_url:    w.cover_url,
-      tags:         w.tags,
-      published_at: w.published_at || null,
-    }))
+  const supabase = await createClient()
 
-  // TODO: replace morePosts with Supabase query (same pattern as blog detail)
+  const coverUrl = post.cover_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
+    : null
 
-  // TODO: reconstruct doc download URL from doc_path via Supabase Storage
-  // const docUrl = post.doc_path
-  //   ? supabase.storage.from('institute-media').getPublicUrl(post.doc_path).data.publicUrl
-  //   : null
-  const docUrl = post.doc_path as string | null  // mock: null for all dev posts
+  const docUrl = post.doc_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.doc_path).data.publicUrl
+    : null
+
+  const { data: moreData } = await supabase
+    .from('wellness_posts')
+    .select('id, title, slug, excerpt, cover_path, tags, published_at')
+    .eq('published', true)
+    .neq('id', post.id)
+    .order('published_at', { ascending: false })
+    .limit(3)
+
+  const morePosts = (moreData ?? []).map((w) => ({
+    id:           w.id,
+    title:        w.title,
+    excerpt:      w.excerpt,
+    cover_url:    w.cover_path
+      ? supabase.storage.from('institute-media').getPublicUrl(w.cover_path).data.publicUrl
+      : '',
+    tags:         w.tags ?? [],
+    published_at: w.published_at ?? null,
+  }))
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
-      {/* Back link */}
       <Link
         href="/health-wellness"
         className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
@@ -75,11 +80,10 @@ export default async function WellnessDetailPage({ params }: Props) {
         ← Back to Health &amp; Wellness
       </Link>
 
-      {/* Cover image */}
-      {post.cover_url && (
+      {coverUrl && (
         <div className="relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '16/7' }}>
           <Image
-            src={post.cover_url}
+            src={coverUrl}
             alt={post.title}
             fill
             priority
@@ -89,12 +93,10 @@ export default async function WellnessDetailPage({ params }: Props) {
         </div>
       )}
 
-      {/* Article header */}
       <header className="space-y-4">
-        {/* Tags */}
-        {post.tags.length > 0 && (
+        {post.tags && post.tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {post.tags.map((tag) => (
+            {post.tags.map((tag: string) => (
               <Link
                 key={tag}
                 href={`/health-wellness?tag=${encodeURIComponent(tag)}`}
@@ -114,7 +116,6 @@ export default async function WellnessDetailPage({ params }: Props) {
           {post.title}
         </h1>
 
-        {/* Download button */}
         {docUrl && (
           <a
             href={docUrl}
@@ -129,13 +130,11 @@ export default async function WellnessDetailPage({ params }: Props) {
         )}
       </header>
 
-      {/* Article body */}
       <div
         className="tiptap-content prose max-w-prose mx-auto"
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
-      {/* More Posts */}
       {morePosts.length > 0 && (
         <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">
           <h2 className="font-display text-2xl font-bold text-[var(--color-brand-teal)] dark:text-white">

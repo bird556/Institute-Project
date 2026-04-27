@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import { updatePageSection } from '@/actions/page-content'
 import { formatDate } from '@/lib/utils'
+import SectionVisibilityToggle from '@/components/admin/SectionVisibilityToggle'
 
 interface PageSectionEditorProps {
   label: string
@@ -12,6 +13,8 @@ interface PageSectionEditorProps {
   section: string
   initialContent: string
   updatedAt?: string
+  visibilityKey?: string
+  initialVisible?: boolean
 }
 
 function relativeTime(iso: string): string {
@@ -32,6 +35,8 @@ export default function PageSectionEditor({
   section,
   initialContent,
   updatedAt,
+  visibilityKey,
+  initialVisible = true,
 }: PageSectionEditorProps) {
   const [content, setContent] = useState(initialContent)
   const [savedContent, setSavedContent] = useState(initialContent)
@@ -73,14 +78,19 @@ export default function PageSectionEditor({
         ) : (
           <span />
         )}
-        <button
-          type="button"
-          onClick={handleSave}
-          disabled={!isDirty || isSaving}
-          className="px-4 py-1.5 rounded-lg text-sm font-medium bg-[var(--color-brand-teal)] text-white hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          {isSaving ? 'Saving…' : 'Save'}
-        </button>
+        <div className="flex items-center gap-3">
+          {visibilityKey && (
+            <SectionVisibilityToggle visibilityKey={visibilityKey} initialVisible={initialVisible} />
+          )}
+          <button
+            type="button"
+            onClick={handleSave}
+            disabled={!isDirty || isSaving}
+            className="px-4 py-1.5 rounded-lg text-sm font-medium bg-[var(--color-brand-teal)] text-white hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          >
+            {isSaving ? 'Saving…' : 'Save'}
+          </button>
+        </div>
       </div>
     </div>
   )

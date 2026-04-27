@@ -46,7 +46,8 @@ export async function toggleSectionVisibility(
   const supabase = await createClient()
   const { error } = await supabase
     .from('site_settings')
-    .upsert({ key, value: enabled ? 'true' : 'false' }, { onConflict: 'key' })
+    .update({ value: enabled ? 'true' : 'false' })
+    .eq('key', key)
   if (error) return { success: false, error: error.message }
   revalidatePath('/', 'layout')
   return { success: true }

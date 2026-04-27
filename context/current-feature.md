@@ -20,9 +20,35 @@ Swap every action file from mock data to real Supabase queries, then test all CR
 - [x] Step 10 — Input real site settings (site name, contact info, admin name/title/email)
 - [ ] Step 11 — Input real page content (home, about, mission sections via Tiptap editors)
 - [ ] Step 12 — Create a test blog post, event, reading list item, partner — verify publish/unpublish/delete
-- [ ] Step 13 — Test public pages reflect live Supabase data
+- [x] Step 13 — Wire public pages to Supabase (blogs, events, reading-list, partners, health-wellness, home)
 - [ ] Step 14 — Test search returns real results
-- [ ] Step 15 — Wire `/api/upload` to use real Supabase Storage (test image upload on blog cover)
+- [x] Step 15 — `/api/upload` was already wired to Supabase Storage from initial build
+
+## Additional Work Completed
+
+### Section Visibility Toggles on Admin Home
+
+- New `SectionVisibilityToggle.tsx` client component — Eye/EyeOff icons, calls `toggleSectionVisibility()`, toast on result
+- `PageSectionEditor`, `GoalEditor`, `ImpactEditor`, `MissionEditor` each accept `visibilityKey` + `initialVisible` props and render the toggle beside their Save button
+- Admin `/admin/home` sections reordered to match public page: Hero → Hero Images → Introduction → Goal → Challenge → Mission → CTA
+- Toggles on admin/home and toggles in Site Settings share the same `site_settings` keys — they stay in sync
+- New `site_settings` keys seeded in Supabase dashboard: `intro_section_enabled`, `cta_section_enabled`, `goal_section_enabled`, `impact_section_enabled`, `mission_section_enabled`
+
+### Public Home — Introduction Section
+
+- Introduction section was being saved by the admin but never rendered publicly — fixed by reading the `intro` page_content block and gating its render on `intro_section_enabled`
+- CTA section gated on `cta_section_enabled`
+
+### Footer — Conditional Contact Fields
+
+- Phone and address only render when their respective visibility toggles (`contact_phone_visible`, `address_visible`) are `true` and the field has a value
+- Contact column hidden entirely when no visible fields exist
+
+### `site-visibility.ts` — Supabase Wiring + Bug Fixes
+
+- Rewrote to use `unstable_cache` + real Supabase query; defaults all keys to `true` via `{ ...ALL_ENABLED, ...map }` merge
+- **Fix**: `unstable_cache` cannot call `cookies()` — switched to a plain `createClient` from `@supabase/supabase-js` (no session needed for public `site_settings` reads)
+- **Fix**: `toggleSectionVisibility` switched from `.upsert()` to `.update()` — Supabase RLS blocks upsert INSERT even when the row exists; `.update()` matches the pattern used by all other settings actions and avoids the INSERT permission check
 
 ---
 

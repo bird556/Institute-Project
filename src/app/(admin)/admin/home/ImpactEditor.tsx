@@ -8,13 +8,16 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { updatePageSection } from '@/actions/page-content'
+import SectionVisibilityToggle from '@/components/admin/SectionVisibilityToggle'
 import type { ImpactSectionContent } from '@/types'
 
 interface ImpactEditorProps {
   initialData: ImpactSectionContent
+  visibilityKey?: string
+  initialVisible?: boolean
 }
 
-export default function ImpactEditor({ initialData }: ImpactEditorProps) {
+export default function ImpactEditor({ initialData, visibilityKey, initialVisible = true }: ImpactEditorProps) {
   const [data, setData] = useState<ImpactSectionContent>(initialData)
   const [saved, setSaved] = useState(JSON.stringify(initialData))
   const [saving, setSaving] = useState(false)
@@ -118,7 +121,10 @@ export default function ImpactEditor({ initialData }: ImpactEditorProps) {
         </Button>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3">
+        {visibilityKey && (
+          <SectionVisibilityToggle visibilityKey={visibilityKey} initialVisible={initialVisible} />
+        )}
         <Button onClick={handleSave} disabled={saving || !isDirty} className="cursor-pointer">
           {saving ? 'Saving…' : 'Save'}
         </Button>
