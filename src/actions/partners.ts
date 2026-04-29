@@ -25,6 +25,18 @@ export async function getPartnerById(id: string): Promise<ActionResult<Partner>>
   return { success: true, data }
 }
 
+export async function getPublicPartnerById(id: string): Promise<ActionResult<Partner>> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('partners')
+    .select('*')
+    .eq('id', id)
+    .eq('published', true)
+    .single()
+  if (error) return { success: false, error: 'Partner not found.' }
+  return { success: true, data }
+}
+
 export async function createPartner(): Promise<ActionResult<{ id: string }>> {
   const supabase = await createClient()
   const { data: maxRow } = await supabase

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { getSiteSettings } from '@/actions/settings';
+import { getSiteVisibility, type SiteVisibility } from '@/lib/site-visibility';
 
 function renderSiteName(name: string) {
   const idx = name.indexOf('Institute');
@@ -13,17 +14,20 @@ function renderSiteName(name: string) {
   );
 }
 
-const footerLinks = [
-  { href: '/about', label: 'About' },
-  { href: '/mission', label: 'Mission' },
-  { href: '/events', label: 'Events' },
-  { href: '/blogs', label: 'Blogs' },
-  { href: '/reading-list', label: 'Reading List' },
-  { href: '/partners', label: 'Partners' },
+const ALL_FOOTER_LINKS: { href: string; label: string; key: keyof SiteVisibility }[] = [
+  { href: '/about',        label: 'About',        key: 'about_enabled' },
+  { href: '/mission',      label: 'Mission',      key: 'mission_enabled' },
+  { href: '/events',       label: 'Events',       key: 'events_enabled' },
+  { href: '/blogs',        label: 'Blogs',        key: 'blogs_enabled' },
+  { href: '/reading-list', label: 'Reading List', key: 'reading_list_enabled' },
+  { href: '/partners',     label: 'Partners',     key: 'partners_enabled' },
 ];
 
 export async function Footer() {
-  const { data: settings } = await getSiteSettings();
+  const [{ data: settings }, visibility] = await Promise.all([
+    getSiteSettings(),
+    getSiteVisibility(),
+  ]);
 
   const siteName        = settings?.site_name || 'Kustawi Institute';
   const siteDescription = settings?.site_description || '';
@@ -59,7 +63,7 @@ export async function Footer() {
               Navigate
             </p>
             <ul className="space-y-2">
-              {footerLinks.map(({ href, label }) => (
+              {ALL_FOOTER_LINKS.filter(({ key }) => visibility[key]).map(({ href, label }) => (
                 <li key={href}>
                   <Link
                     href={href}

@@ -3,59 +3,16 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { FileText, CalendarDays, BookOpen, Handshake, Inbox, Plus } from 'lucide-react'
-import { mockDashboardStats, mockRecentActivity, mockNewsletterSubmissions } from '@/lib/mock-data'
 import { formatDate } from '@/lib/utils'
 import { cn } from '@/lib/utils'
-
-// ── Stat cards ────────────────────────────────────────────────────────────────
-
-const pendingCount = mockDashboardStats.newsletter.pendingReview
-
-const STAT_CARDS = [
-  {
-    label:    'Blog Posts',
-    icon:     FileText,
-    value:    mockDashboardStats.blogs.published,
-    subLabel: 'published',
-    urgent:   false,
-  },
-  {
-    label:    'Events',
-    icon:     CalendarDays,
-    value:    mockDashboardStats.events.upcoming,
-    subLabel: 'upcoming',
-    urgent:   false,
-  },
-  {
-    label:    'Reading List',
-    icon:     BookOpen,
-    value:    mockDashboardStats.readingList.published,
-    subLabel: 'items',
-    urgent:   false,
-  },
-  {
-    label:    'Partners',
-    icon:     Handshake,
-    value:    mockDashboardStats.partners.active,
-    subLabel: 'active',
-    urgent:   false,
-  },
-  {
-    label:    'Submissions Pending',
-    icon:     Inbox,
-    value:    pendingCount,
-    subLabel: 'need review',
-    urgent:   pendingCount > 0,
-    href:     '/admin/newsletter',
-  },
-]
+import type { DashboardData } from '@/actions/dashboard'
 
 // ── Quick actions ─────────────────────────────────────────────────────────────
 
 const QUICK_ACTIONS = [
-  { label: '+ New Blog',    href: '/admin/blogs/new' },
-  { label: '+ New Event',   href: '/admin/events/new' },
-  { label: '+ New Partner', href: '/admin/partners/new' },
+  { label: 'New Blog',    href: '/admin/blogs/new' },
+  { label: 'New Event',   href: '/admin/events/new' },
+  { label: 'New Partner', href: '/admin/partners/new' },
 ]
 
 // ── Activity type badge ───────────────────────────────────────────────────────
@@ -74,7 +31,48 @@ const TYPE_COLORS: Record<string, string> = {
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export default function DashboardOverview() {
+export default function DashboardOverview({ data }: { data: DashboardData }) {
+  const { stats, pendingSubmissions, recentActivity } = data
+
+  const STAT_CARDS = [
+    {
+      label:    'Blog Posts',
+      icon:     FileText,
+      value:    stats.blogs,
+      subLabel: 'published',
+      urgent:   false,
+    },
+    {
+      label:    'Events',
+      icon:     CalendarDays,
+      value:    stats.upcomingEvents,
+      subLabel: 'upcoming',
+      urgent:   false,
+    },
+    {
+      label:    'Reading List',
+      icon:     BookOpen,
+      value:    stats.readingList,
+      subLabel: 'items',
+      urgent:   false,
+    },
+    {
+      label:    'Partners',
+      icon:     Handshake,
+      value:    stats.partners,
+      subLabel: 'active',
+      urgent:   false,
+    },
+    {
+      label:    'Submissions Pending',
+      icon:     Inbox,
+      value:    stats.pendingSubmissions,
+      subLabel: 'need review',
+      urgent:   stats.pendingSubmissions > 0,
+      href:     '/admin/newsletter',
+    },
+  ]
+
   return (
     <div className="space-y-8">
       {/* Welcome */}
@@ -147,14 +145,14 @@ export default function DashboardOverview() {
               className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-sm font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
             >
               <Plus size={15} />
-              {action.label.replace('+ ', '')}
+              {action.label}
             </Link>
           ))}
         </div>
       </div>
 
       {/* Pending newsletter submissions */}
-      {pendingCount > 0 && (
+      {stats.pendingSubmissions > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wider">
@@ -168,33 +166,30 @@ export default function DashboardOverview() {
             </Link>
           </div>
           <div className="bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] border border-amber-300 dark:border-amber-700 rounded-xl divide-y divide-[var(--color-border)] dark:divide-[var(--color-dark-border)] overflow-hidden">
-            {mockNewsletterSubmissions
-              .filter((s) => s.status === 'pending')
-              .slice(0, 3)
-              .map((s) => (
-                <Link
-                  key={s.id}
-                  href={`/admin/newsletter/submissions/${s.id}`}
-                  className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className={cn(
-                      'shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold',
-                      s.type === 'research_call' ? 'bg-[var(--color-brand-teal)] text-white' :
-                      s.type === 'research_note' ? 'bg-amber-500 text-white' :
-                                                   'bg-purple-600 text-white',
-                    )}>
-                      {s.type === 'research_call' ? 'RC' : s.type === 'research_note' ? 'RN' : 'AC'}
-                    </span>
-                    <span className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
-                      {s.title}
-                    </span>
-                  </div>
-                  <span className="shrink-0 text-xs text-[var(--color-text-muted)]">
-                    Review →
+            {pendingSubmissions.map((s) => (
+              <Link
+                key={s.id}
+                href={`/admin/newsletter/submissions/${s.id}`}
+                className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className={cn(
+                    'shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-bold',
+                    s.type === 'research_call' ? 'bg-[var(--color-brand-teal)] text-white' :
+                    s.type === 'research_note' ? 'bg-amber-500 text-white' :
+                                                 'bg-purple-600 text-white',
+                  )}>
+                    {s.type === 'research_call' ? 'RC' : s.type === 'research_note' ? 'RN' : 'AC'}
                   </span>
-                </Link>
-              ))}
+                  <span className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
+                    {s.title}
+                  </span>
+                </div>
+                <span className="shrink-0 text-xs text-[var(--color-text-muted)]">
+                  Review →
+                </span>
+              </Link>
+            ))}
           </div>
         </div>
       )}
@@ -204,30 +199,34 @@ export default function DashboardOverview() {
         <h3 className="text-sm font-semibold text-[var(--color-text-muted)] uppercase tracking-wider mb-3">
           Recent Activity
         </h3>
-        <div className="bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] rounded-xl divide-y divide-[var(--color-border)] dark:divide-[var(--color-dark-border)]">
-          {mockRecentActivity.map((item, i) => (
-            <Link
-              key={i}
-              href={item.href}
-              className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors first:rounded-t-xl last:rounded-b-xl"
-            >
-              <div className="flex items-center gap-3 min-w-0">
-                <span
-                  className={cn(
-                    'shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
-                    TYPE_COLORS[item.type]
-                  )}
-                >
-                  {TYPE_LABELS[item.type]}
+        {recentActivity.length === 0 ? (
+          <p className="text-sm text-[var(--color-text-muted)]">No recent activity yet.</p>
+        ) : (
+          <div className="bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] rounded-xl divide-y divide-[var(--color-border)] dark:divide-[var(--color-dark-border)]">
+            {recentActivity.map((item, i) => (
+              <Link
+                key={i}
+                href={item.href}
+                className="flex items-center justify-between gap-4 px-5 py-4 hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors first:rounded-t-xl last:rounded-b-xl"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={cn(
+                      'shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
+                      TYPE_COLORS[item.type]
+                    )}
+                  >
+                    {TYPE_LABELS[item.type]}
+                  </span>
+                  <span className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">{item.title}</span>
+                </div>
+                <span className="shrink-0 text-xs text-[var(--color-text-muted)]">
+                  {formatDate(item.date)}
                 </span>
-                <span className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">{item.title}</span>
-              </div>
-              <span className="shrink-0 text-xs text-[var(--color-text-muted)]">
-                {formatDate(item.date)}
-              </span>
-            </Link>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )

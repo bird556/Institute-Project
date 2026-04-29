@@ -15,13 +15,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ImageUpload from '@/components/shared/ImageUpload'
+import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updatePartner, deletePartner } from '@/actions/partners'
 import { formatDate } from '@/lib/utils'
 import type { Partner } from '@/types'
 
 const AUTOSAVE_MS = 2000
-const DESC_MAX = 500
 
 function isValidUrl(value: string): boolean {
   try {
@@ -80,7 +80,6 @@ export default function PartnerEditor({ partner }: PartnerEditorProps) {
   }
 
   function handleDescriptionChange(val: string) {
-    if (val.length > DESC_MAX) return
     setDescription(val)
     scheduleAutosave()
   }
@@ -188,21 +187,15 @@ export default function PartnerEditor({ partner }: PartnerEditorProps) {
 
             {/* Description */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="description" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                  Description
-                </Label>
-                <span className="text-xs text-[var(--color-text-muted)]">
-                  {description.length}/{DESC_MAX}
-                </span>
-              </div>
-              <textarea
-                id="description"
-                value={description}
-                onChange={(e) => handleDescriptionChange(e.target.value)}
-                placeholder="Brief description of this partner organisation…"
-                rows={5}
-                className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Description
+              </Label>
+              <RichTextEditor
+                content={description}
+                onChange={handleDescriptionChange}
+                folder="partners/inline"
+                placeholder="Write a description for this partner organisation…"
+                minHeight={250}
               />
             </div>
           </div>
