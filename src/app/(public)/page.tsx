@@ -35,9 +35,21 @@ const GOAL_FALLBACK: GoalSectionContent = {
   description:
     "Kustawi strives to promote engagement, disseminate knowledge and conduct research that will enable African descent boys, men and those who love them to thrive and continue their life's journey with an enriched sense of themselves endowed by the Grantor of Dominion (GoD).",
   pillars: [
-    { num: '01', label: 'Engagement', desc: 'Building meaningful connections and community.' },
-    { num: '02', label: 'Knowledge',  desc: 'Disseminating research and education.' },
-    { num: '03', label: 'Research',   desc: 'Conducting transformative studies.' },
+    {
+      num: '01',
+      label: 'Engagement',
+      desc: 'Building meaningful connections and community.',
+    },
+    {
+      num: '02',
+      label: 'Knowledge',
+      desc: 'Disseminating research and education.',
+    },
+    {
+      num: '03',
+      label: 'Research',
+      desc: 'Conducting transformative studies.',
+    },
   ],
 };
 
@@ -62,10 +74,26 @@ const MISSION_FALLBACK: MissionSectionContent = {
   description:
     'The Institute recognizes that many African descent boys and men are impacted by misandrist dehumanizing stereotypes, unspoken trauma, and the silencing of their emotional lives.',
   pillars: [
-    { icon_name: 'Heart',    title: 'Advocacy',      desc: 'Championing the emotional well-being and dignity of African descent boys and men.' },
-    { icon_name: 'BookOpen', title: 'Education',      desc: 'Community education and knowledge dissemination for healing and empowerment.' },
-    { icon_name: 'Shield',   title: 'Research',       desc: 'Conducting critical research on trauma, identity, and resilience.' },
-    { icon_name: 'Users',    title: 'Psychotherapy',  desc: 'Supporting men and boys in reclaiming creative power and voice.' },
+    {
+      icon_name: 'Heart',
+      title: 'Advocacy',
+      desc: 'Championing the emotional well-being and dignity of African descent boys and men.',
+    },
+    {
+      icon_name: 'BookOpen',
+      title: 'Education',
+      desc: 'Community education and knowledge dissemination for healing and empowerment.',
+    },
+    {
+      icon_name: 'Shield',
+      title: 'Research',
+      desc: 'Conducting critical research on trauma, identity, and resilience.',
+    },
+    {
+      icon_name: 'Users',
+      title: 'Psychotherapy',
+      desc: 'Supporting men and boys in reclaiming creative power and voice.',
+    },
   ],
 };
 
@@ -78,21 +106,29 @@ export default async function HomePage() {
       createClient(),
     ]);
 
-  const hero  = sections?.find((s) => s.section === 'hero');
+  const hero = sections?.find((s) => s.section === 'hero');
   const intro = sections?.find((s) => s.section === 'intro');
-  const cta   = sections?.find((s) => s.section === 'cta');
+  const cta = sections?.find((s) => s.section === 'cta');
 
   // Reconstruct hero image URLs from storage paths
   const heroImageUrl = settings?.home_hero_image_path
-    ? supabase.storage.from('institute-media').getPublicUrl(settings.home_hero_image_path).data.publicUrl
+    ? supabase.storage
+        .from('institute-media')
+        .getPublicUrl(settings.home_hero_image_path).data.publicUrl
     : '/assets/hero-image.jpg';
   const heroBgUrl = settings?.home_hero_bg_path
-    ? supabase.storage.from('institute-media').getPublicUrl(settings.home_hero_bg_path).data.publicUrl
+    ? supabase.storage
+        .from('institute-media')
+        .getPublicUrl(settings.home_hero_bg_path).data.publicUrl
     : '/assets/forest-bg.jpg';
 
-  const goalData    = parseSection(sections, 'goal_section',    GOAL_FALLBACK);
-  const impactData  = parseSection(sections, 'impact_section',  IMPACT_FALLBACK);
-  const missionData = parseSection(sections, 'mission_section', MISSION_FALLBACK);
+  const goalData = parseSection(sections, 'goal_section', GOAL_FALLBACK);
+  const impactData = parseSection(sections, 'impact_section', IMPACT_FALLBACK);
+  const missionData = parseSection(
+    sections,
+    'mission_section',
+    MISSION_FALLBACK,
+  );
 
   // Upcoming events from Supabase
   const now = new Date().toISOString();
@@ -108,7 +144,7 @@ export default async function HomePage() {
   return (
     <div>
       {/* Hero — always rendered with defaults */}
-      <section className="relative bg-surface dark:bg-dark-surface py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative bg-surface dark:bg-dark-surface py-40 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <Image
           src={heroBgUrl}
           alt=""
@@ -141,7 +177,7 @@ export default async function HomePage() {
                 </a>
               </div>
             </div>
-            <div className="hidden md:block flex-shrink-0 w-80">
+            <div className="hidden md:block flex-shrink-0 w-sm">
               <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/5]">
                 <Image
                   src={heroImageUrl}
@@ -176,7 +212,9 @@ export default async function HomePage() {
       {visibility.impact_section_enabled && <ImpactSection data={impactData} />}
 
       {/* Mission Section */}
-      {visibility.mission_section_enabled && <MissionSection data={missionData} />}
+      {visibility.mission_section_enabled && (
+        <MissionSection data={missionData} />
+      )}
 
       {/* Upcoming Events */}
       {upcomingEvents.length > 0 && (

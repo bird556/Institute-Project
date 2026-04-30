@@ -1,8 +1,16 @@
 import { getSiteSettings } from '@/actions/settings'
+import { createClient } from '@/lib/supabase/server'
 import SettingsClient from '@/components/admin/SettingsClient'
 
 export default async function AdminSettingsPage() {
-  const { data: settings } = await getSiteSettings()
+  const [{ data: settings }, supabase] = await Promise.all([
+    getSiteSettings(),
+    createClient(),
+  ])
+
+  const logoUrl = settings?.logo_path
+    ? supabase.storage.from('institute-media').getPublicUrl(settings.logo_path).data.publicUrl
+    : undefined
 
   return (
     <div className="max-w-2xl mx-auto space-y-8 p-6">
@@ -15,7 +23,7 @@ export default async function AdminSettingsPage() {
         </p>
       </div>
 
-      <SettingsClient initialSettings={settings ?? null} />
+      <SettingsClient initialSettings={settings ?? null} initialLogoUrl={logoUrl} />
     </div>
   )
 }

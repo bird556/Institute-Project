@@ -39,9 +39,10 @@ import type { Partner } from '@/types'
 
 interface PartnersClientProps {
   partners: Partner[]
+  logoUrls: Record<string, string>
 }
 
-export default function PartnersClient({ partners: initial }: PartnersClientProps) {
+export default function PartnersClient({ partners: initial, logoUrls }: PartnersClientProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [partners, setPartners] = useState(initial)
@@ -151,6 +152,7 @@ export default function PartnersClient({ partners: initial }: PartnersClientProp
                     key={partner.id}
                     partner={partner}
                     index={i}
+                    logoUrl={logoUrls[partner.id]}
                     onEdit={() => router.push(`/admin/partners/${partner.id}`)}
                     onDelete={() => setDeleteId(partner.id)}
                     onToggleVisible={() => handleToggleVisible(partner.id, partner.published)}
@@ -181,12 +183,13 @@ export default function PartnersClient({ partners: initial }: PartnersClientProp
 interface SortableRowProps {
   partner: Partner
   index: number
+  logoUrl?: string
   onEdit: () => void
   onDelete: () => void
   onToggleVisible: () => void
 }
 
-function SortableRow({ partner, index, onEdit, onDelete, onToggleVisible }: SortableRowProps) {
+function SortableRow({ partner, index, logoUrl, onEdit, onDelete, onToggleVisible }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: partner.id,
   })
@@ -219,9 +222,9 @@ function SortableRow({ partner, index, onEdit, onDelete, onToggleVisible }: Sort
 
       {/* Logo thumbnail */}
       <div className="h-12 w-12 rounded-md overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] shrink-0 flex items-center justify-center">
-        {partner.logo_path ? (
+        {logoUrl ? (
           <Image
-            src={partner.logo_path}
+            src={logoUrl}
             alt={partner.name}
             width={48}
             height={48}

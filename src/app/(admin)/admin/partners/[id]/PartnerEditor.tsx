@@ -34,15 +34,16 @@ function isValidUrl(value: string): boolean {
 
 interface PartnerEditorProps {
   partner: Partner
+  initialLogoUrl?: string
 }
 
-export default function PartnerEditor({ partner }: PartnerEditorProps) {
+export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditorProps) {
   const router = useRouter()
 
   const [name, setName] = useState(partner.name)
   const [description, setDescription] = useState(partner.description ?? '')
   const [logoPath, setLogoPath] = useState<string | null>(partner.logo_path)
-  const [logoUrl, setLogoUrl] = useState<string | undefined>(undefined)
+  const [logoUrl, setLogoUrl] = useState<string | undefined>(initialLogoUrl)
   const [websiteUrl, setWebsiteUrl] = useState(partner.website_url ?? '')
   const [urlError, setUrlError] = useState('')
 

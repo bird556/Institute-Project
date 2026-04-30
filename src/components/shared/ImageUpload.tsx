@@ -68,7 +68,11 @@ export default function ImageUpload({
       </p>
 
       {currentUrl ? (
-        <div className="relative rounded-lg overflow-hidden border border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+        <div
+          className="group relative rounded-lg overflow-hidden border border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+          onDrop={handleDrop}
+          onDragOver={(e) => e.preventDefault()}
+        >
           <div className="relative w-full aspect-video">
             <Image
               src={currentUrl}
@@ -78,6 +82,8 @@ export default function ImageUpload({
               sizes="(max-width: 768px) 100vw, 400px"
             />
           </div>
+          {/* Darkened overlay — always slightly visible, stronger on hover */}
+          <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors" />
           <div className="absolute top-2 right-2 flex gap-1">
             <Button
               type="button"
@@ -100,6 +106,10 @@ export default function ImageUpload({
               <X className="h-3 w-3" />
             </Button>
           </div>
+          {/* Drag-to-replace hint shown on hover */}
+          <p className="absolute bottom-2 left-0 right-0 text-center text-xs text-white/80 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+            Drop a new image to replace
+          </p>
         </div>
       ) : (
         <div

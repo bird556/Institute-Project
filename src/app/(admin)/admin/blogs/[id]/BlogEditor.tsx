@@ -28,9 +28,10 @@ const AUTOSAVE_MS = 2000
 
 interface BlogEditorProps {
   post: BlogPost
+  initialCoverUrl?: string
 }
 
-export default function BlogEditor({ post }: BlogEditorProps) {
+export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
   const router = useRouter()
 
   const [title, setTitle] = useState(post.title)
@@ -38,7 +39,7 @@ export default function BlogEditor({ post }: BlogEditorProps) {
   const [excerpt, setExcerpt] = useState(post.excerpt ?? '')
   const [content, setContent] = useState(post.content)
   const [coverPath, setCoverPath] = useState<string | null>(post.cover_path)
-  const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined)
+  const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [published, setPublished] = useState(post.published)
 
   const [saving, setSaving] = useState(false)

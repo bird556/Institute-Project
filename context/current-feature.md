@@ -94,6 +94,55 @@ Swap every action file from mock data to real Supabase queries, then test all CR
 
 ---
 
+## Additional Work Completed
+
+### Feature Docs Added
+
+- **`context/features/resend-email.md`** — Full setup guide for Resend transactional email: account creation, domain verification, `npm install resend`, `src/lib/resend.ts` singleton, wiring the 3 newsletter TODOs (`submitToNewsletter`, `approveSubmission`, `rejectSubmission`), try/catch pattern so email failures don't block actions. Documents the 3 existing email template components (`SubmissionConfirmation`, `SubmissionApproved`, `SubmissionRejected`) and optional contact form integration.
+- **`context/features/seo-management.md`** — Full spec for admin-controlled SEO: 6 new `site_settings` keys (`seo_site_name`, `seo_default_description`, `seo_og_image_path`, `seo_twitter_handle`, `seo_ga_id`, `seo_robots`), per-page SEO via `page_content` `seo_title`/`seo_description` sections, new `src/lib/metadata.ts` helper, `/admin/seo` page spec, GA4 injection via `next/script` in root layout, and all listing/detail pages updated from static `metadata` to `generateMetadata()`.
+
+### Bug Fix — Logo URL Reconstruction (Header Crash)
+
+- `src/components/layout/HeaderServer.tsx` was passing `settings.logo_path` (a raw Supabase Storage key like `logos/my-logo.png`) directly to `Header` as `logoUrl`. `next/image` requires a full URL, causing an `Invalid URL` crash on the public site after uploading a brand logo.
+- Fixed: `HeaderServer.tsx` now calls `createClient()` and reconstructs the URL via `supabase.storage.from('institute-media').getPublicUrl(path).data.publicUrl` before passing it down.
+
+### Bug Fix — Admin Settings Logo Not Showing on Reload
+
+- `src/app/(admin)/admin/settings/page.tsx` was not reconstructing the logo URL server-side, so `SettingsClient.tsx` always initialized `logoUrl` state as `undefined` (a `// TODO` comment was left in place). The uploaded logo was never shown on re-entering the settings page.
+- Fixed: `settings/page.tsx` now adds `createClient()`, reconstructs the logo URL, and passes it as `initialLogoUrl` prop. `SettingsClient.tsx` initializes state from `useState<string | undefined>(initialLogoUrl)`.
+
+### ImageUpload UX — Preview Overlay + Drag-and-Drop on Existing Image
+
+- `src/components/shared/ImageUpload.tsx` image preview container now uses CSS `group` + `group-hover` for a permanent 30% dark overlay (50% on hover) over the existing image.
+- "Change" and "X" (remove) buttons remain in the top-right corner of the preview.
+- A "Drop a new image to replace" hint fades in on hover at the bottom of the preview.
+- `onDrop` + `onDragOver` handlers added to the preview container so drag-and-drop still works when an image is already shown.
+
+### Bug Fix — Admin Partners List Page Crash
+
+- `src/app/(admin)/admin/partners/page.tsx` → `PartnersClient.tsx` → `SortableRow` was using `partner.logo_path` (raw storage key) as the `src` for `next/image`, causing `Invalid URL` on the admin partners list page.
+- Fixed: `partners/page.tsx` now builds a `logoUrls: Record<string, string>` map (keyed by partner ID) via `getPublicUrl()` for every partner that has a `logo_path`, and passes the map to `PartnersClient`. `SortableRow` receives and uses `logoUrl` instead of the raw path.
+
+### Bug Fix — Cover/Logo Images Not Showing in Admin Editors on Load
+
+All 6 content editors were initializing their cover/logo URL state as `undefined`, so `ImageUpload` always showed the empty dropzone even when a cover or logo had previously been saved. Fixed across every editor with the same pattern: server `page.tsx` adds `createClient()`, reconstructs the URL, and passes it as an initial prop; the editor client component initializes state from that prop.
+
+| Editor | Page fixed | Prop added |
+|---|---|---|
+| Blog editor | `admin/blogs/[id]/page.tsx` + `BlogEditor.tsx` | `initialCoverUrl` |
+| Event editor | `admin/events/[id]/page.tsx` + `EventEditor.tsx` | `initialCoverUrl` |
+| Reading list editor | `admin/reading-list/[id]/page.tsx` + `ReadingListEditor.tsx` | `initialCoverUrl` |
+| Health & Wellness editor | `admin/health-wellness/[id]/page.tsx` + `WellnessEditor.tsx` | `initialCoverUrl` |
+| Newsletter edition editor | `admin/newsletter/editions/[id]/page.tsx` + `EditionEditor.tsx` | `initialCoverUrl` |
+| Partner editor | `admin/partners/[id]/page.tsx` + `PartnerEditor.tsx` | `initialLogoUrl` |
+
+### Bug Fix — Admin Home Hero Images Not Showing
+
+- `src/app/(admin)/admin/home/page.tsx` was passing `initialHeroImageUrl={undefined}` and `initialBgImageUrl={undefined}` to `HomeHeroImagePanels` even though `settings` had the paths stored.
+- Fixed: `home/page.tsx` now adds `createClient()` to the existing `Promise.all`, reconstructs both URLs server-side, and passes them as props so `HomeHeroImagePanels` initializes its state from the already-uploaded images.
+
+---
+
 # Auth Activation & Testing — COMPLETE ✅
 
 > Branch: `supabase-setup-phase`

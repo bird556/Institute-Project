@@ -29,9 +29,10 @@ const AUTOSAVE_MS = 2000
 
 interface WellnessEditorProps {
   post: WellnessPost
+  initialCoverUrl?: string
 }
 
-export default function WellnessEditor({ post }: WellnessEditorProps) {
+export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditorProps) {
   const router = useRouter()
 
   const [title, setTitle]         = useState(post.title)
@@ -39,7 +40,7 @@ export default function WellnessEditor({ post }: WellnessEditorProps) {
   const [excerpt, setExcerpt]     = useState(post.excerpt ?? '')
   const [content, setContent]     = useState(post.content)
   const [coverPath, setCoverPath] = useState<string | null>(post.cover_path)
-  const [coverUrl, setCoverUrl]   = useState<string | undefined>(undefined)
+  const [coverUrl, setCoverUrl]   = useState<string | undefined>(initialCoverUrl)
   const [docPath, setDocPath]     = useState<string | null>(post.doc_path)
   const [docName, setDocName]     = useState<string>('')
   const [docUploading, setDocUploading] = useState(false)

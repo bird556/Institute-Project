@@ -26,6 +26,7 @@ const AUTOSAVE_MS = 2000
 
 interface ReadingListEditorProps {
   item: ReadingListItem
+  initialCoverUrl?: string
 }
 
 function isValidUrl(value: string): boolean {
@@ -37,14 +38,14 @@ function isValidUrl(value: string): boolean {
   }
 }
 
-export default function ReadingListEditor({ item }: ReadingListEditorProps) {
+export default function ReadingListEditor({ item, initialCoverUrl }: ReadingListEditorProps) {
   const router = useRouter()
 
   const [title, setTitle] = useState(item.title)
   const [author, setAuthor] = useState(item.author ?? '')
   const [description, setDescription] = useState(item.description ?? '')
   const [coverPath, setCoverPath] = useState<string | null>(item.cover_path)
-  const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined)
+  const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [externalUrl, setExternalUrl] = useState(item.external_url ?? '')
   const [urlError, setUrlError] = useState('')
   const [published, setPublished] = useState(item.published)

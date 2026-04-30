@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { getWellnessById } from '@/actions/wellness'
+import { createClient } from '@/lib/supabase/server'
 import WellnessEditor from './WellnessEditor'
 
 interface Props {
@@ -8,7 +9,10 @@ interface Props {
 
 export default async function WellnessEditorPage({ params }: Props) {
   const { id } = await params
-  const { data: post } = await getWellnessById(id)
+  const [{ data: post }, supabase] = await Promise.all([getWellnessById(id), createClient()])
   if (!post) notFound()
-  return <WellnessEditor post={post} />
+  const initialCoverUrl = post.cover_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
+    : undefined
+  return <WellnessEditor post={post} initialCoverUrl={initialCoverUrl} />
 }

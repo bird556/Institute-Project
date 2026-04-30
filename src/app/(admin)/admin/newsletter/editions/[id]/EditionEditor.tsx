@@ -63,12 +63,14 @@ interface EditionEditorProps {
   edition: NewsletterEdition
   editionSubmissions: NewsletterSubmission[]
   availableSubmissions: NewsletterSubmission[]
+  initialCoverUrl?: string
 }
 
 export default function EditionEditor({
   edition,
   editionSubmissions: initialEditionSubs,
   availableSubmissions: initialAvailable,
+  initialCoverUrl,
 }: EditionEditorProps) {
   const router = useRouter()
 
@@ -76,7 +78,7 @@ export default function EditionEditor({
   const [slug, setSlug]             = useState(edition.slug)
   const [intro, setIntro]           = useState(edition.intro)
   const [coverPath, setCoverPath]   = useState<string | null>(edition.cover_path)
-  const [coverUrl, setCoverUrl]     = useState<string | undefined>(undefined)
+  const [coverUrl, setCoverUrl]     = useState<string | undefined>(initialCoverUrl)
   const [published, setPublished]   = useState(edition.published)
   const [slugManual, setSlugManual] = useState(false)
 

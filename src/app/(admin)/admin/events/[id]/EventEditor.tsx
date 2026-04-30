@@ -26,6 +26,7 @@ const AUTOSAVE_MS = 2000
 
 interface EventEditorProps {
   event: Event
+  initialCoverUrl?: string
 }
 
 /** Split an ISO timestamptz into separate date + time strings for the inputs */
@@ -41,14 +42,14 @@ function combineDateTime(date: string, time: string): string {
   return `${date}T${time}:00.000Z`
 }
 
-export default function EventEditor({ event }: EventEditorProps) {
+export default function EventEditor({ event, initialCoverUrl }: EventEditorProps) {
   const router = useRouter()
 
   const [title, setTitle] = useState(event.title)
   const [slug, setSlug] = useState(event.slug)
   const [description, setDescription] = useState(event.description)
   const [coverPath, setCoverPath] = useState<string | null>(event.cover_path)
-  const [coverUrl, setCoverUrl] = useState<string | undefined>(undefined)
+  const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [location, setLocation] = useState(event.location ?? '')
   const [externalUrl, setExternalUrl] = useState(event.external_url ?? '')
   const [published, setPublished] = useState(event.published)

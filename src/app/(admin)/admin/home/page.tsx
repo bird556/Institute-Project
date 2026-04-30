@@ -1,5 +1,6 @@
 import { getPageContent } from '@/actions/page-content'
 import { getSiteSettings } from '@/actions/settings'
+import { createClient } from '@/lib/supabase/server'
 import PageSectionEditor from '@/components/admin/PageSectionEditor'
 import HomeHeroImagePanels from '@/components/admin/HomeHeroImagePanels'
 import GoalEditor from './GoalEditor'
@@ -36,9 +37,10 @@ const MISSION_FALLBACK: MissionSectionContent = {
 }
 
 export default async function AdminHomePage() {
-  const [{ data: sections }, { data: settings }] = await Promise.all([
+  const [{ data: sections }, { data: settings }, supabase] = await Promise.all([
     getPageContent('home'),
     getSiteSettings(),
+    createClient(),
   ])
 
   const s = (key: string) => sections?.find(sec => sec.section === key)
@@ -85,8 +87,12 @@ export default async function AdminHomePage() {
           Optionally add a side image and background to the home hero section.
         </p>
         <HomeHeroImagePanels
-          initialHeroImageUrl={undefined}
-          initialBgImageUrl={undefined}
+          initialHeroImageUrl={settings?.home_hero_image_path
+            ? supabase.storage.from('institute-media').getPublicUrl(settings.home_hero_image_path).data.publicUrl
+            : undefined}
+          initialBgImageUrl={settings?.home_hero_bg_path
+            ? supabase.storage.from('institute-media').getPublicUrl(settings.home_hero_bg_path).data.publicUrl
+            : undefined}
         />
       </div>
 

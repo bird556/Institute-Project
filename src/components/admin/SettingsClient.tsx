@@ -18,6 +18,7 @@ import type { SiteSettings } from '@/types'
 
 interface SettingsClientProps {
   initialSettings: SiteSettings | null
+  initialLogoUrl?: string
 }
 
 const EMPTY: SiteSettings = {
@@ -52,16 +53,12 @@ const EMPTY: SiteSettings = {
   cta_section_enabled:   'true',
 }
 
-export default function SettingsClient({ initialSettings }: SettingsClientProps) {
+export default function SettingsClient({ initialSettings, initialLogoUrl }: SettingsClientProps) {
   const settings = initialSettings ?? EMPTY
 
   // ── Logo ────────────────────────────────────────────────────────────────────
   const [logoPath, setLogoPath] = useState(settings.logo_path)
-  const [logoUrl, setLogoUrl] = useState<string | undefined>(
-    settings.logo_path ? undefined : undefined,
-    // TODO: reconstruct from Supabase Storage:
-    // supabase.storage.from('institute-media').getPublicUrl(settings.logo_path).data.publicUrl
-  )
+  const [logoUrl, setLogoUrl] = useState<string | undefined>(initialLogoUrl)
 
   function handleLogoUpload(url: string, path: string) {
     setLogoUrl(url)
