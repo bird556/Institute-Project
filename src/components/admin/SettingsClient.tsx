@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -156,6 +157,28 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     if (!res.success) {
       setVisibility(prev => ({ ...prev, [key]: !enabled }))
       toast.error(res.error ?? 'Failed to update visibility')
+    }
+  }
+
+  // ── Export Data ─────────────────────────────────────────────────────────────
+  const [exporting, setExporting] = useState(false)
+
+  async function handleExport() {
+    setExporting(true)
+    try {
+      const res = await fetch('/api/export')
+      if (!res.ok) throw new Error()
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `institute-export-${new Date().toISOString().slice(0, 10)}.zip`
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      toast.error('Export failed. Please try again.')
+    } finally {
+      setExporting(false)
     }
   }
 
@@ -394,7 +417,7 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
 
       <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
 
-      {/* ── Section 4: Change Password ────────────────────────────────────── */}
+      {/* ── Section 4: Change Password ───────────────────────────────────── */}
       <section className="space-y-4">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
@@ -452,7 +475,38 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
 
       <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
 
-      {/* ── Section 5: Page Visibility ────────────────────────────────── */}
+      {/* ── Section 5: Export Data ───────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Export Data
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Download a complete backup of all your site content and media as a ZIP archive.
+            Includes all posts, events, partners, reading list, wellness posts, newsletter,
+            page content, settings, and all uploaded images and documents.
+          </p>
+        </div>
+
+        <Button
+          onClick={handleExport}
+          disabled={exporting}
+          className="cursor-pointer"
+        >
+          {exporting ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Preparing export…
+            </>
+          ) : (
+            'Download Export'
+          )}
+        </Button>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 6: Page Visibility ────────────────────────────────── */}
       <section className="space-y-4">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
