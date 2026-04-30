@@ -1,4 +1,4 @@
-# Supabase Data Wiring — IN PROGRESS 🔧
+# Supabase Data Wiring — COMPLETE ✅
 
 > Branch: `supabase-setup-phase`
 
@@ -18,11 +18,53 @@ Swap every action file from mock data to real Supabase queries, then test all CR
 - [x] Step 8 — Wire `src/actions/wellness.ts` (all CRUD actions)
 - [x] Step 9 — Wire `src/actions/search.ts` (Supabase FTS across blog_posts, events, reading_list)
 - [x] Step 10 — Input real site settings (site name, contact info, admin name/title/email)
-- [ ] Step 11 — Input real page content (home, about, mission sections via Tiptap editors)
-- [ ] Step 12 — Create a test blog post, event, reading list item, partner — verify publish/unpublish/delete
+- [x] Step 11 — Input real page content (home, about, mission sections via Tiptap editors) ✓ manually tested
+- [x] Step 12 — Create a test blog post, event, reading list item, partner — verify publish/unpublish/delete ✓ manually tested
 - [x] Step 13 — Wire public pages to Supabase (blogs, events, reading-list, partners, health-wellness, home)
-- [ ] Step 14 — Test search returns real results
+- [x] Step 14 — Test search returns real results ✓ manually tested
 - [x] Step 15 — `/api/upload` was already wired to Supabase Storage from initial build
+
+## Additional Work Completed
+
+### Dashboard Stats — Supabase Live Data
+
+- New `src/actions/dashboard.ts` — `getDashboardData()` fires 9 Supabase queries in parallel: COUNT of published blogs, upcoming events, published reading list items, published partners, pending newsletter submissions; top 3 pending submissions for the feed; top 5 recent items across blogs/events/reading_list merged and sorted by `updated_at`
+- `DashboardOverview.tsx` converted from mock imports to props-based (`{ data: DashboardData }`) — all `mockDashboardStats` / `mockRecentActivity` / `mockNewsletterSubmissions` references removed
+- `admin/page.tsx` calls `getDashboardData()` server-side and passes result to `<DashboardOverview>`
+- Added empty-state "No recent activity yet." for new installs
+
+### Partners — Detail Pages + Tiptap Description
+
+- New `getPublicPartnerById` action — queries by id AND `published = true` (safe for public routes)
+- New public `/partners/[id]/page.tsx` — full description, full-size logo, "Visit Website" button
+- `PartnerCard` wrapped in `Link` to `/partners/[id]`; "Visit Website" `<a>` removed from card (nested anchor); "Learn more →" label added
+- Description field in `PartnerEditor` upgraded from plain `<textarea>` (500 char cap) to full `RichTextEditor` with `folder="partners/inline"` — bold, headings, lists, links, inline images all available
+- `stripHtml()` utility added to `src/lib/utils.ts` — used on the card to strip HTML tags before `line-clamp-4` truncation
+- Public detail page renders description via `dangerouslySetInnerHTML` + `tiptap-content` class
+
+### Footer — Section Visibility Bug Fix
+
+- Footer navigation previously showed all 6 links regardless of admin visibility settings
+- Fixed: `Footer.tsx` now calls `getSiteVisibility()` and filters `ALL_FOOTER_LINKS` by the matching visibility key before rendering — matches the public navbar behaviour
+
+### Reading List — Sort & Filter
+
+- New `src/app/(public)/reading-list/ReadingListClient.tsx` (client component) — owns sort and author filter state; filters/sorts entirely client-side (no page reload)
+- Sort options: Date Added Newest (default), Date Added Oldest, Title A → Z, Title Z → A
+- Author filter: dropdown of unique authors — only shown when 2+ distinct authors exist; shows `"X of Y items"` count when active
+- `page.tsx` now selects `created_at` from Supabase and passes it through; renders `<ReadingListClient>` instead of `<ReadingListGrid>` directly
+- `ReadingListGrid` and `ReadingListCard` unchanged
+
+### Reading List Detail — Sticky Sidebar
+
+- `<aside>` on `/reading-list/[id]` given `sticky top-24` — book cover and "Find this book" button remain visible while scrolling through long descriptions
+- `top-24` (6rem) clears the public site's `sticky top-0` header
+
+### CLAUDE.md — Admin Pages Routes Updated
+
+- Added missing `/admin/pages/*` routes (blogs, events, newsletter, reading-list, partners) to the Admin Pages table — these were built in Phase 14 but never documented
+
+---
 
 ## Additional Work Completed
 

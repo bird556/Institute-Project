@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { truncate } from '@/lib/utils'
-import ReadingListGrid from './ReadingListGrid'
+import ReadingListClient from './ReadingListClient'
 import { getPageContent } from '@/actions/page-content'
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default async function ReadingListPage() {
 
   const { data } = await supabase
     .from('reading_list')
-    .select('id, title, author, description, cover_path, external_url')
+    .select('id, title, author, description, cover_path, external_url, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
 
@@ -36,6 +36,7 @@ export default async function ReadingListPage() {
       ? supabase.storage.from('institute-media').getPublicUrl(r.cover_path).data.publicUrl
       : '',
     external_url: r.external_url,
+    created_at: r.created_at,
   }))
 
   return (
@@ -54,7 +55,7 @@ export default async function ReadingListPage() {
           No items yet — check back soon.
         </p>
       ) : (
-        <ReadingListGrid items={items} />
+        <ReadingListClient items={items} />
       )}
     </div>
   )

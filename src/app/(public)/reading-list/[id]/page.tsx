@@ -71,7 +71,7 @@ export default async function ReadingListDetailPage({ params }: Props) {
           />
         </div>
 
-        <aside className="space-y-5">
+        <aside className="space-y-5 sticky top-24">
           {coverUrl && (
             <div className="relative w-full rounded-xl overflow-hidden shadow-md" style={{ aspectRatio: '3/4' }}>
               <Image
