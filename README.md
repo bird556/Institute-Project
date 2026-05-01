@@ -1,36 +1,124 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kustawi Institute
+
+A modern, full-stack institute website with a built-in content management system. Admins manage all site content through a protected dashboard; the public site reflects changes in real time.
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Language | TypeScript |
+| Database & Auth | Supabase (PostgreSQL + Row Level Security) |
+| Storage | Supabase Storage |
+| Styling | Tailwind CSS v4 |
+| UI Components | shadcn/ui |
+| Rich Text | Tiptap |
+| Animations | Framer Motion |
+| Notifications | Sonner |
+| Fonts | Fraunces (display) · DM Sans (body) |
+
+## Features
+
+### Public Site
+
+- **Home** — hero section, intro, featured content
+- **Blog** — published articles with cover images and rich text
+- **Events** — upcoming and past events with date, location, and external registration links
+- **Reading List** — curated books and articles with cover images and external links
+- **Health & Wellness** — posts with tags, downloadable PDFs, and rich text content
+- **Newsletter** — quarterly editions with submission portal (research calls, notes, commentaries)
+- **Partners** — partner organisations with logos and website links
+- **About / Mission** — editable page content blocks
+- **Search** — full-text search across blogs, events, and reading list (Supabase FTS)
+
+### Admin Dashboard (`/admin`)
+
+- **Authentication** — email + password, single admin account, forgot/reset password flow
+- **Content editors** — full CRUD for all content types with Tiptap rich text and image uploads
+- **Settings** — site name, description, logo, contact info, admin details, footer visibility toggles
+- **Page visibility** — toggle entire sections of the public site on/off
+- **Home editor** — control hero images and all home section content
+- **Data export** — one-click ZIP download of all DB records and media files
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- A [Supabase](https://supabase.com) project
+
+### Installation
+
+```bash
+git clone <repo-url>
+cd kustawi-institute
+npm install
+```
+
+### Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+### Database
+
+Apply the migrations to your Supabase project:
+
+```bash
+supabase db push --linked
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) for the public site. The admin dashboard is at [http://localhost:3000/admin](http://localhost:3000/admin).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+src/
+├── app/
+│   ├── (public)/          # Public-facing pages
+│   ├── (admin)/           # Admin dashboard pages
+│   └── api/               # API routes (upload, export)
+├── actions/               # Server Actions (CRUD per content type)
+├── components/
+│   ├── admin/             # Dashboard UI components
+│   ├── layout/            # Header, Footer, navigation
+│   └── shared/            # RichTextEditor, ImageUpload, PublishToggle
+├── lib/
+│   ├── supabase/          # Server and browser Supabase clients
+│   ├── metadata.ts        # SEO metadata helper (buildMetadata)
+│   └── utils.ts           # cn, slugify, formatDate, truncate, stripHtml
+└── types/                 # Shared TypeScript types
+```
 
-## Learn More
+## Key Conventions
 
-To learn more about Next.js, take a look at the following resources:
+- Storage paths (not full URLs) are stored in the database — URLs are reconstructed server-side
+- `published` boolean gates all public queries — unpublished content never appears on the public site
+- Server Components are used everywhere possible; client components are used only when interactivity is required
+- All Server Actions return `{ success: boolean; data?: T; error?: string }`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Commands
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev          # Start dev server
+npm run build        # Production build
+npm run start        # Start production server
+npx tsc --noEmit     # Type check
+npm run lint         # Lint
+```
