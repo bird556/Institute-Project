@@ -6,6 +6,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import BlogCard from '@/components/blog/BlogCard'
 import { formatDate } from '@/lib/utils'
+import { buildMetadata } from '@/lib/metadata'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -25,20 +26,16 @@ const getPost = cache(async (id: string) => {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const post = await getPost(id)
-  if (!post) return {}
+  if (!post) return buildMetadata({ noIndex: true })
   const supabase = await createClient()
-  const coverUrl = post.cover_path
+  const imageUrl = post.cover_path
     ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
     : null
-  return {
-    title: `${post.title} | Blog | Institute Name`,
-    description: post.excerpt,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt ?? undefined,
-      images: coverUrl ? [{ url: coverUrl }] : [],
-    },
-  }
+  return buildMetadata({
+    title: post.title,
+    description: post.excerpt ?? undefined,
+    imageUrl,
+  })
 }
 
 export default async function BlogDetailPage({ params }: Props) {

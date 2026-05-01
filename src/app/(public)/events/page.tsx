@@ -1,16 +1,12 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { truncate } from '@/lib/utils'
+import { truncate, stripHtml } from '@/lib/utils'
 import EventGrid from './EventGrid'
 import { getPageContent } from '@/actions/page-content'
+import { buildMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
-  title: 'Events | Institute Name',
-  description: 'Upcoming and past events from the Institute.',
-}
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Events' })
 }
 
 export default async function EventsPage() {

@@ -6,14 +6,11 @@ import { MapPin, Calendar, ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import EventCard from '@/components/events/EventCard'
-import { formatDate, formatTime, truncate } from '@/lib/utils'
+import { formatDate, formatTime, truncate, stripHtml } from '@/lib/utils'
+import { buildMetadata } from '@/lib/metadata'
 
 interface Props {
   params: Promise<{ id: string }>
-}
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
 const getEvent = cache(async (id: string) => {
@@ -30,20 +27,16 @@ const getEvent = cache(async (id: string) => {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const event = await getEvent(id)
-  if (!event) return {}
+  if (!event) return buildMetadata({ noIndex: true })
   const supabase = await createClient()
-  const coverUrl = event.cover_path
+  const imageUrl = event.cover_path
     ? supabase.storage.from('institute-media').getPublicUrl(event.cover_path).data.publicUrl
     : null
-  return {
-    title: `${event.title} | Events | Institute Name`,
+  return buildMetadata({
+    title: event.title,
     description: truncate(stripHtml(event.description), 160),
-    openGraph: {
-      title: event.title,
-      description: truncate(stripHtml(event.description), 160),
-      images: coverUrl ? [{ url: coverUrl }] : [],
-    },
-  }
+    imageUrl,
+  })
 }
 
 export default async function EventDetailPage({ params }: Props) {

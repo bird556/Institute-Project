@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from 'next/font/google';
 import { ThemeProvider } from 'next-themes';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Toaster } from 'sonner';
+import { buildMetadata } from '@/lib/metadata';
 import './globals.css';
 
 const inter = Inter({
@@ -20,10 +21,9 @@ const playfair = Playfair_Display({
   display: 'swap',
 });
 
-export const metadata: Metadata = {
-  title: 'Kustawi Institute - Modern Academic Website',
-  description: 'A modern institute website',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata()
+}
 
 export default function RootLayout({
   children,

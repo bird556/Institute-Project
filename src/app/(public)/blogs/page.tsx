@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import BlogGrid from '@/components/blog/BlogGrid'
 import { getPageContent } from '@/actions/page-content'
+import { buildMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
-  title: 'Blog | Institute Name',
-  description: 'Insights and perspectives from the Institute.',
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Blog' })
 }
 
 export default async function BlogsPage() {

@@ -10,7 +10,8 @@ export async function HeaderServer() {
     createClient(),
   ])
 
-  const logoUrl = settings?.logo_path
+  const logoVisible = settings?.logo_visible !== 'false'
+  const logoUrl = settings?.logo_path && logoVisible
     ? supabase.storage.from('institute-media').getPublicUrl(settings.logo_path).data.publicUrl
     : undefined
   const siteName = settings?.site_name || 'Institute'

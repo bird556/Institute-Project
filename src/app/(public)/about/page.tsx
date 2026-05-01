@@ -1,4 +1,10 @@
+import type { Metadata } from 'next'
 import { getPageContent } from '@/actions/page-content'
+import { buildMetadata } from '@/lib/metadata'
+
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'About' })
+}
 
 const ABOUT_SECTIONS = ['intro', 'mission', 'team', 'history']
 

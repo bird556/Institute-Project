@@ -7,6 +7,7 @@ import { Download } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import WellnessCard from '@/components/wellness/WellnessCard'
 import { formatDate } from '@/lib/utils'
+import { buildMetadata } from '@/lib/metadata'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -26,15 +27,16 @@ const getPost = cache(async (id: string) => {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const post = await getPost(id)
-  if (!post) return {}
-  return {
-    title: `${post.title} | Health & Wellness | Institute Name`,
+  if (!post) return buildMetadata({ noIndex: true })
+  const supabase = await createClient()
+  const imageUrl = post.cover_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
+    : null
+  return buildMetadata({
+    title: post.title,
     description: post.excerpt ?? undefined,
-    openGraph: {
-      title: post.title,
-      description: post.excerpt ?? undefined,
-    },
-  }
+    imageUrl,
+  })
 }
 
 export default async function WellnessDetailPage({ params }: Props) {

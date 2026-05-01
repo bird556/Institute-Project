@@ -1,12 +1,13 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { getPublishedEditions, getEditionSubmissions } from '@/actions/newsletter'
 import { getPageContent } from '@/actions/page-content'
 import { formatDate } from '@/lib/utils'
 import type { NewsletterEdition } from '@/types'
+import { buildMetadata } from '@/lib/metadata'
 
-export const metadata = {
-  title: 'Newsletter',
-  description: 'Quarterly scholarly newsletter featuring research calls, practitioner notes, and analytical commentaries.',
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Newsletter' })
 }
 
 export default async function NewsletterPage() {

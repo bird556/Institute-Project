@@ -1,16 +1,12 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { truncate } from '@/lib/utils'
+import { truncate, stripHtml } from '@/lib/utils'
 import ReadingListClient from './ReadingListClient'
 import { getPageContent } from '@/actions/page-content'
+import { buildMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
-  title: 'Reading List | Institute Name',
-  description: 'Curated books, articles and resources recommended by the Institute.',
-}
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Reading List' })
 }
 
 export default async function ReadingListPage() {

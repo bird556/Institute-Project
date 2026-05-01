@@ -1,17 +1,14 @@
 import type { Metadata } from 'next'
 import { searchContent } from '@/actions/search'
 import SearchResults from '@/components/search/SearchResults'
+import { buildMetadata } from '@/lib/metadata'
 
 interface Props {
   searchParams: Promise<{ q?: string }>
 }
 
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
-  const { q } = await searchParams
-  return {
-    title: q ? `"${q}" — Search | Institute Name` : 'Search | Institute Name',
-    description: 'Search across blogs, events, and reading list.',
-  }
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Search', noIndex: true })
 }
 
 export default async function SearchPage({ searchParams }: Props) {
