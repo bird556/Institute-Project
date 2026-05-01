@@ -5,14 +5,11 @@ import Image from 'next/image'
 import { ExternalLink } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import { truncate } from '@/lib/utils'
+import { truncate, stripHtml } from '@/lib/utils'
+import { buildMetadata } from '@/lib/metadata'
 
 interface Props {
   params: Promise<{ id: string }>
-}
-
-function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()
 }
 
 const getItem = cache(async (id: string) => {
@@ -29,11 +26,16 @@ const getItem = cache(async (id: string) => {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params
   const item = await getItem(id)
-  if (!item) return {}
-  return {
-    title: `${item.title} | Reading List | Institute Name`,
+  if (!item) return buildMetadata({ noIndex: true })
+  const supabase = await createClient()
+  const imageUrl = item.cover_path
+    ? supabase.storage.from('institute-media').getPublicUrl(item.cover_path).data.publicUrl
+    : null
+  return buildMetadata({
+    title: item.title,
     description: truncate(stripHtml(item.description ?? ''), 160),
-  }
+    imageUrl,
+  })
 }
 
 export default async function ReadingListDetailPage({ params }: Props) {

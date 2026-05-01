@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import PartnerGrid from '@/components/partners/PartnerGrid'
 import { getPageContent } from '@/actions/page-content'
+import { buildMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
-  title: 'Partners | Institute Name',
-  description: 'Organisations that support and collaborate with the Institute in advancing educational excellence.',
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Partners' })
 }
 
 export default async function PartnersPage() {

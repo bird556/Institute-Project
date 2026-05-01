@@ -3,10 +3,10 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getPageContent } from '@/actions/page-content'
 import WellnessGrid from './WellnessGrid'
+import { buildMetadata } from '@/lib/metadata'
 
-export const metadata: Metadata = {
-  title: 'Health & Wellness | Institute Name',
-  description: 'Resources, guides, and insights to support your wellbeing.',
+export async function generateMetadata(): Promise<Metadata> {
+  return buildMetadata({ title: 'Health & Wellness' })
 }
 
 export default async function HealthWellnessPage() {

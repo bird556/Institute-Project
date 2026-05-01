@@ -48,6 +48,7 @@ const EMPTY: SiteSettings = {
   goal_section_enabled: 'true',
   impact_section_enabled: 'true',
   mission_section_enabled: 'true',
+  logo_visible: 'true',
   home_hero_image_path: '',
   home_hero_bg_path: '',
   intro_section_enabled: 'true',
@@ -144,6 +145,7 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     goal_section_enabled:    settings.goal_section_enabled    !== 'false',
     impact_section_enabled:  settings.impact_section_enabled  !== 'false',
     mission_section_enabled: settings.mission_section_enabled !== 'false',
+    logo_visible:            settings.logo_visible            !== 'false',
     admin_name_visible:      settings.admin_name_visible      !== 'false',
     admin_title_visible:     settings.admin_title_visible     !== 'false',
     admin_email_visible:     settings.admin_email_visible     !== 'false',
@@ -234,9 +236,22 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
         </div>
 
         {logoPath && (
-          <p className="text-xs text-[var(--color-text-muted)]">
-            Saved path: <span className="font-mono">{logoPath}</span>
-          </p>
+          <>
+            <div className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-text-primary dark:text-white">Show logo on public site</p>
+                <p className="text-xs text-text-muted mt-0.5">When off, only the site name appears in the navbar.</p>
+              </div>
+              <Switch
+                checked={visibility.logo_visible}
+                onCheckedChange={(checked) => handleToggleVisibility('logo_visible', checked)}
+                className="cursor-pointer shrink-0"
+              />
+            </div>
+            <p className="text-xs text-[var(--color-text-muted)]">
+              Saved path: <span className="font-mono">{logoPath}</span>
+            </p>
+          </>
         )}
       </section>
 
