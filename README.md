@@ -1,6 +1,7 @@
-# Kustawi Institute
+# Institute Website
 
 A modern, full-stack institute website with a built-in content management system. Admins manage all site content through a protected dashboard; the public site reflects changes in real time.
+
 
 ## Tech Stack
 
@@ -51,7 +52,7 @@ A modern, full-stack institute website with a built-in content management system
 
 ```bash
 git clone <repo-url>
-cd kustawi-institute
+cd Institute-Project
 npm install
 ```
 
