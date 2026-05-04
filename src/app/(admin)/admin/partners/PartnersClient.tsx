@@ -19,7 +19,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, MoreVertical, PenLine, Trash2, Plus, Building2 } from 'lucide-react'
+import { GripVertical, MoreVertical, PenLine, Trash2, Plus, Building2, Search, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import {
@@ -37,6 +37,8 @@ import {
 } from '@/actions/partners'
 import type { Partner } from '@/types'
 
+type VisibilityFilter = 'all' | 'visible' | 'hidden'
+
 interface PartnersClientProps {
   partners: Partner[]
   logoUrls: Record<string, string>
@@ -46,12 +48,29 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [partners, setPartners] = useState(initial)
+  const [query, setQuery] = useState('')
+  const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
+
+  const isFiltering = query !== '' || visibilityFilter !== 'all'
+
+  const filtered = partners.filter((p) => {
+    const q = query.toLowerCase()
+    const matchesQuery =
+      !q ||
+      p.name.toLowerCase().includes(q) ||
+      (p.description ?? '').toLowerCase().includes(q)
+    const matchesVisibility =
+      visibilityFilter === 'all' ||
+      (visibilityFilter === 'visible' && p.published) ||
+      (visibilityFilter === 'hidden' && !p.published)
+    return matchesQuery && matchesVisibility
+  })
 
   async function handleNew() {
     startTransition(async () => {
@@ -80,13 +99,11 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
 
   async function handleToggleVisible(id: string, current: boolean) {
     const next = !current
-    // Optimistic update
     setPartners((prev) =>
       prev.map((p) => (p.id === id ? { ...p, published: next } : p))
     )
     const result = await togglePartnerPublished(id, next)
     if (!result.success) {
-      // Revert on failure
       setPartners((prev) =>
         prev.map((p) => (p.id === id ? { ...p, published: current } : p))
       )
@@ -102,18 +119,25 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
     const newIndex = partners.findIndex((p) => p.id === over.id)
     const reordered = arrayMove(partners, oldIndex, newIndex)
 
-    // Optimistic update with new sort_order values
     const withOrder = reordered.map((p, i) => ({ ...p, sort_order: i + 1 }))
     setPartners(withOrder)
 
     const updates = withOrder.map(({ id, sort_order }) => ({ id, sort_order }))
     const result = await updatePartnerSortOrder(updates)
     if (!result.success) {
-      // Revert to original order on failure
       setPartners(partners)
       toast.error(result.error ?? 'Failed to save order.')
     }
   }
+
+  const filterBtnClass = (active: boolean) =>
+    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+      active
+        ? 'bg-[var(--color-brand-teal)] text-white'
+        : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
+    }`
+
+  const listItems = isFiltering ? filtered : partners
 
   return (
     <>
@@ -133,19 +157,81 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
           </Button>
         </div>
 
+        {/* Search + filter bar */}
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by name…"
+              className="w-full sm:w-80 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
+            {(['all', 'visible', 'hidden'] as VisibilityFilter[]).map((f) => (
+              <button key={f} onClick={() => setVisibilityFilter(f)} className={filterBtnClass(visibilityFilter === f)}>
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Result count */}
+        {isFiltering && (
+          <p className="text-sm text-[var(--color-text-muted)] -mt-2">
+            Showing {filtered.length} of {partners.length} {partners.length === 1 ? 'partner' : 'partners'}
+          </p>
+        )}
+
         {/* List */}
-        {partners.length === 0 ? (
-          <EmptyState onNew={handleNew} creating={isPending} />
+        {listItems.length === 0 ? (
+          isFiltering ? (
+            <div className="flex flex-col items-center justify-center py-20 gap-4 text-center rounded-xl border border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+              <Building2 className="h-8 w-8 text-[var(--color-text-muted)]" />
+              <div>
+                <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">
+                  No results{query ? ` for "${query}"` : ''}
+                </p>
+                <p className="text-sm text-[var(--color-text-muted)] mt-1">Try a different search or clear the filters.</p>
+              </div>
+              <Button variant="ghost" onClick={() => { setQuery(''); setVisibilityFilter('all') }} className="cursor-pointer text-[var(--color-brand-teal)]">
+                Clear filters
+              </Button>
+            </div>
+          ) : (
+            <EmptyState onNew={handleNew} creating={isPending} />
+          )
+        ) : isFiltering ? (
+          // Filtered view — no drag context
+          <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
+            {listItems.map((partner, i) => (
+              <SortableRow
+                key={partner.id}
+                partner={partner}
+                index={i}
+                logoUrl={logoUrls[partner.id]}
+                dragDisabled
+                onEdit={() => router.push(`/admin/partners/${partner.id}`)}
+                onDelete={() => setDeleteId(partner.id)}
+                onToggleVisible={() => handleToggleVisible(partner.id, partner.published)}
+              />
+            ))}
+          </div>
         ) : (
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={partners.map((p) => p.id)}
-              strategy={verticalListSortingStrategy}
-            >
+          // Full list with drag-to-reorder
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={partners.map((p) => p.id)} strategy={verticalListSortingStrategy}>
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
                 {partners.map((partner, i) => (
                   <SortableRow
@@ -153,6 +239,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
                     partner={partner}
                     index={i}
                     logoUrl={logoUrls[partner.id]}
+                    dragDisabled={false}
                     onEdit={() => router.push(`/admin/partners/${partner.id}`)}
                     onDelete={() => setDeleteId(partner.id)}
                     onToggleVisible={() => handleToggleVisible(partner.id, partner.published)}
@@ -164,7 +251,9 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
         )}
 
         <p className="text-xs text-[var(--color-text-muted)]">
-          Drag rows to reorder. Order is reflected on the public partners page.
+          {isFiltering
+            ? 'Clear filters to reorder partners.'
+            : 'Drag rows to reorder. Order is reflected on the public partners page.'}
         </p>
       </div>
 
@@ -184,14 +273,16 @@ interface SortableRowProps {
   partner: Partner
   index: number
   logoUrl?: string
+  dragDisabled: boolean
   onEdit: () => void
   onDelete: () => void
   onToggleVisible: () => void
 }
 
-function SortableRow({ partner, index, logoUrl, onEdit, onDelete, onToggleVisible }: SortableRowProps) {
+function SortableRow({ partner, index, logoUrl, dragDisabled, onEdit, onDelete, onToggleVisible }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: partner.id,
+    disabled: dragDisabled,
   })
 
   const style = {
@@ -214,7 +305,12 @@ function SortableRow({ partner, index, logoUrl, onEdit, onDelete, onToggleVisibl
       <button
         {...attributes}
         {...listeners}
-        className="shrink-0 p-1 rounded text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] cursor-grab active:cursor-grabbing touch-none"
+        disabled={dragDisabled}
+        className={`shrink-0 p-1 rounded touch-none transition-colors ${
+          dragDisabled
+            ? 'opacity-30 cursor-not-allowed'
+            : 'text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] cursor-grab active:cursor-grabbing'
+        }`}
         aria-label="Drag to reorder"
       >
         <GripVertical className="h-4 w-4" />
@@ -223,13 +319,7 @@ function SortableRow({ partner, index, logoUrl, onEdit, onDelete, onToggleVisibl
       {/* Logo thumbnail */}
       <div className="h-12 w-12 rounded-md overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] shrink-0 flex items-center justify-center">
         {logoUrl ? (
-          <Image
-            src={logoUrl}
-            alt={partner.name}
-            width={48}
-            height={48}
-            className="object-cover w-full h-full"
-          />
+          <Image src={logoUrl} alt={partner.name} width={48} height={48} className="object-cover w-full h-full" />
         ) : (
           <Building2 className="h-5 w-5 text-[var(--color-text-muted)]" />
         )}
@@ -275,10 +365,7 @@ function SortableRow({ partner, index, logoUrl, onEdit, onDelete, onToggleVisibl
             <PenLine className="h-4 w-4" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem
-            onClick={onDelete}
-            className="cursor-pointer gap-2 text-red-600 focus:text-red-600"
-          >
+          <DropdownMenuItem onClick={onDelete} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
             <Trash2 className="h-4 w-4" />
             Delete
           </DropdownMenuItem>
@@ -295,12 +382,8 @@ function EmptyState({ onNew, creating }: { onNew: () => void; creating: boolean 
         <Building2 className="h-6 w-6 text-[var(--color-text-muted)]" />
       </div>
       <div>
-        <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">
-          No partners yet
-        </p>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1">
-          Add your first partner organisation to get started.
-        </p>
+        <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">No partners yet</p>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Add your first partner organisation to get started.</p>
       </div>
       <Button
         onClick={onNew}

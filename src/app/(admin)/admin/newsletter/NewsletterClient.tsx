@@ -13,6 +13,8 @@ import {
   BookOpen,
   FileText,
   MessageSquare,
+  Search,
+  X,
 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
@@ -30,8 +32,6 @@ interface Props {
   submissions: NewsletterSubmission[]
   editions: NewsletterEdition[]
 }
-
-// ─── Type badge config ────────────────────────────────────────────────────────
 
 const TYPE_LABEL: Record<SubmissionType, string> = {
   research_call: 'RC',
@@ -57,28 +57,33 @@ const TYPE_ICON: Record<SubmissionType, React.ElementType> = {
   commentary:    MessageSquare,
 }
 
-// ─── Main component ───────────────────────────────────────────────────────────
-
 export default function NewsletterClient({ submissions: initial, editions: initialEditions }: Props) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [mainTab, setMainTab]         = useState<MainTab>('submissions')
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
-  const [typeFilter, setTypeFilter]   = useState<TypeFilter>('all')
-  const [submissions]                 = useState(initial)
-  const [editions, setEditions]       = useState(initialEditions)
+  const [mainTab, setMainTab]               = useState<MainTab>('submissions')
+  const [statusFilter, setStatusFilter]     = useState<StatusFilter>('all')
+  const [typeFilter, setTypeFilter]         = useState<TypeFilter>('all')
+  const [submissionQuery, setSubmissionQuery] = useState('')
+  const [editionQuery, setEditionQuery]     = useState('')
+  const [submissions]                       = useState(initial)
+  const [editions, setEditions]             = useState(initialEditions)
   const [deleteEditionId, setDeleteEditionId] = useState<string | null>(null)
   const [deletingEdition, setDeletingEdition] = useState(false)
 
-  // Counts for filter badges
   const pendingCount  = submissions.filter((s) => s.status === 'pending').length
   const approvedCount = submissions.filter((s) => s.status === 'approved').length
   const rejectedCount = submissions.filter((s) => s.status === 'rejected').length
 
   const filteredSubmissions = submissions.filter((s) => {
+    const q = submissionQuery.toLowerCase()
+    const matchesQuery =
+      !q ||
+      s.title.toLowerCase().includes(q) ||
+      s.submitter_name.toLowerCase().includes(q) ||
+      s.submitter_email.toLowerCase().includes(q)
     const statusMatch = statusFilter === 'all' || s.status === statusFilter
     const typeMatch   = typeFilter === 'all'   || s.type === typeFilter
-    return statusMatch && typeMatch
+    return matchesQuery && statusMatch && typeMatch
   })
 
   const pendingFirst = [
@@ -87,7 +92,10 @@ export default function NewsletterClient({ submissions: initial, editions: initi
     ...filteredSubmissions.filter((s) => s.status === 'rejected'),
   ]
 
-  // ── Edition actions ─────────────────────────────────────────────────────────
+  const filteredEditions = editions.filter((e) => {
+    const q = editionQuery.toLowerCase()
+    return !q || e.title.toLowerCase().includes(q) || (e.intro ?? '').toLowerCase().includes(q)
+  })
 
   function handleNewEdition() {
     startTransition(async () => {
@@ -114,8 +122,6 @@ export default function NewsletterClient({ submissions: initial, editions: initi
     toast.success('Edition deleted.')
   }
 
-  // ── Shared styles ───────────────────────────────────────────────────────────
-
   const tabBtnClass = (active: boolean) =>
     `px-4 py-2 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
       active
@@ -140,12 +146,7 @@ export default function NewsletterClient({ submissions: initial, editions: initi
           </h1>
           {mainTab === 'submissions' ? (
             <Button
-              onClick={() => {
-                // Admin-created research call: navigate to a new submission editor
-                // For now, create a new edition and redirect — research call creation
-                // handled in submissions/[id] with a pre-filled type
-                toast.info('Use "Submit a Research Call" from the public form, or approve a pending submission.')
-              }}
+              onClick={() => toast.info('Use "Submit a Research Call" from the public form, or approve a pending submission.')}
               className="cursor-pointer gap-1.5 bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white"
             >
               <Plus className="h-4 w-4" />
@@ -183,6 +184,26 @@ export default function NewsletterClient({ submissions: initial, editions: initi
         {/* ── Submissions tab ─────────────────────────────────────────────────── */}
         {mainTab === 'submissions' && (
           <div className="space-y-4">
+            {/* Search */}
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
+              <input
+                type="text"
+                value={submissionQuery}
+                onChange={(e) => setSubmissionQuery(e.target.value)}
+                placeholder="Search by name, email, or title…"
+                className="w-full pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
+              />
+              {submissionQuery && (
+                <button
+                  onClick={() => setSubmissionQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
             {/* Filter rows */}
             <div className="flex flex-wrap gap-3">
               <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
@@ -206,9 +227,16 @@ export default function NewsletterClient({ submissions: initial, editions: initi
               </div>
             </div>
 
+            {/* Result count */}
+            {(submissionQuery || statusFilter !== 'all' || typeFilter !== 'all') && (
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Showing {pendingFirst.length} of {submissions.length} {submissions.length === 1 ? 'submission' : 'submissions'}
+              </p>
+            )}
+
             {/* Submission list */}
             {pendingFirst.length === 0 ? (
-              <SubmissionsEmpty />
+              <SubmissionsEmpty hasQuery={!!submissionQuery} onClear={() => { setSubmissionQuery(''); setStatusFilter('all'); setTypeFilter('all') }} />
             ) : (
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
                 {pendingFirst.map((s, i) => (
@@ -222,11 +250,51 @@ export default function NewsletterClient({ submissions: initial, editions: initi
         {/* ── Editions tab ────────────────────────────────────────────────────── */}
         {mainTab === 'editions' && (
           <div className="space-y-4">
-            {editions.length === 0 ? (
-              <EditionsEmpty onNew={handleNewEdition} creating={isPending} />
+            {/* Search */}
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
+              <input
+                type="text"
+                value={editionQuery}
+                onChange={(e) => setEditionQuery(e.target.value)}
+                placeholder="Search editions…"
+                className="w-full pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
+              />
+              {editionQuery && (
+                <button
+                  onClick={() => setEditionQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+                >
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Result count */}
+            {editionQuery && (
+              <p className="text-sm text-[var(--color-text-muted)]">
+                Showing {filteredEditions.length} of {editions.length} {editions.length === 1 ? 'edition' : 'editions'}
+              </p>
+            )}
+
+            {filteredEditions.length === 0 ? (
+              editionQuery ? (
+                <div className="flex flex-col items-center justify-center py-20 gap-4 text-center rounded-xl border border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+                  <Newspaper className="h-8 w-8 text-[var(--color-text-muted)]" />
+                  <div>
+                    <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">No results for &ldquo;{editionQuery}&rdquo;</p>
+                    <p className="text-sm text-[var(--color-text-muted)] mt-1">Try a different search.</p>
+                  </div>
+                  <Button variant="ghost" onClick={() => setEditionQuery('')} className="cursor-pointer text-[var(--color-brand-teal)]">
+                    Clear search
+                  </Button>
+                </div>
+              ) : (
+                <EditionsEmpty onNew={handleNewEdition} creating={isPending} />
+              )
             ) : (
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-                {editions.map((edition, i) => (
+                {filteredEditions.map((edition, i) => (
                   <EditionRow
                     key={edition.id}
                     edition={edition}
@@ -253,8 +321,6 @@ export default function NewsletterClient({ submissions: initial, editions: initi
     </>
   )
 }
-
-// ─── Submission row ───────────────────────────────────────────────────────────
 
 function SubmissionRow({
   submission: s,
@@ -284,13 +350,11 @@ function SubmissionRow({
       transition={{ delay: index * 0.04, duration: 0.25 }}
       className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
     >
-      {/* Type badge */}
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-bold shrink-0 ${TYPE_COLOR[s.type]}`}>
         <TypeIcon className="h-3 w-3" />
         {TYPE_LABEL[s.type]}
       </span>
 
-      {/* Content */}
       <div className="flex-1 min-w-0">
         <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
           {s.title}
@@ -303,13 +367,11 @@ function SubmissionRow({
         </p>
       </div>
 
-      {/* Status */}
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium shrink-0 ${statusColor}`}>
         {statusIcon}
         {s.status.charAt(0).toUpperCase() + s.status.slice(1)}
       </span>
 
-      {/* Review button */}
       <Button
         variant="ghost"
         size="sm"
@@ -322,8 +384,6 @@ function SubmissionRow({
     </motion.div>
   )
 }
-
-// ─── Edition row ──────────────────────────────────────────────────────────────
 
 function EditionRow({
   edition,
@@ -345,12 +405,10 @@ function EditionRow({
       transition={{ delay: index * 0.04, duration: 0.25 }}
       className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
     >
-      {/* Icon */}
       <div className="h-10 w-10 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
         <Newspaper className="h-5 w-5 text-[var(--color-text-muted)]" />
       </div>
 
-      {/* Info */}
       <div className="flex-1 min-w-0">
         <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
           {edition.title}
@@ -361,7 +419,6 @@ function EditionRow({
         </p>
       </div>
 
-      {/* Status badge */}
       <Badge
         variant={edition.published ? 'default' : 'secondary'}
         className={edition.published ? 'bg-[var(--color-brand-teal)] text-white shrink-0' : 'shrink-0'}
@@ -369,7 +426,6 @@ function EditionRow({
         {edition.published ? 'Published' : 'Draft'}
       </Badge>
 
-      {/* Actions */}
       <div className="flex items-center gap-2 shrink-0">
         <Button
           variant="ghost"
@@ -393,16 +449,19 @@ function EditionRow({
   )
 }
 
-// ─── Empty states ─────────────────────────────────────────────────────────────
-
-function SubmissionsEmpty() {
+function SubmissionsEmpty({ hasQuery, onClear }: { hasQuery: boolean; onClear: () => void }) {
   return (
     <div className="flex flex-col items-center justify-center py-20 gap-4 text-center rounded-xl border border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
       <div className="h-12 w-12 rounded-full bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] flex items-center justify-center">
         <FileText className="h-6 w-6 text-[var(--color-text-muted)]" />
       </div>
       <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">No submissions match this filter</p>
-      <p className="text-sm text-[var(--color-text-muted)]">Try changing the status or type filter.</p>
+      <p className="text-sm text-[var(--color-text-muted)]">Try changing the status, type, or search query.</p>
+      {hasQuery && (
+        <Button variant="ghost" onClick={onClear} className="cursor-pointer text-[var(--color-brand-teal)]">
+          Clear filters
+        </Button>
+      )}
     </div>
   )
 }

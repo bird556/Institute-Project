@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { MoreVertical, PenLine, Trash2, Plus, Heart } from 'lucide-react'
+import { MoreVertical, PenLine, Trash2, Plus, Heart, Search, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -16,9 +16,11 @@ import {
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { createWellnessPost, deleteWellnessPost } from '@/actions/wellness'
 import { formatDate } from '@/lib/utils'
-import type { WellnessPost } from '@/types'
+import { WELLNESS_TAGS } from '@/types'
+import type { WellnessPost, WellnessTag } from '@/types'
 
-type Filter = 'all' | 'published' | 'drafts'
+type StatusFilter = 'all' | 'published' | 'drafts'
+type TagFilter    = 'all' | WellnessTag
 
 interface WellnessListClientProps {
   posts: WellnessPost[]
@@ -28,15 +30,28 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [posts, setPosts] = useState(initial)
-  const [filter, setFilter] = useState<Filter>('all')
+  const [query, setQuery] = useState('')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [tagFilter, setTagFilter] = useState<TagFilter>('all')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
   const filtered = posts.filter((p) => {
-    if (filter === 'published') return p.published
-    if (filter === 'drafts')    return !p.published
-    return true
+    const q = query.toLowerCase()
+    const matchesQuery =
+      !q ||
+      p.title.toLowerCase().includes(q) ||
+      (p.excerpt ?? '').toLowerCase().includes(q)
+    const matchesStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'published' && p.published) ||
+      (statusFilter === 'drafts' && !p.published)
+    const matchesTag =
+      tagFilter === 'all' || p.tags.includes(tagFilter)
+    return matchesQuery && matchesStatus && matchesTag
   })
+
+  const isFiltering = query !== '' || statusFilter !== 'all' || tagFilter !== 'all'
 
   async function handleNew() {
     startTransition(async () => {
@@ -63,6 +78,12 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
     toast.success('Wellness post deleted.')
   }
 
+  function clearFilters() {
+    setQuery('')
+    setStatusFilter('all')
+    setTagFilter('all')
+  }
+
   const filterBtnClass = (active: boolean) =>
     `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
@@ -78,28 +99,80 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
           <h1 className="font-display text-2xl font-bold text-[var(--color-brand-teal)] dark:text-white">
             Health &amp; Wellness
           </h1>
-          <Button onClick={handleNew} disabled={isPending} className="cursor-pointer gap-1.5">
+          <Button onClick={handleNew} disabled={isPending} className="cursor-pointer bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white gap-1.5">
             <Plus size={16} /> New Post
           </Button>
         </div>
 
-        {/* Filter tabs */}
-        <div className="flex gap-1">
-          {(['all', 'published', 'drafts'] as Filter[]).map((f) => (
-            <button key={f} onClick={() => setFilter(f)} className={filterBtnClass(filter === f)}>
-              {f.charAt(0).toUpperCase() + f.slice(1)}
-            </button>
-          ))}
+        {/* Search + filter bar */}
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search by title or excerpt…"
+              className="w-full sm:w-80 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
+            />
+            {query && (
+              <button
+                onClick={() => setQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
+            {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
+              <button key={f} onClick={() => setStatusFilter(f)} className={filterBtnClass(statusFilter === f)}>
+                {f.charAt(0).toUpperCase() + f.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          <select
+            value={tagFilter}
+            onChange={(e) => setTagFilter(e.target.value as TagFilter)}
+            className="h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
+          >
+            <option value="all">All Tags</option>
+            {WELLNESS_TAGS.map((tag) => (
+              <option key={tag} value={tag}>{tag}</option>
+            ))}
+          </select>
         </div>
+
+        {/* Result count */}
+        {isFiltering && (
+          <p className="text-sm text-[var(--color-text-muted)] -mt-2">
+            Showing {filtered.length} of {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+          </p>
+        )}
 
         {/* List */}
         {filtered.length === 0 ? (
-          <div className="py-20 text-center rounded-xl border border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
-            <Heart size={32} className="mx-auto mb-3 text-[var(--color-text-muted)]" />
-            <p className="text-[var(--color-text-muted)]">No posts yet.</p>
-            <button onClick={handleNew} className="mt-3 text-sm text-[var(--color-brand-teal)] hover:underline cursor-pointer">
-              Create your first post →
-            </button>
+          <div className="flex flex-col items-center justify-center py-20 gap-4 text-center rounded-xl border border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+            <Heart size={32} className="text-[var(--color-text-muted)]" />
+            <div>
+              <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">
+                {isFiltering ? `No results${query ? ` for "${query}"` : ''}` : 'No posts yet'}
+              </p>
+              <p className="text-sm text-[var(--color-text-muted)] mt-1">
+                {isFiltering ? 'Try a different search or clear the filters.' : 'Create your first wellness post to get started.'}
+              </p>
+            </div>
+            {isFiltering ? (
+              <Button variant="ghost" onClick={clearFilters} className="cursor-pointer text-[var(--color-brand-teal)]">
+                Clear filters
+              </Button>
+            ) : (
+              <button onClick={handleNew} className="text-sm text-[var(--color-brand-teal)] hover:underline cursor-pointer">
+                Create your first post →
+              </button>
+            )}
           </div>
         ) : (
           <motion.ul
