@@ -7,6 +7,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { truncate, stripHtml } from '@/lib/utils'
 import { buildMetadata } from '@/lib/metadata'
+import { DetailPageShell } from '@/components/shared/DetailPageShell'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -49,7 +50,7 @@ export default async function ReadingListDetailPage({ params }: Props) {
     : null
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+    <DetailPageShell className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
       <Link
         href="/reading-list"
         className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
@@ -99,6 +100,6 @@ export default async function ReadingListDetailPage({ params }: Props) {
           )}
         </aside>
       </div>
-    </div>
+    </DetailPageShell>
   )
 }

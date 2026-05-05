@@ -1,13 +1,13 @@
-import Link from 'next/link';
 import Image from 'next/image';
 import { getPageContent } from '@/actions/page-content';
 import { getSiteSettings } from '@/actions/settings';
 import { getSiteVisibility } from '@/lib/site-visibility';
 import { createClient } from '@/lib/supabase/server';
-import { formatDate } from '@/lib/utils';
 import GoalSection from '@/components/home/GoalSection';
 import ImpactSection from '@/components/home/ImpactSection';
 import MissionSection from '@/components/home/MissionSection';
+import { HeroContent } from '@/components/home/HeroContent';
+import { UpcomingEventsSection } from '@/components/home/UpcomingEventsSection';
 import type {
   GoalSectionContent,
   ImpactSectionContent,
@@ -155,47 +155,12 @@ export default async function HomePage() {
         />
         <div className="absolute inset-0 bg-black/50" />
 
-        <div className="relative max-w-6xl mx-auto">
-          <div className="flex items-center gap-12">
-            <div className="flex-1">
-              <div
-                className="hero-tiptap tiptap-content"
-                dangerouslySetInnerHTML={{ __html: hero?.content ?? '' }}
-              />
-              <div className="flex flex-wrap gap-3 mt-6">
-                <a
-                  href="/mission"
-                  className="inline-block px-6 py-3 rounded-lg bg-[hsl(35_60%_50%)] text-white font-semibold text-sm hover:bg-[hsl(35_65%_45%)] transition-colors"
-                >
-                  Our Mission
-                </a>
-                <a
-                  href="/events"
-                  className="inline-block px-6 py-3 rounded-lg border border-white text-white font-semibold text-sm hover:bg-white/10 transition-colors"
-                >
-                  Upcoming Events
-                </a>
-              </div>
-            </div>
-            <div className="hidden md:block flex-shrink-0 w-sm">
-              <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-[4/5]">
-                <Image
-                  src={heroImageUrl}
-                  alt=""
-                  fill
-                  className="object-cover"
-                  priority
-                  quality={75}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <HeroContent heroHtml={hero?.content ?? ''} heroImageUrl={heroImageUrl} />
       </section>
 
       {/* Introduction Section */}
       {visibility.intro_section_enabled && intro?.content && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[var(--color-surface)] dark:bg-dark-background">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-dark-background">
           <div className="max-w-4xl mx-auto">
             <div
               className="tiptap-content"
@@ -218,42 +183,12 @@ export default async function HomePage() {
 
       {/* Upcoming Events */}
       {upcomingEvents.length > 0 && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-(--color-brand-primary) dark:bg-dark-surface">
-          <div className="max-w-6xl mx-auto">
-            <h2 className="font-display text-3xl font-bold text-white mb-8">
-              Upcoming Events
-            </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
-              {upcomingEvents.map((event) => (
-                <Link
-                  key={event.id}
-                  href={`/events/${event.id}`}
-                  className="group block rounded-xl border border-white/20 bg-white/10 p-6 hover:bg-white/20 transition-colors"
-                >
-                  <p className="text-xs text-white/60 mb-2">
-                    {formatDate(event.event_date)} · {event.location}
-                  </p>
-                  <h3 className="font-display text-lg font-bold text-white">
-                    {event.title}
-                  </h3>
-                </Link>
-              ))}
-            </div>
-            <div className="mt-8">
-              <Link
-                href="/events"
-                className="text-sm font-medium text-[hsl(35_60%_50%)] hover:underline"
-              >
-                View all events →
-              </Link>
-            </div>
-          </div>
-        </section>
+        <UpcomingEventsSection events={upcomingEvents} />
       )}
 
       {/* CTA */}
       {visibility.cta_section_enabled && cta?.content && (
-        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-[var(--color-surface)] dark:bg-dark-background">
+        <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface dark:bg-dark-background">
           <div className="max-w-4xl mx-auto">
             <div
               className="tiptap-content"

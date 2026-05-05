@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { getPageContent } from '@/actions/page-content'
 import { buildMetadata } from '@/lib/metadata'
+import { FadeUp } from '@/components/shared/FadeUp'
 
 export async function generateMetadata(): Promise<Metadata> {
   return buildMetadata({ title: 'Mission' })
@@ -17,12 +18,14 @@ export default async function MissionPage() {
         const section = sections?.find(s => s.section === key)
         if (!section?.content) return null
         return (
-          <section key={key}>
-            <div
-              className="tiptap-content"
-              dangerouslySetInnerHTML={{ __html: section.content }}
-            />
-          </section>
+          <FadeUp key={key}>
+            <section>
+              <div
+                className="tiptap-content"
+                dangerouslySetInnerHTML={{ __html: section.content }}
+              />
+            </section>
+          </FadeUp>
         )
       })}
     </div>
