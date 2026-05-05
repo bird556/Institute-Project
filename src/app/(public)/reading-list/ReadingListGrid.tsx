@@ -30,7 +30,7 @@ export default function ReadingListGrid({ items }: { items: ReadingListCardProps
       variants={container}
       initial="hidden"
       animate={inView ? 'show' : 'hidden'}
-      className="grid grid-cols-2 lg:grid-cols-4 gap-6"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
     >
       {items.map((item_) => (
         <motion.div key={item_.id} variants={item}>

@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { Menu, X, Search, ChevronDown } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeToggle } from './ThemeToggle'
 import { SearchBar } from './SearchBar'
 import { cn } from '@/lib/utils'
@@ -100,25 +101,33 @@ export function Header({ visibility, logoUrl, siteName = 'Institute' }: HeaderPr
                   <ChevronDown size={14} className={cn('transition-transform', moreOpen && 'rotate-180')} />
                 </button>
 
-                {moreOpen && (
-                  <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border dark:border-dark-border bg-background dark:bg-dark-surface shadow-lg overflow-hidden z-50">
-                    {moreLinks.map(({ href, label }) => (
-                      <Link
-                        key={href}
-                        href={href}
-                        onClick={() => setMoreOpen(false)}
-                        className={cn(
-                          'block px-4 py-2.5 text-sm transition-colors',
-                          pathname === href || pathname.startsWith(href + '/')
-                            ? 'text-brand-teal dark:text-white bg-surface dark:bg-dark-surface-hover'
-                            : 'text-text-muted hover:text-brand-teal dark:hover:text-white hover:bg-surface dark:hover:bg-dark-surface-hover'
-                        )}
-                      >
-                        {label}
-                      </Link>
-                    ))}
-                  </div>
-                )}
+                <AnimatePresence>
+                  {moreOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                      transition={{ duration: 0.15, ease: 'easeOut' }}
+                      className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border dark:border-dark-border bg-background dark:bg-dark-surface shadow-lg overflow-hidden z-50"
+                    >
+                      {moreLinks.map(({ href, label }) => (
+                        <Link
+                          key={href}
+                          href={href}
+                          onClick={() => setMoreOpen(false)}
+                          className={cn(
+                            'block px-4 py-2.5 text-sm transition-colors',
+                            pathname === href || pathname.startsWith(href + '/')
+                              ? 'text-brand-teal dark:text-white bg-surface dark:bg-dark-surface-hover'
+                              : 'text-text-muted hover:text-brand-teal dark:hover:text-white hover:bg-surface dark:hover:bg-dark-surface-hover'
+                          )}
+                        >
+                          {label}
+                        </Link>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
           </nav>
@@ -148,32 +157,48 @@ export function Header({ visibility, logoUrl, siteName = 'Institute' }: HeaderPr
         </div>
 
         {/* Search bar (expandable) */}
-        {searchOpen && (
-          <div className="pb-3">
-            <SearchBar onClose={() => setSearchOpen(false)} />
-          </div>
-        )}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="overflow-hidden pb-3"
+            >
+              <SearchBar onClose={() => setSearchOpen(false)} />
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Mobile Nav */}
-        {mobileOpen && (
-          <nav className="lg:hidden pb-4 flex flex-col gap-1">
-            {[...primaryLinks, ...moreLinks].map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                onClick={() => setMobileOpen(false)}
-                className={cn(
-                  'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                  pathname === href
-                    ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
-                    : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
-                )}
-              >
-                {label}
-              </Link>
-            ))}
-          </nav>
-        )}
+        <AnimatePresence>
+          {mobileOpen && (
+            <motion.nav
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="lg:hidden overflow-hidden pb-4 flex flex-col gap-1"
+            >
+              {[...primaryLinks, ...moreLinks].map(({ href, label }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                    pathname === href
+                      ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
+                      : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
+                  )}
+                >
+                  {label}
+                </Link>
+              ))}
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </div>
     </header>
   )

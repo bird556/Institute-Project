@@ -224,6 +224,27 @@ export async function assignToEdition(
   return { success: true, data }
 }
 
+export async function setSubmissionPending(
+  id: string,
+): Promise<ActionResult<NewsletterSubmission>> {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('newsletter_submissions')
+    .update({ status: 'pending', reviewed_at: null, admin_note: null, updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) return { success: false, error: 'Failed to reset submission.' }
+  return { success: true, data }
+}
+
+export async function deleteSubmission(id: string): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { error } = await supabase.from('newsletter_submissions').delete().eq('id', id)
+  if (error) return { success: false, error: 'Failed to delete submission.' }
+  return { success: true }
+}
+
 export async function getEditionSubmissions(
   editionId: string,
 ): Promise<ActionResult<NewsletterSubmission[]>> {

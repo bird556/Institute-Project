@@ -2,14 +2,17 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { ArrowLeft, CheckCircle, XCircle, BookOpen, FileText, MessageSquare } from 'lucide-react'
+import { ArrowLeft, CheckCircle, XCircle, BookOpen, FileText, MessageSquare, RotateCcw, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import {
   approveSubmission,
   rejectSubmission,
+  setSubmissionPending,
+  deleteSubmission,
   updateSubmissionContent,
   updateSubmissionAdminNote,
   assignToEdition,
@@ -47,6 +50,8 @@ interface Props {
 }
 
 export default function SubmissionReviewer({ submission: initial, editions }: Props) {
+  const router = useRouter()
+
   const [submission, setSubmission] = useState(initial)
   const [content, setContent]       = useState(initial.content)
   const [adminNote, setAdminNote]   = useState(initial.admin_note ?? '')
@@ -55,7 +60,10 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
 
   const [approving, setApproving]   = useState(false)
   const [rejecting, setRejecting]   = useState(false)
+  const [resetting, setResetting]   = useState(false)
+  const [deleting, setDeleting]     = useState(false)
   const [rejectOpen, setRejectOpen] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
   const [saving, setSaving]         = useState(false)
 
   const TypeIcon  = TYPE_ICON[submission.type]
@@ -81,6 +89,25 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
     setSubmission(result.data!)
     setRejectOpen(false)
     toast.success('Submission rejected.')
+  }
+
+  async function handleReset() {
+    setResetting(true)
+    const result = await setSubmissionPending(submission.id)
+    setResetting(false)
+    if (!result.success) { toast.error(result.error ?? 'Failed to reset.'); return }
+    setSubmission(result.data!)
+    setAdminNote('')
+    toast.success('Submission reset to pending.')
+  }
+
+  async function handleDelete() {
+    setDeleting(true)
+    const result = await deleteSubmission(submission.id)
+    setDeleting(false)
+    if (!result.success) { toast.error(result.error ?? 'Failed to delete.'); return }
+    toast.success('Submission deleted.')
+    router.push('/admin/newsletter')
   }
 
   async function handleSave() {
@@ -135,6 +162,7 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
                 <CheckCircle className="h-3.5 w-3.5" />
                 {approving ? 'Approving…' : 'Approve'}
               </Button>
+              {/* Reject button — hidden until Resend email is wired up
               <Button
                 onClick={() => setRejectOpen(true)}
                 disabled={approving || rejecting}
@@ -144,6 +172,76 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
               >
                 <XCircle className="h-3.5 w-3.5" />
                 Reject
+              </Button>
+              */}
+              <Button
+                onClick={() => setDeleteOpen(true)}
+                disabled={approving}
+                variant="outline"
+                size="sm"
+                className="cursor-pointer gap-1.5 border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 dark:border-red-800 dark:text-red-400"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </Button>
+            </>
+          )}
+
+          {submission.status === 'approved' && (
+            <>
+              <Button
+                onClick={handleReset}
+                disabled={resetting || deleting}
+                variant="outline"
+                size="sm"
+                className="cursor-pointer gap-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                {resetting ? 'Resetting…' : 'Reset to Pending'}
+              </Button>
+              <Button
+                onClick={() => setDeleteOpen(true)}
+                disabled={resetting || deleting}
+                variant="outline"
+                size="sm"
+                className="cursor-pointer gap-1.5 border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 dark:border-red-800 dark:text-red-400"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
+              </Button>
+            </>
+          )}
+
+          {submission.status === 'rejected' && (
+            <>
+              <Button
+                onClick={handleApprove}
+                disabled={approving || resetting || deleting}
+                className="cursor-pointer gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
+                size="sm"
+              >
+                <CheckCircle className="h-3.5 w-3.5" />
+                {approving ? 'Approving…' : 'Approve'}
+              </Button>
+              <Button
+                onClick={handleReset}
+                disabled={approving || resetting || deleting}
+                variant="outline"
+                size="sm"
+                className="cursor-pointer gap-1.5"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                {resetting ? 'Resetting…' : 'Reset to Pending'}
+              </Button>
+              <Button
+                onClick={() => setDeleteOpen(true)}
+                disabled={approving || resetting || deleting}
+                variant="outline"
+                size="sm"
+                className="cursor-pointer gap-1.5 border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/30 dark:border-red-800 dark:text-red-400"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+                Delete
               </Button>
             </>
           )}
@@ -322,7 +420,38 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
         </div>
       </div>
 
-      {/* ── Reject dialog (inline) ──────────────────────────────────────────── */}
+      {/* Delete confirmation dialog */}
+      {deleteOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-sm bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] rounded-2xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-6 space-y-4 shadow-xl">
+            <h2 className="font-display text-lg font-bold text-[var(--color-text-primary)] dark:text-white">
+              Delete Submission?
+            </h2>
+            <p className="text-sm text-[var(--color-text-muted)]">
+              This will permanently remove the submission. This action cannot be undone.
+            </p>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setDeleteOpen(false)}
+                disabled={deleting}
+                className="cursor-pointer"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="cursor-pointer bg-red-600 hover:bg-red-700 text-white"
+              >
+                {deleting ? 'Deleting…' : 'Delete'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Reject dialog — hidden until Resend email is wired up ─────────────
       {rejectOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-md bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] rounded-2xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-6 space-y-4 shadow-xl">
@@ -359,6 +488,7 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
           </div>
         </div>
       )}
+      */}
     </div>
   )
 }

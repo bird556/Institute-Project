@@ -1,25 +1,57 @@
-import type { GoalSectionContent } from '@/types';
+'use client'
+
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
+import { FadeUp } from '@/components/shared/FadeUp'
+import type { GoalSectionContent } from '@/types'
+
+const ease = [0.22, 1, 0.36, 1] as [number, number, number, number]
+
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+}
+
+const item = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
+}
 
 interface GoalSectionProps {
-  data: GoalSectionContent;
+  data: GoalSectionContent
 }
 
 export default function GoalSection({ data }: GoalSectionProps) {
+  const ref = useRef<HTMLElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+
   return (
-    <section className="py-24 bg-background">
+    <section ref={ref} className="py-24 bg-background">
       <div className="max-w-4xl mx-auto px-6 text-center">
-        <p className="text-secondary dark:text-primary font-medium tracking-widest uppercase text-sm mb-3">
-          {data.label}
-        </p>
-        <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-6">
-          {data.title}
-        </h2>
-        <p className="text-muted-foreground text-lg leading-relaxed mb-10">
-          {data.description}
-        </p>
-        <div className="grid sm:grid-cols-3 gap-8">
+        <FadeUp delay={0}>
+          <p className="text-secondary dark:text-primary font-medium tracking-widest uppercase text-sm mb-3">
+            {data.label}
+          </p>
+        </FadeUp>
+        <FadeUp delay={0.1}>
+          <h2 className="font-serif text-3xl sm:text-4xl font-bold text-foreground mb-6">
+            {data.title}
+          </h2>
+        </FadeUp>
+        <FadeUp delay={0.2}>
+          <p className="text-muted-foreground text-lg leading-relaxed mb-10">
+            {data.description}
+          </p>
+        </FadeUp>
+
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate={inView ? 'show' : 'hidden'}
+          className="grid sm:grid-cols-3 gap-8"
+        >
           {data.pillars.map((pillar) => (
-            <div key={pillar.num} className="text-left">
+            <motion.div key={pillar.num} variants={item} className="text-left">
               <span className="text-5xl font-serif font-bold text-[hsl(35_60%_50%/0.3)] dark:text-text-on-brand/85">
                 {pillar.num}
               </span>
@@ -29,10 +61,10 @@ export default function GoalSection({ data }: GoalSectionProps) {
               <p className="text-muted-foreground text-sm leading-relaxed">
                 {pillar.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
-  );
+  )
 }

@@ -173,8 +173,9 @@ export default function SubmitForm() {
           Submission Received
         </h2>
         <p className="text-[var(--color-text-muted)]">
-          Thank you — your submission has been received and is under review.
-          We&apos;ll be in touch.
+          Thank you — your submission has been received and is currently under
+          editorial review. If approved, it will be featured in an upcoming
+          edition of the newsletter.
         </p>
         <div className="flex gap-3 justify-center pt-2 flex-wrap">
           <Button
@@ -352,6 +353,7 @@ export default function SubmitForm() {
                     className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                   />
                 </Field>
+                {/* Contact Email for Responses — hidden until Resend is wired up
                 <Field label="Contact Email for Responses" id="contact-email">
                   <Input
                     id="contact-email"
@@ -363,6 +365,7 @@ export default function SubmitForm() {
                     placeholder="contact@example.com"
                   />
                 </Field>
+                */}
               </div>
             )}
           </fieldset>
