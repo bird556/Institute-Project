@@ -4,9 +4,9 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { MoreVertical, PenLine, Trash2, Plus, Heart, Search, X } from 'lucide-react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
-import { createWellnessPost, deleteWellnessPost } from '@/actions/wellness'
+import { createWellnessPost, deleteWellnessPost, toggleWellnessPublished } from '@/actions/wellness'
 import { formatDate } from '@/lib/utils'
 import { WELLNESS_TAGS } from '@/types'
 import type { WellnessPost, WellnessTag } from '@/types'
@@ -22,8 +22,12 @@ import type { WellnessPost, WellnessTag } from '@/types'
 type StatusFilter = 'all' | 'published' | 'drafts'
 type TagFilter    = 'all' | WellnessTag
 
+interface WellnessListItem extends WellnessPost {
+  cover_url: string | null
+}
+
 interface WellnessListClientProps {
-  posts: WellnessPost[]
+  posts: WellnessListItem[]
 }
 
 export default function WellnessListClient({ posts: initial }: WellnessListClientProps) {
@@ -35,6 +39,7 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
   const [tagFilter, setTagFilter] = useState<TagFilter>('all')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
   const filtered = posts.filter((p) => {
     const q = query.toLowerCase()
@@ -76,6 +81,17 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
     }
     setPosts((prev) => prev.filter((p) => p.id !== deleteId))
     toast.success('Wellness post deleted.')
+  }
+
+  async function handleToggle(id: string, current: boolean) {
+    setTogglingId(id)
+    setPosts((prev) => prev.map((p) => p.id === id ? { ...p, published: !current } : p))
+    const result = await toggleWellnessPublished(id, !current)
+    setTogglingId(null)
+    if (!result.success) {
+      setPosts((prev) => prev.map((p) => p.id === id ? { ...p, published: current } : p))
+      toast.error(result.error ?? 'Failed to update status.')
+    }
   }
 
   function clearFilters() {
@@ -185,28 +201,46 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
               <motion.li
                 key={post.id}
                 variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
-                className="flex items-center justify-between gap-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3"
+                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3"
               >
-                <div className="flex items-start gap-3 min-w-0">
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm text-[var(--color-text-primary)] dark:text-white truncate">
-                      {post.title}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <Badge variant={post.published ? 'default' : 'secondary'} className="text-xs">
-                        {post.published ? 'Published' : 'Draft'}
-                      </Badge>
-                      {post.tags.map((tag) => (
-                        <span key={tag} className="text-xs text-[var(--color-text-muted)]">
-                          {tag}
-                        </span>
-                      ))}
-                      <span className="text-xs text-[var(--color-text-muted)]">
-                        {formatDate(post.updated_at)}
+                {/* Thumbnail */}
+                {post.cover_url ? (
+                  <div className="h-10 w-10 rounded-md overflow-hidden relative shrink-0">
+                    <Image src={post.cover_url} alt={post.title} fill className="object-cover" sizes="40px" />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 rounded-md bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
+                    <Heart className="h-5 w-5 text-[var(--color-text-muted)]" />
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-sm text-[var(--color-text-primary)] dark:text-white truncate">
+                    {post.title}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1 flex-wrap">
+                    {post.tags.map((tag) => (
+                      <span key={tag} className="text-xs text-[var(--color-text-muted)]">
+                        {tag}
                       </span>
-                    </div>
+                    ))}
+                    <span className="text-xs text-[var(--color-text-muted)]">
+                      {formatDate(post.updated_at)}
+                    </span>
                   </div>
                 </div>
+
+                <button
+                  onClick={() => handleToggle(post.id, post.published)}
+                  disabled={togglingId === post.id}
+                  className={`text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer transition-colors shrink-0 ${
+                    post.published
+                      ? 'bg-[var(--color-brand-teal)] text-white hover:opacity-80'
+                      : 'bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:bg-[var(--color-surface-hover)]'
+                  }`}
+                >
+                  {togglingId === post.id ? '…' : post.published ? 'Published' : 'Draft'}
+                </button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer shrink-0">

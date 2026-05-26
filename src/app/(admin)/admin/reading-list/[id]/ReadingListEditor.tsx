@@ -48,6 +48,8 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [externalUrl, setExternalUrl] = useState(item.external_url ?? '')
   const [urlError, setUrlError] = useState('')
+  const [authorRegion, setAuthorRegion] = useState<'canadian' | 'world' | ''>(item.author_region ?? '')
+  const [itemType, setItemType] = useState<'book' | 'thesis_ma' | 'thesis_phd' | ''>(item.item_type ?? '')
   const [published, setPublished] = useState(item.published)
 
   const [saving, setSaving] = useState(false)
@@ -65,6 +67,8 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
       description: description || null,
       cover_path: coverPath,
       external_url: externalUrl || null,
+      author_region: (authorRegion || null) as 'canadian' | 'world' | null,
+      item_type: (itemType || null) as 'book' | 'thesis_ma' | 'thesis_phd' | null,
     }
   }
 
@@ -259,6 +263,41 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
                 placeholder="e.g. Paulo Freire"
                 className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
+            </div>
+
+            {/* Author Region */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="author-region" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Author Region
+              </Label>
+              <select
+                id="author-region"
+                value={authorRegion}
+                onChange={(e) => { setAuthorRegion(e.target.value as 'canadian' | 'world' | ''); scheduleAutosave() }}
+                className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
+              >
+                <option value="">— Not set —</option>
+                <option value="canadian">Canadian</option>
+                <option value="world">International</option>
+              </select>
+            </div>
+
+            {/* Item Type */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="item-type" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Item Type
+              </Label>
+              <select
+                id="item-type"
+                value={itemType}
+                onChange={(e) => { setItemType(e.target.value as 'book' | 'thesis_ma' | 'thesis_phd' | ''); scheduleAutosave() }}
+                className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
+              >
+                <option value="">— Not set —</option>
+                <option value="book">Book</option>
+                <option value="thesis_ma">Thesis (M.A.)</option>
+                <option value="thesis_phd">Thesis (Ph.D.)</option>
+              </select>
             </div>
 
             {/* External URL */}

@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/server';
 import GoalSection from '@/components/home/GoalSection';
 import ImpactSection from '@/components/home/ImpactSection';
 import MissionSection from '@/components/home/MissionSection';
+import WellnessFeaturedSection from '@/components/home/WellnessFeaturedSection';
 import { HeroContent } from '@/components/home/HeroContent';
 import { UpcomingEventsSection } from '@/components/home/UpcomingEventsSection';
 import type {
@@ -130,6 +131,40 @@ export default async function HomePage() {
     MISSION_FALLBACK,
   );
 
+  // H&W featured posts
+  const wellnessFeaturedMode = settings?.wellness_featured_mode ?? 'latest'
+  const wellnessFeaturedIds: string[] = (() => {
+    try { return JSON.parse(settings?.wellness_featured_ids ?? '[]') } catch { return [] }
+  })()
+
+  let wellnessFeaturedPosts: { id: string; title: string; excerpt: string | null; cover_url: string | null }[] = []
+  if (visibility.wellness_section_enabled) {
+    let wellnessQuery = supabase
+      .from('wellness_posts')
+      .select('id, title, excerpt, cover_path')
+      .eq('published', true)
+
+    if (wellnessFeaturedMode === 'manual' && wellnessFeaturedIds.length > 0) {
+      wellnessQuery = wellnessQuery.in('id', wellnessFeaturedIds)
+    } else {
+      wellnessQuery = wellnessQuery.order('published_at', { ascending: false }).limit(3)
+    }
+
+    const { data: wData } = await wellnessQuery
+    const ordered = wellnessFeaturedMode === 'manual' && wellnessFeaturedIds.length > 0
+      ? wellnessFeaturedIds.map((id) => (wData ?? []).find((p) => p.id === id)).filter(Boolean)
+      : (wData ?? [])
+
+    wellnessFeaturedPosts = (ordered as typeof wData ?? []).map((p) => ({
+      id: p!.id,
+      title: p!.title,
+      excerpt: p!.excerpt,
+      cover_url: p!.cover_path
+        ? supabase.storage.from('institute-media').getPublicUrl(p!.cover_path).data.publicUrl
+        : null,
+    }))
+  }
+
   // Upcoming events from Supabase
   const now = new Date().toISOString();
   const { data: eventsData } = await supabase
@@ -179,6 +214,14 @@ export default async function HomePage() {
       {/* Mission Section */}
       {visibility.mission_section_enabled && (
         <MissionSection data={missionData} />
+      )}
+
+      {/* Health & Wellness Featured */}
+      {visibility.wellness_section_enabled && wellnessFeaturedPosts.length > 0 && (
+        <WellnessFeaturedSection
+          blurb={settings?.wellness_section_blurb ?? ''}
+          posts={wellnessFeaturedPosts}
+        />
       )}
 
       {/* Upcoming Events */}

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import ImageUpload from '@/components/shared/ImageUpload'
 import { Switch } from '@/components/ui/switch'
+import NavManagerClient from './NavManagerClient'
 import {
   updateSiteSetting,
   updateSiteSettings,
@@ -53,6 +54,12 @@ const EMPTY: SiteSettings = {
   home_hero_bg_path: '',
   intro_section_enabled: 'true',
   cta_section_enabled:   'true',
+  wellness_section_enabled: 'true',
+  wellness_section_blurb: '',
+  wellness_featured_mode: 'latest',
+  wellness_featured_ids: '[]',
+  nav_config: '',
+  book_of_the_month_id: '',
 }
 
 export default function SettingsClient({ initialSettings, initialLogoUrl }: SettingsClientProps) {
@@ -144,8 +151,9 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     cta_section_enabled:     settings.cta_section_enabled     !== 'false',
     goal_section_enabled:    settings.goal_section_enabled    !== 'false',
     impact_section_enabled:  settings.impact_section_enabled  !== 'false',
-    mission_section_enabled: settings.mission_section_enabled !== 'false',
-    logo_visible:            settings.logo_visible            !== 'false',
+    mission_section_enabled:  settings.mission_section_enabled  !== 'false',
+    wellness_section_enabled: settings.wellness_section_enabled !== 'false',
+    logo_visible:             settings.logo_visible             !== 'false',
     admin_name_visible:      settings.admin_name_visible      !== 'false',
     admin_title_visible:     settings.admin_title_visible     !== 'false',
     admin_email_visible:     settings.admin_email_visible     !== 'false',
@@ -521,7 +529,22 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
 
       <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
 
-      {/* ── Section 6: Page Visibility ────────────────────────────────── */}
+      {/* ── Section 6: Navigation ────────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Navigation
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Control which links appear in the public site menu and in what order.
+          </p>
+        </div>
+        <NavManagerClient initialNavConfig={settings.nav_config} />
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 7: Page Visibility ────────────────────────────────── */}
       <section className="space-y-4">
         <div>
           <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
@@ -547,6 +570,7 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
             { key: 'impact_section_enabled',  label: 'Home — The Challenge', description: 'Show/hide the Addressing Hidden Crises section on the home page' },
             { key: 'mission_section_enabled', label: 'Home — What We Do',    description: 'Show/hide the Remembering Creative Power section on the home page' },
             { key: 'cta_section_enabled',     label: 'Home — Call to Action',description: 'Show/hide the Call to Action section on the home page' },
+            { key: 'wellness_section_enabled', label: 'Home — Health & Wellness', description: 'Show/hide the Health & Wellness featured section on the home page' },
           ] as const).map(({ key, label, description }) => (
             <div key={key} className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
               <div>

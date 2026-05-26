@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { ArrowLeft, MoreVertical, Trash2, ExternalLink } from 'lucide-react'
+import { ArrowLeft, MoreVertical, Trash2, ExternalLink, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,7 +17,7 @@ import {
 import ImageUpload from '@/components/shared/ImageUpload'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
-import { updatePartner, deletePartner } from '@/actions/partners'
+import { updatePartner, deletePartner, togglePartnerPublished } from '@/actions/partners'
 import { formatDate } from '@/lib/utils'
 import type { Partner } from '@/types'
 
@@ -47,12 +47,28 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
   const [websiteUrl, setWebsiteUrl] = useState(partner.website_url ?? '')
   const [urlError, setUrlError] = useState('')
 
+  const [published, setPublished] = useState(partner.published)
+  const [togglingVisibility, setTogglingVisibility] = useState(false)
+
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [confirmOpen, setConfirmOpen] = useState(false)
 
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isDirty = useRef(false)
+
+  async function handleToggleVisibility() {
+    const next = !published
+    setTogglingVisibility(true)
+    const result = await togglePartnerPublished(partner.id, next)
+    setTogglingVisibility(false)
+    if (!result.success) {
+      toast.error(result.error ?? 'Failed to update visibility.')
+      return
+    }
+    setPublished(next)
+    toast.success(next ? 'Partner is now visible.' : 'Partner is now hidden.')
+  }
 
   function buildFields() {
     return {
@@ -222,6 +238,40 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
                   scheduleAutosave()
                 }}
               />
+            </div>
+
+            {/* Visibility */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
+                Visibility
+              </p>
+              <button
+                onClick={handleToggleVisibility}
+                disabled={togglingVisibility}
+                className="flex items-center gap-3 w-full cursor-pointer group disabled:opacity-60"
+              >
+                <div
+                  className="flex items-center justify-center h-8 w-8 rounded-full shrink-0 transition-colors"
+                  style={
+                    published
+                      ? { background: 'color-mix(in srgb, var(--color-brand-teal) 12%, transparent)' }
+                      : { background: 'var(--color-surface-hover)' }
+                  }
+                >
+                  {published
+                    ? <Eye className="h-4 w-4" style={{ color: 'var(--color-brand-teal)' }} />
+                    : <EyeOff className="h-4 w-4 text-[var(--color-text-muted)]" />
+                  }
+                </div>
+                <div className="text-left">
+                  <p className="text-sm font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">
+                    {published ? 'Visible on site' : 'Hidden from site'}
+                  </p>
+                  <p className="text-xs text-[var(--color-text-muted)]">
+                    {published ? 'Click to hide' : 'Click to make visible'}
+                  </p>
+                </div>
+              </button>
             </div>
 
             {/* Website URL */}

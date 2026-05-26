@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 export interface ReadingListCardProps {
@@ -46,7 +46,9 @@ export default function ReadingListCard({
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand-teal)] to-[var(--color-brand-teal-light)]" />
+            <div className="absolute inset-0 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center">
+              <BookOpen className="w-12 h-12 text-[var(--color-text-muted)] opacity-40" />
+            </div>
           )}
         </div>
 

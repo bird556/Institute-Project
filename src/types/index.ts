@@ -32,6 +32,8 @@ export interface ReadingListItem {
   description: string | null
   cover_path: string | null
   external_url: string | null
+  author_region: 'canadian' | 'world' | null
+  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | null
   published: boolean
   created_at: string
   updated_at: string
@@ -91,6 +93,15 @@ export interface SiteSettings {
   goal_section_enabled:    string
   impact_section_enabled:  string
   mission_section_enabled: string
+  // H&W featured section
+  wellness_section_enabled: string
+  wellness_section_blurb:   string
+  wellness_featured_mode:   string  // 'latest' | 'manual'
+  wellness_featured_ids:    string  // JSON array of up to 3 post IDs
+  // Nav config
+  nav_config: string  // JSON array of NavItem
+  // Reading list feature
+  book_of_the_month_id: string  // empty string = not set
 }
 
 export interface GoalPillar {

@@ -19,7 +19,7 @@ import {
   arrayMove,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { GripVertical, MoreVertical, PenLine, Trash2, Plus, Building2, Search, X } from 'lucide-react'
+import { GripVertical, MoreVertical, PenLine, Trash2, Plus, Building2, Search, X, Eye, EyeOff } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import {
@@ -364,6 +364,12 @@ function SortableRow({ partner, index, logoUrl, dragDisabled, onEdit, onDelete, 
           <DropdownMenuItem onClick={onEdit} className="cursor-pointer gap-2">
             <PenLine className="h-4 w-4" />
             Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onToggleVisible} className="cursor-pointer gap-2">
+            {partner.published
+              ? <><EyeOff className="h-4 w-4" />Hide</>
+              : <><Eye className="h-4 w-4" />Show</>
+            }
           </DropdownMenuItem>
           <DropdownMenuItem onClick={onDelete} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
             <Trash2 className="h-4 w-4" />

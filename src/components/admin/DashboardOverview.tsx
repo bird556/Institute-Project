@@ -1,19 +1,17 @@
 'use client'
 
+import { useTransition } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { FileText, CalendarDays, BookOpen, Handshake, Inbox, Plus } from 'lucide-react'
+import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
 import { cn } from '@/lib/utils'
+import { createBlog } from '@/actions/blogs'
+import { createEvent } from '@/actions/events'
+import { createPartner } from '@/actions/partners'
 import type { DashboardData } from '@/actions/dashboard'
-
-// ── Quick actions ─────────────────────────────────────────────────────────────
-
-const QUICK_ACTIONS = [
-  { label: 'New Blog',    href: '/admin/blogs/new' },
-  { label: 'New Event',   href: '/admin/events/new' },
-  { label: 'New Partner', href: '/admin/partners/new' },
-]
 
 // ── Activity type badge ───────────────────────────────────────────────────────
 
@@ -33,6 +31,22 @@ const TYPE_COLORS: Record<string, string> = {
 
 export default function DashboardOverview({ data }: { data: DashboardData }) {
   const { stats, pendingSubmissions, recentActivity } = data
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
+
+  function handleQuickAction(
+    action: () => Promise<{ success: boolean; data?: { id: string }; error?: string }>,
+    path: string,
+  ) {
+    startTransition(async () => {
+      const result = await action()
+      if (!result.success || !result.data) {
+        toast.error(result.error ?? 'Could not create item.')
+        return
+      }
+      router.push(`${path}/${result.data.id}`)
+    })
+  }
 
   const STAT_CARDS = [
     {
@@ -138,15 +152,20 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
           Quick Actions
         </h3>
         <div className="flex flex-wrap gap-3">
-          {QUICK_ACTIONS.map((action) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-sm font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+          {[
+            { label: 'New Blog',    action: createBlog,    path: '/admin/blogs' },
+            { label: 'New Event',   action: createEvent,   path: '/admin/events' },
+            { label: 'New Partner', action: createPartner, path: '/admin/partners' },
+          ].map(({ label, action, path }) => (
+            <button
+              key={label}
+              onClick={() => handleQuickAction(action, path)}
+              disabled={isPending}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-sm font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <Plus size={15} />
-              {action.label}
-            </Link>
+              {label}
+            </button>
           ))}
         </div>
       </div>

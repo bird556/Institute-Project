@@ -5,6 +5,13 @@ import { motion } from 'framer-motion'
 import WellnessCard from '@/components/wellness/WellnessCard'
 import { WELLNESS_TAGS } from '@/types'
 
+function getAllTags(posts: WellnessGridPost[]): string[] {
+  const hardcoded = WELLNESS_TAGS as readonly string[]
+  const all = posts.flatMap((p) => p.tags)
+  const custom = [...new Set(all.filter((t) => !hardcoded.includes(t)))]
+  return [...hardcoded.filter((t) => all.includes(t)), ...custom]
+}
+
 interface WellnessGridPost {
   id: string
   title: string
@@ -62,10 +69,8 @@ export default function WellnessGrid({ posts }: WellnessGridProps) {
         >
           All
         </button>
-        {WELLNESS_TAGS.map((tag) => {
+        {getAllTags(posts).map((tag) => {
           const isActive = activeTag === tag
-          const count    = posts.filter((p) => p.tags.includes(tag)).length
-          if (count === 0) return null
           return (
             <button
               key={tag}

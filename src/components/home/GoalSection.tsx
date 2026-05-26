@@ -1,29 +1,30 @@
-'use client'
+'use client';
 
-import { useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
-import { FadeUp } from '@/components/shared/FadeUp'
-import type { GoalSectionContent } from '@/types'
+import { useRef } from 'react';
+import Link from 'next/link';
+import { motion, useInView } from 'framer-motion';
+import { FadeUp } from '@/components/shared/FadeUp';
+import type { GoalSectionContent } from '@/types';
 
-const ease = [0.22, 1, 0.36, 1] as [number, number, number, number]
+const ease = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 const container = {
   hidden: {},
   show: { transition: { staggerChildren: 0.08 } },
-}
+};
 
 const item = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
-}
+};
 
 interface GoalSectionProps {
-  data: GoalSectionContent
+  data: GoalSectionContent;
 }
 
 export default function GoalSection({ data }: GoalSectionProps) {
-  const ref = useRef<HTMLElement>(null)
-  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const ref = useRef<HTMLElement>(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
 
   return (
     <section ref={ref} className="py-24 bg-background">
@@ -64,7 +65,18 @@ export default function GoalSection({ data }: GoalSectionProps) {
             </motion.div>
           ))}
         </motion.div>
+
+        <FadeUp delay={0.4}>
+          <div className="mt-10">
+            <Link
+              href="/about"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[hsl(35_60%_50%)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+            >
+              Learn More About Us
+            </Link>
+          </div>
+        </FadeUp>
       </div>
     </section>
-  )
+  );
 }

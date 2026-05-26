@@ -165,7 +165,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                   onClick={handleViewAll}
                   className="w-full px-4 py-2.5 text-sm font-medium text-brand-teal dark:text-white hover:bg-surface dark:hover:bg-dark-surface-hover transition-colors text-left cursor-pointer"
                 >
-                  View all {total} result{total !== 1 ? 's' : ''} for &ldquo;
+                  View all {total} result {total !== 1 ? 's' : ''} for &ldquo;
                   {query.trim()}&rdquo; →
                 </button>
               </div>

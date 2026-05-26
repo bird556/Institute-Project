@@ -1,11 +1,10 @@
-import { getSiteVisibility } from '@/lib/site-visibility'
 import { getSiteSettings } from '@/actions/settings'
 import { createClient } from '@/lib/supabase/server'
+import { parseNavConfig } from '@/lib/nav-config'
 import { Header } from './Header'
 
 export async function HeaderServer() {
-  const [visibility, { data: settings }, supabase] = await Promise.all([
-    getSiteVisibility(),
+  const [{ data: settings }, supabase] = await Promise.all([
     getSiteSettings(),
     createClient(),
   ])
@@ -15,6 +14,7 @@ export async function HeaderServer() {
     ? supabase.storage.from('institute-media').getPublicUrl(settings.logo_path).data.publicUrl
     : undefined
   const siteName = settings?.site_name || 'Institute'
+  const navItems = parseNavConfig(settings?.nav_config)
 
-  return <Header visibility={visibility} logoUrl={logoUrl} siteName={siteName} />
+  return <Header navItems={navItems} logoUrl={logoUrl} siteName={siteName} />
 }

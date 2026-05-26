@@ -4,9 +4,9 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { MoreVertical, PenLine, Trash2, Plus, FileText, Search, X } from 'lucide-react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +14,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
-import { createBlog, deleteBlog } from '@/actions/blogs'
+import { createBlog, deleteBlog, toggleBlogPublished } from '@/actions/blogs'
 import { formatDate } from '@/lib/utils'
 import type { BlogPost } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
 
+interface BlogListItem extends BlogPost {
+  cover_url: string | null
+}
+
 interface BlogListClientProps {
-  blogs: BlogPost[]
+  blogs: BlogListItem[]
 }
 
 export default function BlogListClient({ blogs: initial }: BlogListClientProps) {
@@ -32,6 +36,7 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
   const filtered = blogs.filter((b) => {
     const q = query.toLowerCase()
@@ -71,6 +76,17 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
     }
     setBlogs((prev) => prev.filter((b) => b.id !== deleteId))
     toast.success('Blog post deleted.')
+  }
+
+  async function handleToggle(id: string, current: boolean) {
+    setTogglingId(id)
+    setBlogs((prev) => prev.map((b) => b.id === id ? { ...b, published: !current } : b))
+    const result = await toggleBlogPublished(id, !current)
+    setTogglingId(null)
+    if (!result.success) {
+      setBlogs((prev) => prev.map((b) => b.id === id ? { ...b, published: current } : b))
+      toast.error(result.error ?? 'Failed to update status.')
+    }
   }
 
   const filterBtnClass = (active: boolean) =>
@@ -148,9 +164,16 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
                 transition={{ delay: i * 0.04, duration: 0.25 }}
                 className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
               >
-                <div className="h-10 w-10 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
-                  <FileText className="h-5 w-5 text-[var(--color-text-muted)]" />
-                </div>
+                {/* Thumbnail */}
+                {post.cover_url ? (
+                  <div className="h-10 w-10 rounded-md overflow-hidden relative shrink-0">
+                    <Image src={post.cover_url} alt={post.title} fill className="object-cover" sizes="40px" />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
+                    <FileText className="h-5 w-5 text-[var(--color-text-muted)]" />
+                  </div>
+                )}
 
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
@@ -163,16 +186,21 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
                   )}
                 </div>
 
-                <Badge
-                  variant={post.published ? 'default' : 'secondary'}
-                  className={post.published ? 'bg-[var(--color-brand-teal)] text-white shrink-0' : 'shrink-0'}
-                >
-                  {post.published ? 'Published' : 'Draft'}
-                </Badge>
-
                 <span className="text-sm text-[var(--color-text-muted)] shrink-0 hidden sm:block">
                   {formatDate(post.published_at || post.created_at)}
                 </span>
+
+                <button
+                  onClick={() => handleToggle(post.id, post.published)}
+                  disabled={togglingId === post.id}
+                  className={`text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer transition-colors shrink-0 ${
+                    post.published
+                      ? 'bg-[var(--color-brand-teal)] text-white hover:opacity-80'
+                      : 'bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:bg-[var(--color-surface-hover)]'
+                  }`}
+                >
+                  {togglingId === post.id ? '…' : post.published ? 'Published' : 'Draft'}
+                </button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">

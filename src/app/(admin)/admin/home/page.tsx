@@ -6,6 +6,7 @@ import HomeHeroImagePanels from '@/components/admin/HomeHeroImagePanels'
 import GoalEditor from './GoalEditor'
 import ImpactEditor from './ImpactEditor'
 import MissionEditor from './MissionEditor'
+import WellnessFeaturedEditor from './WellnessFeaturedEditor'
 import type { GoalSectionContent, ImpactSectionContent, MissionSectionContent } from '@/types'
 
 function parseSection<T>(content: string | undefined, fallback: T): T {
@@ -43,6 +44,20 @@ export default async function AdminHomePage() {
     createClient(),
   ])
 
+  const { data: wellnessPosts } = await supabase
+    .from('wellness_posts')
+    .select('id, title, cover_path')
+    .eq('published', true)
+    .order('published_at', { ascending: false })
+
+  const publishedPosts = (wellnessPosts ?? []).map((p) => ({
+    id: p.id,
+    title: p.title,
+    cover_url: p.cover_path
+      ? supabase.storage.from('institute-media').getPublicUrl(p.cover_path).data.publicUrl
+      : null,
+  }))
+
   const s = (key: string) => sections?.find(sec => sec.section === key)
 
   const goalContent    = s('goal_section')?.content
@@ -51,11 +66,12 @@ export default async function AdminHomePage() {
 
   // Visibility flags — default to enabled if key not yet in DB
   const vis = {
-    intro:   settings?.intro_section_enabled   !== 'false',
-    cta:     settings?.cta_section_enabled     !== 'false',
-    goal:    settings?.goal_section_enabled    !== 'false',
-    impact:  settings?.impact_section_enabled  !== 'false',
-    mission: settings?.mission_section_enabled !== 'false',
+    intro:    settings?.intro_section_enabled    !== 'false',
+    cta:      settings?.cta_section_enabled      !== 'false',
+    goal:     settings?.goal_section_enabled     !== 'false',
+    impact:   settings?.impact_section_enabled   !== 'false',
+    mission:  settings?.mission_section_enabled  !== 'false',
+    wellness: settings?.wellness_section_enabled !== 'false',
   }
 
   return (
@@ -128,7 +144,17 @@ export default async function AdminHomePage() {
         initialVisible={vis.mission}
       />
 
-      {/* 7. Call to Action Section */}
+      {/* 7. Health & Wellness Featured Section */}
+      <WellnessFeaturedEditor
+        initialBlurb={settings?.wellness_section_blurb ?? ''}
+        initialMode={settings?.wellness_featured_mode ?? 'latest'}
+        initialIds={settings?.wellness_featured_ids ?? '[]'}
+        visibilityKey="wellness_section_enabled"
+        initialVisible={vis.wellness}
+        publishedPosts={publishedPosts}
+      />
+
+      {/* 8. Call to Action Section */}
       <PageSectionEditor
         label="Call to Action Section"
         page="home"

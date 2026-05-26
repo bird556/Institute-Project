@@ -27,6 +27,10 @@ import type { WellnessPost } from '@/types'
 const EXCERPT_MAX = 300
 const AUTOSAVE_MS = 2000
 
+function toTitleCase(str: string): string {
+  return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase())
+}
+
 interface WellnessEditorProps {
   post: WellnessPost
   initialCoverUrl?: string
@@ -45,6 +49,7 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
   const [docName, setDocName]     = useState<string>('')
   const [docUploading, setDocUploading] = useState(false)
   const [tags, setTags]           = useState<string[]>(post.tags)
+  const [customTagInput, setCustomTagInput] = useState('')
   const [published, setPublished] = useState(post.published)
 
   const [saving, setSaving]       = useState(false)
@@ -126,6 +131,25 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
 
   function toggleTag(tag: string) {
     const next = tags.includes(tag) ? tags.filter((t) => t !== tag) : [...tags, tag]
+    setTags(next)
+    updateWellnessPost(post.id, { tags: next })
+  }
+
+  function handleAddCustomTag() {
+    const tag = toTitleCase(customTagInput.trim())
+    if (!tag || tags.includes(tag)) { setCustomTagInput(''); return }
+    const next = [...tags, tag]
+    setTags(next)
+    updateWellnessPost(post.id, { tags: next })
+    setCustomTagInput('')
+  }
+
+  function handleCustomTagKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === 'Enter') { e.preventDefault(); handleAddCustomTag() }
+  }
+
+  function removeCustomTag(tag: string) {
+    const next = tags.filter((t) => t !== tag)
     setTags(next)
     updateWellnessPost(post.id, { tags: next })
   }
@@ -289,10 +313,42 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
                     </button>
                   )
                 })}
+                {tags.filter((t) => !(WELLNESS_TAGS as readonly string[]).includes(t)).map((tag) => (
+                  <span
+                    key={tag}
+                    className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-[var(--color-brand-teal)] text-white border border-[var(--color-brand-teal)]"
+                  >
+                    {tag}
+                    <button
+                      onClick={() => removeCustomTag(tag)}
+                      className="hover:opacity-70 transition-opacity cursor-pointer"
+                      aria-label={`Remove ${tag}`}
+                    >
+                      <X size={10} />
+                    </button>
+                  </span>
+                ))}
               </div>
               {tags.length === 0 && (
                 <p className="text-xs text-[var(--color-text-muted)]">No tags selected.</p>
               )}
+              <div className="flex gap-2 pt-1">
+                <input
+                  type="text"
+                  value={customTagInput}
+                  onChange={(e) => setCustomTagInput(toTitleCase(e.target.value))}
+                  onKeyDown={handleCustomTagKeyDown}
+                  placeholder="Add custom tag…"
+                  className="flex-1 h-8 px-3 text-xs rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-white placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)]"
+                />
+                <button
+                  onClick={handleAddCustomTag}
+                  disabled={!customTagInput.trim()}
+                  className="h-8 px-3 text-xs rounded-md bg-[var(--color-brand-teal)] text-white font-medium cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Add
+                </button>
+              </div>
             </div>
 
             {/* Cover image */}

@@ -17,6 +17,7 @@ import {
   List,
   Mail,
   Heart,
+  Star,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -60,7 +61,8 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'Blogs',             href: '/admin/blogs',            icon: FileText },
       { label: 'Events',            href: '/admin/events',           icon: CalendarDays },
-      { label: 'Reading List',      href: '/admin/reading-list',     icon: BookOpen },
+      { label: 'Reading List',      href: '/admin/reading-list',                     icon: BookOpen },
+      { label: 'Book of the Month', href: '/admin/reading-list/book-of-the-month', icon: Star },
       { label: 'Partners',          href: '/admin/partners',         icon: Handshake },
       { label: 'Newsletter',        href: '/admin/newsletter',       icon: Newspaper },
       { label: 'Health & Wellness', href: '/admin/health-wellness',  icon: Heart },

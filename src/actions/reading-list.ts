@@ -71,3 +71,14 @@ export async function deleteReadingListItem(id: string): Promise<ActionResult> {
   revalidatePath('/reading-list', 'layout')
   return { success: true }
 }
+
+export async function setBookOfTheMonth(id: string | null): Promise<ActionResult> {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('site_settings')
+    .update({ value: id ?? '' })
+    .eq('key', 'book_of_the_month_id')
+  if (error) return { success: false, error: 'Failed to update Book of the Month.' }
+  revalidatePath('/reading-list', 'layout')
+  return { success: true }
+}

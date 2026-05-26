@@ -4,9 +4,9 @@ import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { MoreVertical, PenLine, Trash2, Plus, BookOpen, Search, X } from 'lucide-react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,14 +14,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
-import { createReadingListItem, deleteReadingListItem } from '@/actions/reading-list'
+import { createReadingListItem, deleteReadingListItem, toggleReadingListPublished } from '@/actions/reading-list'
 import { formatDate } from '@/lib/utils'
 import type { ReadingListItem } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
 
+interface ReadingListListItem extends ReadingListItem {
+  cover_url: string | null
+}
+
 interface ReadingListClientProps {
-  items: ReadingListItem[]
+  items: ReadingListListItem[]
 }
 
 export default function ReadingListClient({ items: initial }: ReadingListClientProps) {
@@ -32,6 +36,7 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
+  const [togglingId, setTogglingId] = useState<string | null>(null)
 
   const filtered = items.filter((item) => {
     const q = query.toLowerCase()
@@ -71,6 +76,17 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
     }
     setItems((prev) => prev.filter((item) => item.id !== deleteId))
     toast.success('Item deleted.')
+  }
+
+  async function handleToggle(id: string, current: boolean) {
+    setTogglingId(id)
+    setItems((prev) => prev.map((item) => item.id === id ? { ...item, published: !current } : item))
+    const result = await toggleReadingListPublished(id, !current)
+    setTogglingId(null)
+    if (!result.success) {
+      setItems((prev) => prev.map((item) => item.id === id ? { ...item, published: current } : item))
+      toast.error(result.error ?? 'Failed to update status.')
+    }
   }
 
   const filterBtnClass = (active: boolean) =>
@@ -148,9 +164,16 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
                 transition={{ delay: i * 0.04, duration: 0.25 }}
                 className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
               >
-                <div className="h-10 w-10 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
-                  <BookOpen className="h-5 w-5 text-[var(--color-text-muted)]" />
-                </div>
+                {/* Thumbnail */}
+                {item.cover_url ? (
+                  <div className="h-10 w-10 rounded-md overflow-hidden relative shrink-0">
+                    <Image src={item.cover_url} alt={item.title} fill className="object-cover" sizes="40px" />
+                  </div>
+                ) : (
+                  <div className="h-10 w-10 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
+                    <BookOpen className="h-5 w-5 text-[var(--color-text-muted)]" />
+                  </div>
+                )}
 
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
@@ -168,12 +191,17 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
                   </div>
                 </div>
 
-                <Badge
-                  variant={item.published ? 'default' : 'secondary'}
-                  className={item.published ? 'bg-[var(--color-brand-teal)] text-white shrink-0' : 'shrink-0'}
+                <button
+                  onClick={() => handleToggle(item.id, item.published)}
+                  disabled={togglingId === item.id}
+                  className={`text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer transition-colors shrink-0 ${
+                    item.published
+                      ? 'bg-[var(--color-brand-teal)] text-white hover:opacity-80'
+                      : 'bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:bg-[var(--color-surface-hover)]'
+                  }`}
                 >
-                  {item.published ? 'Published' : 'Draft'}
-                </Badge>
+                  {togglingId === item.id ? '…' : item.published ? 'Published' : 'Draft'}
+                </button>
 
                 <DropdownMenu>
                   <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
