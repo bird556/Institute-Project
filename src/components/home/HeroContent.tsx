@@ -37,6 +37,12 @@ export function HeroContent({ heroHtml, heroImageUrl }: HeroContentProps) {
             >
               Upcoming Events
             </a>
+            <a
+              href="/reading-list"
+              className="inline-block px-6 py-3 rounded-lg border border-[hsl(35_60%_50%)] text-[hsl(35_60%_50%)] font-semibold text-sm hover:bg-[hsl(35_60%_50%)] hover:text-white transition-colors"
+            >
+              Book of the Month
+            </a>
           </div>
         </motion.div>
 

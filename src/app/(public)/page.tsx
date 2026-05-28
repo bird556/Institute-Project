@@ -6,7 +6,8 @@ import { createClient } from '@/lib/supabase/server';
 import GoalSection from '@/components/home/GoalSection';
 import ImpactSection from '@/components/home/ImpactSection';
 import MissionSection from '@/components/home/MissionSection';
-import WellnessFeaturedSection from '@/components/home/WellnessFeaturedSection';
+import WellnessFeaturedSection from '@/components/home/WellnessFeaturedSection'
+import BookOfMonthSection from '@/components/home/BookOfMonthSection';
 import { HeroContent } from '@/components/home/HeroContent';
 import { UpcomingEventsSection } from '@/components/home/UpcomingEventsSection';
 import type {
@@ -165,6 +166,38 @@ export default async function HomePage() {
     }))
   }
 
+  // Book of the Month
+  const bookOfMonthId = settings?.book_of_the_month_id || null
+  let bookOfMonth: {
+    id: string
+    title: string
+    author: string | null
+    description: string | null
+    cover_url: string | null
+    external_url: string | null
+  } | null = null
+
+  if (bookOfMonthId) {
+    const { data: bomData } = await supabase
+      .from('reading_list')
+      .select('id, title, author, description, cover_path, external_url')
+      .eq('id', bookOfMonthId)
+      .eq('published', true)
+      .single()
+    if (bomData) {
+      bookOfMonth = {
+        id: bomData.id,
+        title: bomData.title,
+        author: bomData.author ?? null,
+        description: bomData.description ?? null,
+        cover_url: bomData.cover_path
+          ? supabase.storage.from('institute-media').getPublicUrl(bomData.cover_path).data.publicUrl
+          : null,
+        external_url: bomData.external_url ?? null,
+      }
+    }
+  }
+
   // Upcoming events from Supabase
   const now = new Date().toISOString();
   const { data: eventsData } = await supabase
@@ -223,6 +256,9 @@ export default async function HomePage() {
           posts={wellnessFeaturedPosts}
         />
       )}
+
+      {/* Book of the Month */}
+      {bookOfMonth && <BookOfMonthSection item={bookOfMonth} />}
 
       {/* Upcoming Events */}
       {upcomingEvents.length > 0 && (
