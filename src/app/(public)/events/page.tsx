@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { truncate, stripHtml } from '@/lib/utils'
 import EventGrid from './EventGrid'
+import PastEventsSection from './PastEventsSection'
 import { getPageContent } from '@/actions/page-content'
 import { buildMetadata } from '@/lib/metadata'
 
@@ -65,14 +66,7 @@ export default async function EventsPage() {
         )}
       </section>
 
-      {past.length > 0 && (
-        <section className="space-y-6">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--color-text-muted)]">
-            Past Events
-          </h2>
-          <EventGrid events={past} />
-        </section>
-      )}
+      {past.length > 0 && <PastEventsSection events={past} />}
     </div>
   )
 }

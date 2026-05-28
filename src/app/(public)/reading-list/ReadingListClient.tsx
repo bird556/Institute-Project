@@ -2,7 +2,10 @@
 
 import { useState, useMemo } from 'react'
 import ReadingListGrid from './ReadingListGrid'
+import Pagination from '@/components/shared/Pagination'
 import type { ReadingListCardProps } from '@/components/reading-list/ReadingListCard'
+
+const PAGE_SIZE = 16
 
 export interface ReadingListItem extends ReadingListCardProps {
   created_at: string
@@ -27,6 +30,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
   const [authorFilter, setAuthorFilter] = useState('all')
   const [regionFilter, setRegionFilter] = useState<'all' | 'canadian' | 'world'>('all')
   const [typeFilter, setTypeFilter]     = useState<'all' | 'book' | 'thesis_ma' | 'thesis_phd' | 'thesis'>('all')
+  const [page, setPage]               = useState(1)
 
   const authors = useMemo(
     () => [...new Set(items.map((i) => i.author).filter(Boolean))].sort(),
@@ -60,7 +64,12 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
     return result
   }, [items, sort, authorFilter, regionFilter, typeFilter])
 
+  const totalPages = Math.ceil(displayed.length / PAGE_SIZE)
+  const paginated  = displayed.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
   const isFiltered = authorFilter !== 'all' || regionFilter !== 'all' || typeFilter !== 'all'
+
+  function resetPage() { setPage(1) }
 
   return (
     <div className="space-y-6">
@@ -73,7 +82,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
           </label>
           <select
             value={sort}
-            onChange={(e) => setSort(e.target.value as SortOption)}
+            onChange={(e) => { setSort(e.target.value as SortOption); resetPage() }}
             className={selectClass}
           >
             {(Object.keys(SORT_LABELS) as SortOption[]).map((key) => (
@@ -90,7 +99,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
             </label>
             <select
               value={authorFilter}
-              onChange={(e) => setAuthorFilter(e.target.value)}
+              onChange={(e) => { setAuthorFilter(e.target.value); resetPage() }}
               className={selectClass}
             >
               <option value="all">All authors</option>
@@ -109,7 +118,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
             </label>
             <select
               value={regionFilter}
-              onChange={(e) => setRegionFilter(e.target.value as typeof regionFilter)}
+              onChange={(e) => { setRegionFilter(e.target.value as typeof regionFilter); resetPage() }}
               className={selectClass}
             >
               <option value="all">All regions</option>
@@ -127,7 +136,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
             </label>
             <select
               value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as typeof typeFilter)}
+              onChange={(e) => { setTypeFilter(e.target.value as typeof typeFilter); resetPage() }}
               className={selectClass}
             >
               <option value="all">All types</option>
@@ -151,7 +160,10 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
       {displayed.length === 0 ? (
         <p className="text-[var(--color-text-muted)] py-8">No items match your filter.</p>
       ) : (
-        <ReadingListGrid items={displayed} />
+        <>
+          <ReadingListGrid items={paginated} />
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </>
       )}
     </div>
   )
