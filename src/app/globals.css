@@ -138,15 +138,28 @@ body {
   margin: 1rem 0;
 }
 .tiptap-editor ul,
-.tiptap-content ul,
+.tiptap-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 0.875rem;
+}
 .tiptap-editor ol,
 .tiptap-content ol {
+  list-style-type: decimal;
   padding-left: 1.5rem;
   margin-bottom: 0.875rem;
 }
 .tiptap-editor li,
 .tiptap-content li {
   margin-bottom: 0.25rem;
+}
+.tiptap-editor ul ul,
+.tiptap-content ul ul {
+  list-style-type: circle;
+}
+.tiptap-editor ul ul ul,
+.tiptap-content ul ul ul {
+  list-style-type: square;
 }
 .tiptap-editor blockquote,
 .tiptap-content blockquote {
