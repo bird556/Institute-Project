@@ -3,7 +3,10 @@
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import WellnessCard from '@/components/wellness/WellnessCard'
+import Pagination from '@/components/shared/Pagination'
 import { WELLNESS_TAGS } from '@/types'
+
+const PAGE_SIZE = 16
 
 function getAllTags(posts: WellnessGridPost[]): string[] {
   const hardcoded = WELLNESS_TAGS as readonly string[]
@@ -40,6 +43,7 @@ export default function WellnessGrid({ posts }: WellnessGridProps) {
   const router       = useRouter()
   const pathname     = usePathname()
   const activeTag    = searchParams.get('tag') ?? ''
+  const page         = Math.max(1, parseInt(searchParams.get('page') ?? '1', 10))
 
   function setTag(tag: string) {
     const params = new URLSearchParams(searchParams.toString())
@@ -48,12 +52,26 @@ export default function WellnessGrid({ posts }: WellnessGridProps) {
     } else {
       params.delete('tag')
     }
+    params.delete('page')
     router.replace(`${pathname}?${params.toString()}`, { scroll: false })
+  }
+
+  function setPage(p: number) {
+    const params = new URLSearchParams(searchParams.toString())
+    if (p <= 1) {
+      params.delete('page')
+    } else {
+      params.set('page', String(p))
+    }
+    router.push(`${pathname}?${params.toString()}`, { scroll: true })
   }
 
   const filtered = activeTag
     ? posts.filter((p) => p.tags.includes(activeTag))
     : posts
+
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <div className="space-y-8">
@@ -95,18 +113,21 @@ export default function WellnessGrid({ posts }: WellnessGridProps) {
           </p>
         </div>
       ) : (
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {filtered.map((post) => (
-            <motion.div key={post.id} variants={item}>
-              <WellnessCard {...post} />
-            </motion.div>
-          ))}
-        </motion.div>
+        <>
+          <motion.div
+            variants={container}
+            initial="hidden"
+            animate="show"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {paginated.map((post) => (
+              <motion.div key={post.id} variants={item}>
+                <WellnessCard {...post} />
+              </motion.div>
+            ))}
+          </motion.div>
+          <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+        </>
       )}
     </div>
   )
