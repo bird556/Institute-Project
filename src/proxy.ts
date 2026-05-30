@@ -18,6 +18,7 @@ const SECTION_ROUTES: Record<string, keyof SiteVisibility> = {
   '/partners':          'partners_enabled',
   '/newsletter':        'newsletter_enabled',
   '/health-wellness':   'health_wellness_enabled',
+  '/research':          'research_enabled',
 }
 
 export async function proxy(request: NextRequest) {
@@ -77,5 +78,6 @@ export const config = {
     '/partners',
     '/newsletter/:path*',
     '/health-wellness/:path*',
+    '/research/:path*',
   ],
 }

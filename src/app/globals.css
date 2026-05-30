@@ -64,6 +64,16 @@ body {
   color: hsl(40, 20%, 95%);
 }
 
+/* ─── Dark Mode Token Overrides ─────────────────────── */
+/* brand-teal is near-black in light mode; lift it to a visible mid-green for dark */
+.dark {
+  --color-text-muted:      hsl(160, 8%,  62%);
+  --color-brand-teal:      hsl(160, 28%, 55%);
+  --color-brand-teal-dark: hsl(160, 28%, 48%);
+  --color-brand-teal-light:hsl(160, 30%, 70%);
+  --color-brand-primary:   hsl(160, 28%, 55%);
+}
+
 /* ─── Tiptap Editor Canvas ───────────────────────── */
 .tiptap-editor {
   font-family: var(--font-sans);

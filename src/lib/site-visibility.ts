@@ -7,6 +7,7 @@ export interface SiteVisibility {
   partners_enabled:        boolean
   newsletter_enabled:      boolean
   health_wellness_enabled: boolean
+  research_enabled:        boolean
   intro_section_enabled:   boolean
   cta_section_enabled:     boolean
   goal_section_enabled:    boolean
@@ -18,7 +19,7 @@ export interface SiteVisibility {
 const VISIBILITY_KEYS: (keyof SiteVisibility)[] = [
   'about_enabled', 'mission_enabled', 'blogs_enabled',
   'events_enabled', 'reading_list_enabled', 'partners_enabled',
-  'newsletter_enabled', 'health_wellness_enabled',
+  'newsletter_enabled', 'health_wellness_enabled', 'research_enabled',
   'intro_section_enabled', 'cta_section_enabled',
   'goal_section_enabled', 'impact_section_enabled', 'mission_section_enabled',
   'wellness_section_enabled',
@@ -33,6 +34,7 @@ const ALL_ENABLED: SiteVisibility = {
   partners_enabled:        true,
   newsletter_enabled:      true,
   health_wellness_enabled: true,
+  research_enabled:        true,
   intro_section_enabled:   true,
   cta_section_enabled:     true,
   goal_section_enabled:    true,

@@ -87,6 +87,7 @@ export interface SiteSettings {
   home_hero_bg_path: string
   // Section visibility
   health_wellness_enabled: string
+  research_enabled: string
   // Home section visibility
   intro_section_enabled:   string
   cta_section_enabled:     string
@@ -211,7 +212,35 @@ export interface WellnessPost {
   updated_at: string
 }
 
-export type SearchResultType = 'blog' | 'event' | 'reading_list' | 'wellness'
+export type ResearchCategory = 'announcements' | 'recent-publications' | 'reports'
+
+export const RESEARCH_CATEGORIES: ResearchCategory[] = [
+  'announcements',
+  'recent-publications',
+  'reports',
+]
+
+export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
+  'announcements':       'Announcements',
+  'recent-publications': 'Recent Publications',
+  'reports':             'Reports',
+}
+
+export interface ResearchPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string | null
+  content: string
+  cover_path: string | null
+  category: ResearchCategory
+  published: boolean
+  published_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type SearchResultType = 'blog' | 'event' | 'reading_list' | 'wellness' | 'research'
 
 export interface SearchResult {
   id: string
