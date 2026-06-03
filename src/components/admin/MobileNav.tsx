@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
   BookOpen, Home, Info, Target, Settings, Newspaper,
-  Calendar, List, Mail, Heart, Star, Menu, X, LogOut,
+  Calendar, List, Mail, Heart, Star, Microscope, Menu, X, LogOut,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -42,13 +42,13 @@ const DRAWER_GROUPS: NavGroup[] = [
   {
     label: 'Content',
     items: [
-      { label: 'Blogs',             href: '/admin/blogs',           icon: FileText },
       { label: 'Events',            href: '/admin/events',          icon: CalendarDays },
       { label: 'Reading List',      href: '/admin/reading-list',                     icon: BookOpen },
       { label: 'Book of the Month', href: '/admin/reading-list/book-of-the-month', icon: Star },
       { label: 'Partners',          href: '/admin/partners',        icon: Handshake },
       { label: 'Newsletter',        href: '/admin/newsletter',      icon: Newspaper },
       { label: 'Health & Wellness', href: '/admin/health-wellness', icon: Heart },
+      { label: 'Research',          href: '/admin/research',        icon: Microscope },
     ],
   },
   {
@@ -57,12 +57,12 @@ const DRAWER_GROUPS: NavGroup[] = [
       { label: 'Home',              href: '/admin/home',               icon: Home },
       { label: 'About',             href: '/admin/about',              icon: Info },
       { label: 'Mission',           href: '/admin/mission',            icon: Target },
-      { label: 'Blogs Page',             href: '/admin/pages/blogs',            icon: FileText },
       { label: 'Events Page',            href: '/admin/pages/events',           icon: Calendar },
       { label: 'Newsletter Page',        href: '/admin/pages/newsletter',       icon: Mail },
       { label: 'Reading List Page',      href: '/admin/pages/reading-list',     icon: List },
       { label: 'Partners Page',          href: '/admin/pages/partners',         icon: Handshake },
       { label: 'Health & Wellness Page', href: '/admin/pages/health-wellness',  icon: Heart },
+      { label: 'Research Page',          href: '/admin/pages/research',         icon: Microscope },
     ],
   },
   {

@@ -8,7 +8,7 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
 
   const supabase = await createClient()
 
-  const [blogsRes, eventsRes, readingRes, wellnessRes] = await Promise.all([
+  const [blogsRes, eventsRes, readingRes, wellnessRes, researchRes] = await Promise.all([
     supabase
       .from('blog_posts')
       .select('id, title, slug, excerpt, published_at')
@@ -27,6 +27,11 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
     supabase
       .from('wellness_posts')
       .select('id, title, slug, excerpt, published_at')
+      .eq('published', true)
+      .textSearch('search_vector', query, { type: 'plain', config: 'english' }),
+    supabase
+      .from('research_posts')
+      .select('id, title, category, excerpt, published_at')
       .eq('published', true)
       .textSearch('search_vector', query, { type: 'plain', config: 'english' }),
   ])
@@ -66,5 +71,14 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
     published_at: w.published_at ?? null,
   }))
 
-  return { success: true, data: [...blogs, ...events, ...reading, ...wellness] }
+  const research = (researchRes.data ?? []).map<SearchResult>((r) => ({
+    id: `${r.category}/${r.id}`,
+    type: 'research',
+    title: r.title,
+    slug: r.id,
+    excerpt: r.excerpt ?? null,
+    published_at: r.published_at ?? null,
+  }))
+
+  return { success: true, data: [...blogs, ...events, ...reading, ...wellness, ...research] }
 }

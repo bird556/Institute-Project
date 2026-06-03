@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Calendar, FileText, Heart, Loader2 } from 'lucide-react';
+import { BookOpen, Calendar, FileText, Heart, Microscope, Loader2 } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { searchContent } from '@/actions/search';
 import type { SearchResult } from '@/types';
@@ -16,6 +16,7 @@ const TYPE_ICON = {
   event: Calendar,
   reading_list: BookOpen,
   wellness: Heart,
+  research: Microscope,
 } as const;
 
 const TYPE_LABEL = {
@@ -23,6 +24,7 @@ const TYPE_LABEL = {
   event: 'Event',
   reading_list: 'Reading',
   wellness: 'Health & Wellness',
+  research: 'Research',
 } as const;
 
 const TYPE_HREF = {
@@ -30,6 +32,7 @@ const TYPE_HREF = {
   event: (id: string) => `/events/${id}`,
   reading_list: (id: string) => `/reading-list/${id}`,
   wellness: (id: string) => `/health-wellness/${id}`,
+  research: (id: string) => `/research/${id}`,
 } as const;
 
 const MAX_INLINE = 5;
