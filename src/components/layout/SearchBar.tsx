@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
-import { BookOpen, Calendar, FileText, Heart, Microscope, Loader2 } from 'lucide-react';
+import Image from 'next/image';
+import { BookOpen, Calendar, FileText, Heart, Microscope, Users, Loader2 } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { searchContent } from '@/actions/search';
 import type { SearchResult } from '@/types';
@@ -17,6 +18,7 @@ const TYPE_ICON = {
   reading_list: BookOpen,
   wellness: Heart,
   research: Microscope,
+  directory: Users,
 } as const;
 
 const TYPE_LABEL = {
@@ -25,6 +27,7 @@ const TYPE_LABEL = {
   reading_list: 'Reading',
   wellness: 'Health & Wellness',
   research: 'Research',
+  directory: 'Directory',
 } as const;
 
 const TYPE_HREF = {
@@ -33,6 +36,7 @@ const TYPE_HREF = {
   reading_list: (id: string) => `/reading-list/${id}`,
   wellness: (id: string) => `/health-wellness/${id}`,
   research: (id: string) => `/research/${id}`,
+  directory: (id: string) => `/${id}`,
 } as const;
 
 const MAX_INLINE = 5;
@@ -144,9 +148,21 @@ export function SearchBar({ onClose }: SearchBarProps) {
                       <button
                         type="button"
                         onClick={() => handleResultClick(href)}
-                        className="w-full flex items-center gap-3 px-4 py-3 hover:bg-surface dark:hover:bg-dark-surface-hover transition-colors text-left cursor-pointer"
+                        className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-surface dark:hover:bg-dark-surface-hover transition-colors text-left cursor-pointer"
                       >
-                        <Icon size={14} className="shrink-0 text-brand-teal" />
+                        <div className="shrink-0 w-8 h-10 rounded-md overflow-hidden bg-surface dark:bg-dark-surface-hover flex items-center justify-center">
+                          {result.cover_url ? (
+                            <Image
+                              src={result.cover_url}
+                              alt={result.title}
+                              width={32}
+                              height={40}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <Icon size={13} className="shrink-0 text-brand-teal" />
+                          )}
+                        </div>
                         <span className="flex-1 min-w-0">
                           <span className="block text-sm text-text-primary dark:text-white truncate leading-snug">
                             {result.title}
@@ -168,8 +184,7 @@ export function SearchBar({ onClose }: SearchBarProps) {
                   onClick={handleViewAll}
                   className="w-full px-4 py-2.5 text-sm font-medium text-brand-teal dark:text-white hover:bg-surface dark:hover:bg-dark-surface-hover transition-colors text-left cursor-pointer"
                 >
-                  View all {total} result {total !== 1 ? 's' : ''} for &ldquo;
-                  {query.trim()}&rdquo; →
+                  View all {total} result{total !== 1 ? 's' : ''} for &ldquo;{query.trim()}&rdquo; →
                 </button>
               </div>
             </>

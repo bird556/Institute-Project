@@ -1,4 +1,4 @@
-import { SkeletonReadingCard } from '@/components/shared/skeletons/SkeletonReadingCard'
+import { SkeletonReadingRow } from '@/components/shared/skeletons/SkeletonReadingRow'
 import { SkeletonBox } from '@/components/shared/skeletons/SkeletonBox'
 
 export default function Loading() {
@@ -9,9 +9,17 @@ export default function Loading() {
         <SkeletonBox className="h-5 w-80" />
       </header>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Controls bar */}
+      <div className="flex flex-wrap gap-3">
+        <SkeletonBox className="h-9 w-44" />
+        <SkeletonBox className="h-9 w-36" />
+        <SkeletonBox className="h-9 w-36" />
+      </div>
+
+      {/* List rows */}
+      <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden divide-y divide-[var(--color-border)] dark:divide-[var(--color-dark-border)]">
         {Array.from({ length: 8 }).map((_, i) => (
-          <SkeletonReadingCard key={i} />
+          <SkeletonReadingRow key={i} />
         ))}
       </div>
     </div>

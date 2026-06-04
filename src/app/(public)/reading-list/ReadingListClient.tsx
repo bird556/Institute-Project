@@ -1,32 +1,34 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import ReadingListGrid from './ReadingListGrid'
+import ReadingListRows from './ReadingListRows'
 import Pagination from '@/components/shared/Pagination'
-import type { ReadingListCardProps } from '@/components/reading-list/ReadingListCard'
+import type { ReadingListRowProps } from '@/components/reading-list/ReadingListRow'
 
 const PAGE_SIZE = 16
 
-export interface ReadingListItem extends ReadingListCardProps {
+export interface ReadingListItem extends ReadingListRowProps {
   created_at: string
   author_region: 'canadian' | 'world' | null
   item_type: 'book' | 'thesis_ma' | 'thesis_phd' | null
 }
 
-type SortOption = 'newest' | 'oldest' | 'az' | 'za'
+type SortOption = 'author_az' | 'author_za' | 'newest' | 'oldest' | 'az' | 'za'
 
 const SORT_LABELS: Record<SortOption, string> = {
-  newest: 'Date Added (Newest)',
-  oldest: 'Date Added (Oldest)',
-  az:     'Title A → Z',
-  za:     'Title Z → A',
+  author_az: 'Author A → Z',
+  author_za: 'Author Z → A',
+  newest:    'Date Added (Newest)',
+  oldest:    'Date Added (Oldest)',
+  az:        'Title A → Z',
+  za:        'Title Z → A',
 }
 
 const selectClass =
   'text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]'
 
 export default function ReadingListClient({ items }: { items: ReadingListItem[] }) {
-  const [sort, setSort]               = useState<SortOption>('newest')
+  const [sort, setSort]               = useState<SortOption>('author_az')
   const [authorFilter, setAuthorFilter] = useState('all')
   const [regionFilter, setRegionFilter] = useState<'all' | 'canadian' | 'world'>('all')
   const [typeFilter, setTypeFilter]     = useState<'all' | 'book' | 'thesis_ma' | 'thesis_phd' | 'thesis'>('all')
@@ -55,10 +57,12 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
     })
 
     switch (sort) {
-      case 'newest': result = [...result].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break
-      case 'oldest': result = [...result].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()); break
-      case 'az':     result = [...result].sort((a, b) => a.title.localeCompare(b.title)); break
-      case 'za':     result = [...result].sort((a, b) => b.title.localeCompare(a.title)); break
+      case 'author_az': result = [...result].sort((a, b) => (a.author ?? '').trim().localeCompare((b.author ?? '').trim())); break
+      case 'author_za': result = [...result].sort((a, b) => (b.author ?? '').trim().localeCompare((a.author ?? '').trim())); break
+      case 'newest':    result = [...result].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()); break
+      case 'oldest':    result = [...result].sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()); break
+      case 'az':        result = [...result].sort((a, b) => a.title.localeCompare(b.title)); break
+      case 'za':        result = [...result].sort((a, b) => b.title.localeCompare(a.title)); break
     }
 
     return result
@@ -73,6 +77,29 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
 
   return (
     <div className="space-y-6">
+      {/* Region tabs — shown when at least one item has region data */}
+      {hasRegionData && (
+        <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
+          {([
+            { value: 'all',      label: 'All' },
+            { value: 'canadian', label: 'Canadian' },
+            { value: 'world',    label: 'International' },
+          ] as { value: typeof regionFilter; label: string }[]).map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => { setRegionFilter(value); resetPage() }}
+              className={`px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+                regionFilter === value
+                  ? 'bg-[var(--color-brand-teal)] text-white font-medium'
+                  : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+
       {/* Controls */}
       <div className="flex flex-wrap items-center gap-3">
         {/* Sort */}
@@ -110,24 +137,6 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
           </div>
         )}
 
-        {/* Region filter */}
-        {hasRegionData && (
-          <div className="flex items-center gap-2">
-            <label className="text-sm text-[var(--color-text-muted)] font-medium whitespace-nowrap">
-              Region
-            </label>
-            <select
-              value={regionFilter}
-              onChange={(e) => { setRegionFilter(e.target.value as typeof regionFilter); resetPage() }}
-              className={selectClass}
-            >
-              <option value="all">All regions</option>
-              <option value="canadian">Canadian</option>
-              <option value="world">International</option>
-            </select>
-          </div>
-        )}
-
         {/* Type filter */}
         {hasTypeData && (
           <div className="flex items-center gap-2">
@@ -156,12 +165,12 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
         </span>
       </div>
 
-      {/* Grid */}
+      {/* Rows */}
       {displayed.length === 0 ? (
         <p className="text-[var(--color-text-muted)] py-8">No items match your filter.</p>
       ) : (
         <>
-          <ReadingListGrid items={paginated} />
+          <ReadingListRows items={paginated} />
           <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
         </>
       )}
