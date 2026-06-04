@@ -20,6 +20,7 @@ export interface Event {
   location: string | null
   event_date: string
   external_url: string | null   // Optional link to external registration (e.g. Eventbrite)
+  organizer: string | null
   event_type: 'kustawi' | 'other'
   published: boolean
   created_at: string

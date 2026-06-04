@@ -9,6 +9,7 @@ type TypeFilter = 'all' | 'kustawi' | 'other'
 
 export interface EventItem extends EventCardProps {
   event_type: 'kustawi' | 'other'
+  organizer?: string | null
 }
 
 interface EventsClientProps {
