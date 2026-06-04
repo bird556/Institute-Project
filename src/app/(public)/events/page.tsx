@@ -31,7 +31,7 @@ export default async function EventsPage({ searchParams }: Props) {
 
   const { data } = await supabase
     .from('events')
-    .select('id, title, description, cover_path, location, event_date, event_type')
+    .select('id, title, description, cover_path, location, event_date, event_type, organizer')
     .eq('published', true)
     .order('event_date', { ascending: true })
 
@@ -47,6 +47,7 @@ export default async function EventsPage({ searchParams }: Props) {
     event_date: e.event_date,
     isPast: new Date(e.event_date) < now,
     event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
+    organizer: e.organizer ?? null,
   }))
 
   return (

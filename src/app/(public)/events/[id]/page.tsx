@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Calendar, ExternalLink } from 'lucide-react'
+import { MapPin, Calendar, ExternalLink, User } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import EventCard from '@/components/events/EventCard'
@@ -55,7 +55,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   const { data: moreData } = await supabase
     .from('events')
-    .select('id, title, description, cover_path, location, event_date, event_type')
+    .select('id, title, description, cover_path, location, event_date, event_type, organizer')
     .eq('published', true)
     .neq('id', event.id)
     .order('event_date', { ascending: true })
@@ -72,6 +72,7 @@ export default async function EventDetailPage({ params }: Props) {
     event_date: e.event_date,
     isPast: new Date(e.event_date) < now,
     event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
+    organizer: e.organizer ?? null,
   }))
 
   const moreEvents = [
@@ -110,6 +111,12 @@ export default async function EventDetailPage({ params }: Props) {
           <span className="flex items-center gap-1.5">
             <MapPin className="w-4 h-4 shrink-0" />
             {event.location}
+          </span>
+        )}
+        {event.organizer && (
+          <span className="flex items-center gap-1.5">
+            <User className="w-4 h-4 shrink-0" />
+            {event.organizer}
           </span>
         )}
       </div>

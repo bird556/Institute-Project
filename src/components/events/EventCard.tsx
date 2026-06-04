@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Calendar } from 'lucide-react'
+import { MapPin, Calendar, User } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { formatDate, formatTime } from '@/lib/utils'
 
@@ -15,6 +15,7 @@ export interface EventCardProps {
   event_date: string
   isPast: boolean
   event_type?: 'kustawi' | 'other'
+  organizer?: string | null
 }
 
 export default function EventCard({
@@ -26,6 +27,7 @@ export default function EventCard({
   event_date,
   isPast,
   event_type,
+  organizer,
 }: EventCardProps) {
   return (
     <motion.div
@@ -67,6 +69,14 @@ export default function EventCard({
             <div className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
               <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span className="line-clamp-1">{location}</span>
+            </div>
+          )}
+
+          {/* Organizer */}
+          {organizer && (
+            <div className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
+              <User className="w-3.5 h-3.5 shrink-0" />
+              <span className="line-clamp-1">{organizer}</span>
             </div>
           )}
 

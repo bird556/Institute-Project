@@ -51,6 +51,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [coverPath, setCoverPath] = useState<string | null>(event.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [location, setLocation] = useState(event.location ?? '')
+  const [organizer, setOrganizer] = useState(event.organizer ?? '')
   const [externalUrl, setExternalUrl] = useState(event.external_url ?? '')
   const [eventType, setEventType] = useState<'kustawi' | 'other'>(event.event_type ?? 'kustawi')
   const [published, setPublished] = useState(event.published)
@@ -76,6 +77,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       description,
       cover_path: coverPath,
       location: location || null,
+      organizer: organizer.trim() || null,
       event_date: combineDateTime(eventDate, eventTime),
       external_url: externalUrl.trim() || null,
       event_type: eventType,
@@ -333,6 +335,23 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                   scheduleAutosave()
                 }}
                 placeholder="e.g. Toronto Convention Centre or Virtual — Zoom"
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+              />
+            </div>
+
+            {/* Organizer */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="organizer" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Organizer
+              </Label>
+              <Input
+                id="organizer"
+                value={organizer}
+                onChange={(e) => {
+                  setOrganizer(e.target.value)
+                  scheduleAutosave()
+                }}
+                placeholder="e.g. Kustawi Institute"
                 className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
             </div>
