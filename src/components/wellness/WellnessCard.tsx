@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
+import { HeartPulse } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 
 interface WellnessCardProps {
@@ -22,6 +24,9 @@ export default function WellnessCard({
   tags,
   published_at,
 }: WellnessCardProps) {
+  const [imgError, setImgError] = useState(false)
+  const showImage = cover_url && !imgError
+
   return (
     <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
       <Link
@@ -29,7 +34,7 @@ export default function WellnessCard({
         className="group flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg transition-shadow"
       >
         {/* Cover image */}
-        {cover_url ? (
+        {showImage ? (
           <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
             <Image
               src={cover_url}
@@ -37,13 +42,16 @@ export default function WellnessCard({
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              onError={() => setImgError(true)}
             />
           </div>
         ) : (
           <div
-            className="w-full bg-[var(--color-brand-teal)] opacity-10"
+            className="relative w-full flex items-center justify-center bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]"
             style={{ aspectRatio: '16/9' }}
-          />
+          >
+            <HeartPulse className="w-14 h-14 text-[var(--color-text-muted)] opacity-25" strokeWidth={1} />
+          </div>
         )}
 
         {/* Content */}

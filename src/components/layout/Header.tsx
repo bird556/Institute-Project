@@ -35,6 +35,8 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
   const [searchOpen, setSearchOpen] = useState(false)
   const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false)
   const [eventsAccordionOpen, setEventsAccordionOpen] = useState(false)
+  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
+  const [servicesAccordionOpen, setServicesAccordionOpen] = useState(false)
 
   const visibleLinks = navItems.filter((i) => i.visible)
 
@@ -61,6 +63,48 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
                 'text-sm font-medium transition-colors',
                 isActive ? 'text-brand-teal dark:text-white' : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
               )
+
+              if (slug === 'services') {
+                return (
+                  <div
+                    key={href}
+                    className="relative"
+                    onMouseEnter={() => setServicesDropdownOpen(true)}
+                    onMouseLeave={() => setServicesDropdownOpen(false)}
+                  >
+                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                      {label}
+                      <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                    </button>
+                    <AnimatePresence>
+                      {servicesDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.15, ease: 'easeOut' }}
+                          className="absolute top-full left-0 mt-2 w-52 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
+                        >
+                          <Link
+                            href="/advocates"
+                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                            onClick={() => setServicesDropdownOpen(false)}
+                          >
+                            Advocates
+                          </Link>
+                          <Link
+                            href="/psychotherapists"
+                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                            onClick={() => setServicesDropdownOpen(false)}
+                          >
+                            Psychotherapists
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              }
 
               if (slug === 'events') {
                 return (
@@ -163,6 +207,46 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
             >
               {visibleLinks.map(({ href, label, slug }) => {
                 const isActive = pathname === href || (href !== '/' && pathname.startsWith(href + '/'))
+
+                if (slug === 'services') {
+                  return (
+                    <div key={href}>
+                      <button
+                        onClick={() => setServicesAccordionOpen((v) => !v)}
+                        className={cn(
+                          'w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                          isActive
+                            ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
+                            : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
+                        )}
+                      >
+                        {label}
+                        {servicesAccordionOpen
+                          ? <ChevronUp className="h-3.5 w-3.5 opacity-60" />
+                          : <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                        }
+                      </button>
+                      <AnimatePresence>
+                        {servicesAccordionOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
+                          >
+                            <Link href="/advocates" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
+                              Advocates
+                            </Link>
+                            <Link href="/psychotherapists" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
+                              Psychotherapists
+                            </Link>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
 
                 if (slug === 'events') {
                   return (
