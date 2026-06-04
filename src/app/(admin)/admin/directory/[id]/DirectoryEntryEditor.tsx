@@ -169,20 +169,22 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               <p className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] font-medium">{categoryLabel}</p>
             </div>
 
-            {/* Mode */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Mode</Label>
-              <select
-                value={mode}
-                onChange={(e) => { setMode(e.target.value as DirectoryMode | ''); scheduleAutosave() }}
-                className="w-full h-9 rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
-              >
-                <option value="">Not specified</option>
-                {(Object.entries(DIRECTORY_MODE_LABELS) as [DirectoryMode, string][]).map(([val, label]) => (
-                  <option key={val} value={val}>{label}</option>
-                ))}
-              </select>
-            </div>
+            {/* Mode — hidden for Black Men's Groups (always Canadian, no mode concept) */}
+            {entry.category !== 'black_mens_group' && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Mode</Label>
+                <select
+                  value={mode}
+                  onChange={(e) => { setMode(e.target.value as DirectoryMode | ''); scheduleAutosave() }}
+                  className="w-full h-9 rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
+                >
+                  <option value="">Not specified</option>
+                  {(Object.entries(DIRECTORY_MODE_LABELS) as [DirectoryMode, string][]).map(([val, label]) => (
+                    <option key={val} value={val}>{label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Website URL */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
@@ -190,11 +192,13 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               <Input type="url" value={website_url} onChange={(e) => { setWebsite(e.target.value); scheduleAutosave() }} placeholder="https://example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
             </div>
 
-            {/* Email */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Email</Label>
-              <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }} placeholder="contact@example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
-            </div>
+            {/* Email — hidden for Black Men's Groups */}
+            {entry.category !== 'black_mens_group' && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Email</Label>
+                <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }} placeholder="contact@example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+              </div>
+            )}
 
             {/* Meta */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">

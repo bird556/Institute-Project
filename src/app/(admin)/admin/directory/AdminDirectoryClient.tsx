@@ -26,9 +26,10 @@ interface Props {
 }
 
 const TABS: { category: DirectoryCategory; label: string }[] = [
-  { category: 'advocate',        label: 'Advocates' },
-  { category: 'psychotherapist', label: 'Psychotherapists' },
-  { category: 'referral_agency', label: 'Referral Agencies' },
+  { category: 'advocate',         label: 'Advocates' },
+  { category: 'psychotherapist',  label: 'Psychotherapists' },
+  { category: 'referral_agency',  label: 'Referral Agencies' },
+  { category: 'black_mens_group', label: "Black Men's Groups" },
 ]
 
 type DirSortOption = 'name_az' | 'name_za' | 'newest' | 'oldest' | 'org_az' | 'org_za' | 'mode'

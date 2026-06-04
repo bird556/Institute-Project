@@ -29,9 +29,10 @@ function PlaceholderIcon({ category }: { category: DirectoryCategory }) {
 }
 
 const CATEGORY_HREFS: Record<DirectoryCategory, string> = {
-  advocate:        '/advocates',
-  psychotherapist: '/psychotherapists',
-  referral_agency: '/referral-agencies',
+  advocate:         '/advocates',
+  psychotherapist:  '/psychotherapists',
+  referral_agency:  '/referral-agencies',
+  black_mens_group: '/black-mens-groups',
 }
 
 export default function DirectoryCard({
