@@ -15,6 +15,7 @@ interface UpcomingEvent {
 
 interface Props {
   events: UpcomingEvent[]
+  heading?: string
 }
 
 const ease = [0.22, 1, 0.36, 1] as [number, number, number, number]
@@ -29,7 +30,7 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
 }
 
-export function UpcomingEventsSection({ events }: Props) {
+export function UpcomingEventsSection({ events, heading = 'Upcoming Events' }: Props) {
   const ref = useRef<HTMLElement>(null)
   const inView = useInView(ref, { once: true, margin: '-60px' })
 
@@ -38,7 +39,7 @@ export function UpcomingEventsSection({ events }: Props) {
       <div className="max-w-6xl mx-auto">
         <FadeUp>
           <h2 className="font-display text-3xl font-bold text-white mb-8">
-            Upcoming Events
+            {heading}
           </h2>
         </FadeUp>
 

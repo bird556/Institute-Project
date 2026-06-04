@@ -199,14 +199,20 @@ export default async function HomePage() {
   }
 
   // Upcoming events from Supabase
+  const upcomingEventsEnabled = visibility.upcoming_events_section_enabled !== false
+  const upcomingEventsMax     = Math.max(1, parseInt(settings?.upcoming_events_max_count ?? '2', 10) || 2)
+  const upcomingEventsHeading = settings?.upcoming_events_heading || 'Upcoming Events'
+
   const now = new Date().toISOString();
-  const { data: eventsData } = await supabase
-    .from('events')
-    .select('id, title, location, event_date')
-    .eq('published', true)
-    .gt('event_date', now)
-    .order('event_date', { ascending: true })
-    .limit(2);
+  const { data: eventsData } = upcomingEventsEnabled
+    ? await supabase
+        .from('events')
+        .select('id, title, location, event_date')
+        .eq('published', true)
+        .gt('event_date', now)
+        .order('event_date', { ascending: true })
+        .limit(upcomingEventsMax)
+    : { data: [] }
   const upcomingEvents = eventsData ?? [];
 
   return (
@@ -261,8 +267,8 @@ export default async function HomePage() {
       {bookOfMonth && <BookOfMonthSection item={bookOfMonth} />}
 
       {/* Upcoming Events */}
-      {upcomingEvents.length > 0 && (
-        <UpcomingEventsSection events={upcomingEvents} />
+      {upcomingEventsEnabled && upcomingEvents.length > 0 && (
+        <UpcomingEventsSection events={upcomingEvents} heading={upcomingEventsHeading} />
       )}
 
       {/* CTA */}

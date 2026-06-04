@@ -69,10 +69,10 @@ export default function GoalSection({ data }: GoalSectionProps) {
         <FadeUp delay={0.4}>
           <div className="mt-10">
             <Link
-              href="/about"
+              href={data.cta_href || '/about'}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[hsl(35_60%_50%)] text-white text-sm font-semibold hover:opacity-90 transition-opacity"
             >
-              Learn More About Us
+              {data.cta_label || 'Learn More About Us'}
             </Link>
           </div>
         </FadeUp>

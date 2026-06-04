@@ -26,9 +26,10 @@ import type { NavItem } from '@/lib/nav-config'
 interface SortableRowProps {
   item: NavItem
   onToggle: (slug: string) => void
+  onLabelChange: (slug: string, label: string) => void
 }
 
-function SortableRow({ item, onToggle }: SortableRowProps) {
+function SortableRow({ item, onToggle, onLabelChange }: SortableRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.slug })
 
@@ -42,7 +43,7 @@ function SortableRow({ item, onToggle }: SortableRowProps) {
     <div
       ref={setNodeRef}
       style={style}
-      className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] px-3 py-2.5 bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)]"
+      className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] px-3 py-2 bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)]"
     >
       <button
         {...attributes}
@@ -53,9 +54,15 @@ function SortableRow({ item, onToggle }: SortableRowProps) {
         <GripVertical size={16} />
       </button>
 
-      <span className={`flex-1 text-sm font-medium ${item.visible ? 'text-[var(--color-text-primary)] dark:text-white' : 'text-[var(--color-text-muted)]'}`}>
-        {item.label}
-      </span>
+      <input
+        type="text"
+        value={item.label}
+        onChange={(e) => onLabelChange(item.slug, e.target.value)}
+        disabled={item.slug === 'home'}
+        className={`flex-1 text-sm font-medium bg-transparent border-none outline-none focus:ring-0 ${
+          item.visible ? 'text-[var(--color-text-primary)] dark:text-white' : 'text-[var(--color-text-muted)]'
+        } disabled:cursor-default`}
+      />
 
       <button
         onClick={() => onToggle(item.slug)}
@@ -92,10 +99,15 @@ export default function NavManagerClient({ initialNavConfig }: NavManagerClientP
   }
 
   function handleToggle(slug: string) {
-    // Prevent hiding "Home"
     if (slug === 'home') return
     setItems((prev) =>
       prev.map((i) => (i.slug === slug ? { ...i, visible: !i.visible } : i))
+    )
+  }
+
+  function handleLabelChange(slug: string, label: string) {
+    setItems((prev) =>
+      prev.map((i) => (i.slug === slug ? { ...i, label } : i))
     )
   }
 
@@ -113,7 +125,7 @@ export default function NavManagerClient({ initialNavConfig }: NavManagerClientP
   return (
     <div className="space-y-4">
       <p className="text-xs text-[var(--color-text-muted)]">
-        Drag to reorder. Toggle the eye icon to show or hide each link. Home is always visible.
+        Click a label to rename it. Drag to reorder. Toggle the eye icon to show or hide.
       </p>
 
       <DndContext
@@ -124,7 +136,7 @@ export default function NavManagerClient({ initialNavConfig }: NavManagerClientP
         <SortableContext items={items.map((i) => i.slug)} strategy={verticalListSortingStrategy}>
           <div className="space-y-2">
             {items.map((item) => (
-              <SortableRow key={item.slug} item={item} onToggle={handleToggle} />
+              <SortableRow key={item.slug} item={item} onToggle={handleToggle} onLabelChange={handleLabelChange} />
             ))}
           </div>
         </SortableContext>

@@ -4,13 +4,15 @@ import { useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { FileText, CalendarDays, BookOpen, Handshake, Inbox, Plus } from 'lucide-react'
+import { CalendarDays, BookOpen, Handshake, Inbox, Plus } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
 import { cn } from '@/lib/utils'
-import { createBlog } from '@/actions/blogs'
 import { createEvent } from '@/actions/events'
 import { createPartner } from '@/actions/partners'
+import { createWellnessPost } from '@/actions/wellness'
+import { createDirectoryEntry } from '@/actions/directory'
+import { createReadingListItem } from '@/actions/reading-list'
 import type { DashboardData } from '@/actions/dashboard'
 
 // ── Activity type badge ───────────────────────────────────────────────────────
@@ -50,18 +52,12 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
 
   const STAT_CARDS = [
     {
-      label:    'Blog Posts',
-      icon:     FileText,
-      value:    stats.blogs,
-      subLabel: 'published',
-      urgent:   false,
-    },
-    {
       label:    'Events',
       icon:     CalendarDays,
       value:    stats.upcomingEvents,
       subLabel: 'upcoming',
       urgent:   false,
+      href:     '/admin/events',
     },
     {
       label:    'Reading List',
@@ -69,6 +65,7 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
       value:    stats.readingList,
       subLabel: 'items',
       urgent:   false,
+      href:     '/admin/reading-list',
     },
     {
       label:    'Partners',
@@ -76,6 +73,7 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
       value:    stats.partners,
       subLabel: 'active',
       urgent:   false,
+      href:     '/admin/partners',
     },
     {
       label:    'Submissions Pending',
@@ -100,7 +98,7 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
       </div>
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {STAT_CARDS.map((card) => {
           const Icon = card.icon
           const inner = (
@@ -153,9 +151,13 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
         </h3>
         <div className="flex flex-wrap gap-3">
           {[
-            { label: 'New Blog',    action: createBlog,    path: '/admin/blogs' },
-            { label: 'New Event',   action: createEvent,   path: '/admin/events' },
-            { label: 'New Partner', action: createPartner, path: '/admin/partners' },
+            { label: 'New Event',              action: createEvent,                              path: '/admin/events' },
+            { label: 'New Reading List Item',  action: createReadingListItem,                    path: '/admin/reading-list' },
+            { label: 'New H&W Post',           action: createWellnessPost,                       path: '/admin/health-wellness' },
+            { label: 'New Advocate',           action: () => createDirectoryEntry('advocate'),        path: '/admin/directory' },
+            { label: 'New Psychotherapist',    action: () => createDirectoryEntry('psychotherapist'), path: '/admin/directory' },
+            { label: 'New Referral Agency',    action: () => createDirectoryEntry('referral_agency'), path: '/admin/directory' },
+            { label: 'New Partner',            action: createPartner,                            path: '/admin/partners' },
           ].map(({ label, action, path }) => (
             <button
               key={label}

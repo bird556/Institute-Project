@@ -15,8 +15,9 @@ export interface SiteVisibility {
   cta_section_enabled:       boolean
   goal_section_enabled:      boolean
   impact_section_enabled:    boolean
-  mission_section_enabled:   boolean
-  wellness_section_enabled:  boolean
+  mission_section_enabled:          boolean
+  wellness_section_enabled:         boolean
+  upcoming_events_section_enabled:  boolean
 }
 
 const VISIBILITY_KEYS: (keyof SiteVisibility)[] = [
@@ -26,7 +27,7 @@ const VISIBILITY_KEYS: (keyof SiteVisibility)[] = [
   'advocates_enabled', 'psychotherapists_enabled', 'referral_agencies_enabled',
   'intro_section_enabled', 'cta_section_enabled',
   'goal_section_enabled', 'impact_section_enabled', 'mission_section_enabled',
-  'wellness_section_enabled',
+  'wellness_section_enabled', 'upcoming_events_section_enabled',
 ]
 
 const ALL_ENABLED: SiteVisibility = {
@@ -46,8 +47,9 @@ const ALL_ENABLED: SiteVisibility = {
   cta_section_enabled:       true,
   goal_section_enabled:      true,
   impact_section_enabled:    true,
-  mission_section_enabled:   true,
-  wellness_section_enabled:  true,
+  mission_section_enabled:          true,
+  wellness_section_enabled:         true,
+  upcoming_events_section_enabled:  true,
 }
 
 import { unstable_cache } from 'next/cache'
