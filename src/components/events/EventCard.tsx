@@ -14,6 +14,7 @@ export interface EventCardProps {
   location: string
   event_date: string
   isPast: boolean
+  event_type?: 'kustawi' | 'other'
 }
 
 export default function EventCard({
@@ -24,6 +25,7 @@ export default function EventCard({
   location,
   event_date,
   isPast,
+  event_type,
 }: EventCardProps) {
   return (
     <motion.div
@@ -66,6 +68,17 @@ export default function EventCard({
               <MapPin className="w-3.5 h-3.5 shrink-0" />
               <span className="line-clamp-1">{location}</span>
             </div>
+          )}
+
+          {/* Type pill */}
+          {event_type && (
+            <span className={`self-start text-xs font-semibold px-2.5 py-0.5 rounded-full ${
+              event_type === 'kustawi'
+                ? 'bg-[var(--color-brand-teal)] text-white'
+                : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+            }`}>
+              {event_type === 'kustawi' ? 'Kustawi' : 'Other Event'}
+            </span>
           )}
 
           {/* Title */}

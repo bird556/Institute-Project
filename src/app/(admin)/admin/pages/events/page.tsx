@@ -1,8 +1,13 @@
 import { getPageContent } from '@/actions/page-content'
+import { getSiteSettings } from '@/actions/settings'
 import PageHeroEditor from '@/components/admin/PageHeroEditor'
+import EventBlurbEditor from './NonAffiliatedBlurbEditor'
 
 export default async function EventsPageHeroEditor() {
-  const { data: sections } = await getPageContent('events')
+  const [{ data: sections }, { data: settings }] = await Promise.all([
+    getPageContent('events'),
+    getSiteSettings(),
+  ])
 
   const title    = sections?.find((s) => s.section === 'hero_title')
   const subtitle = sections?.find((s) => s.section === 'hero_subtitle')
@@ -14,7 +19,7 @@ export default async function EventsPageHeroEditor() {
           Events Page
         </h1>
         <p className="text-sm text-[var(--color-text-muted)] mt-1">
-          Edit the heading and subtitle shown at the top of the public Events page.
+          Edit the heading, subtitle, and section blurbs shown on the public Events page.
         </p>
       </div>
       <PageHeroEditor
@@ -23,6 +28,18 @@ export default async function EventsPageHeroEditor() {
         initialSubtitle={subtitle?.content ?? ''}
         titleUpdatedAt={title?.updated_at}
         subtitleUpdatedAt={subtitle?.updated_at}
+      />
+      <EventBlurbEditor
+        settingKey="kustawi_blurb"
+        label="Kustawi Events Blurb"
+        description='Shown in italics below the filter pills when "Kustawi Events" is selected. Leave empty to hide.'
+        initialBlurb={settings?.kustawi_blurb ?? ''}
+      />
+      <EventBlurbEditor
+        settingKey="non_affiliated_blurb"
+        label="Other Events Blurb"
+        description='Shown in italics below the filter pills when "Other Events" is selected. Leave empty to hide.'
+        initialBlurb={settings?.non_affiliated_blurb ?? ''}
       />
     </div>
   )

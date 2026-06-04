@@ -19,6 +19,7 @@ import type { Event } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
 type DateFilter   = 'all' | 'upcoming' | 'past'
+type TypeFilter   = 'all' | 'kustawi' | 'other'
 
 interface EventListItem extends Event {
   cover_url: string | null
@@ -47,6 +48,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [dateFilter, setDateFilter] = useState<DateFilter>('all')
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('all')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -67,10 +69,13 @@ export default function EventListClient({ events: initial }: EventListClientProp
       dateFilter === 'all' ||
       (dateFilter === 'upcoming' && new Date(e.event_date) > now) ||
       (dateFilter === 'past' && new Date(e.event_date) <= now)
-    return matchesQuery && matchesStatus && matchesDate
+    const matchesType =
+      typeFilter === 'all' ||
+      e.event_type === typeFilter
+    return matchesQuery && matchesStatus && matchesDate && matchesType
   })
 
-  const isFiltering = query !== '' || statusFilter !== 'all' || dateFilter !== 'all'
+  const isFiltering = query !== '' || statusFilter !== 'all' || dateFilter !== 'all' || typeFilter !== 'all'
 
   async function handleNew() {
     startTransition(async () => {
@@ -169,6 +174,14 @@ export default function EventListClient({ events: initial }: EventListClientProp
               </button>
             ))}
           </div>
+
+          <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
+            {([['all', 'All'], ['kustawi', 'Kustawi'], ['other', 'Other Events']] as [TypeFilter, string][]).map(([f, label]) => (
+              <button key={f} onClick={() => setTypeFilter(f)} className={filterBtnClass(typeFilter === f)}>
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Result count */}
@@ -180,7 +193,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
 
         {/* List */}
         {filtered.length === 0 ? (
-          <EmptyState isFiltering={isFiltering} query={query} onClear={() => { setQuery(''); setStatusFilter('all'); setDateFilter('all') }} onNew={handleNew} creating={isPending} />
+          <EmptyState isFiltering={isFiltering} query={query} onClear={() => { setQuery(''); setStatusFilter('all'); setDateFilter('all'); setTypeFilter('all') }} onNew={handleNew} creating={isPending} />
         ) : (
           <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
             {filtered.map((event, i) => (
@@ -203,9 +216,16 @@ export default function EventListClient({ events: initial }: EventListClientProp
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
-                    {event.title}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
+                      {event.title}
+                    </p>
+                    {event.event_type === 'other' && (
+                      <span className="hidden sm:inline-flex shrink-0 text-xs px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 font-medium">
+                        Other Event
+                      </span>
+                    )}
+                  </div>
                   <div className="flex items-center gap-3 mt-0.5">
                     <span className="text-sm text-[var(--color-text-muted)] truncate">
                       {formatEventDate(event.event_date)}

@@ -20,6 +20,7 @@ export interface Event {
   location: string | null
   event_date: string
   external_url: string | null   // Optional link to external registration (e.g. Eventbrite)
+  event_type: 'kustawi' | 'other'
   published: boolean
   created_at: string
   updated_at: string
@@ -103,6 +104,9 @@ export interface SiteSettings {
   nav_config: string  // JSON array of NavItem
   // Reading list feature
   book_of_the_month_id: string  // empty string = not set
+  // Event section blurbs
+  kustawi_blurb: string
+  non_affiliated_blurb: string
 }
 
 export interface GoalPillar {

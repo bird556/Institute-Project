@@ -61,6 +61,8 @@ const EMPTY: SiteSettings = {
   wellness_featured_ids: '[]',
   nav_config: '',
   book_of_the_month_id: '',
+  kustawi_blurb: '',
+  non_affiliated_blurb: '',
 }
 
 export default function SettingsClient({ initialSettings, initialLogoUrl }: SettingsClientProps) {

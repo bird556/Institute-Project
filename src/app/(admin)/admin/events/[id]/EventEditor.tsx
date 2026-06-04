@@ -52,6 +52,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [location, setLocation] = useState(event.location ?? '')
   const [externalUrl, setExternalUrl] = useState(event.external_url ?? '')
+  const [eventType, setEventType] = useState<'kustawi' | 'other'>(event.event_type ?? 'kustawi')
   const [published, setPublished] = useState(event.published)
   const [slugManual, setSlugManual] = useState(false)
 
@@ -77,6 +78,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       location: location || null,
       event_date: combineDateTime(eventDate, eventTime),
       external_url: externalUrl.trim() || null,
+      event_type: eventType,
     }
   }
 
@@ -333,6 +335,25 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                 placeholder="e.g. Toronto Convention Centre or Virtual — Zoom"
                 className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
+            </div>
+
+            {/* Event Type */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="event-type" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Event Type
+              </Label>
+              <select
+                id="event-type"
+                value={eventType}
+                onChange={(e) => {
+                  setEventType(e.target.value as 'kustawi' | 'other')
+                  scheduleAutosave()
+                }}
+                className="w-full h-9 rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
+              >
+                <option value="kustawi">Kustawi Event</option>
+                <option value="other">Other Event</option>
+              </select>
             </div>
 
             {/* External registration link */}
