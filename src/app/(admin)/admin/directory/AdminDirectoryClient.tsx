@@ -31,12 +31,28 @@ const TABS: { category: DirectoryCategory; label: string }[] = [
   { category: 'referral_agency', label: 'Referral Agencies' },
 ]
 
+type DirSortOption = 'name_az' | 'name_za' | 'newest' | 'oldest' | 'org_az' | 'org_za' | 'mode'
+
+const DIR_SORT_LABELS: Record<DirSortOption, string> = {
+  name_az: 'Name A → Z',
+  name_za: 'Name Z → A',
+  newest:  'Date Added: Newest',
+  oldest:  'Date Added: Oldest',
+  org_az:  'Organisation A → Z',
+  org_za:  'Organisation Z → A',
+  mode:    'Mode',
+}
+
+const selectClass =
+  'text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] px-3 h-9 cursor-pointer focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors'
+
 export default function AdminDirectoryClient({ entries: initial }: Props) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
   const [entries, setEntries] = useState(initial)
   const [activeTab, setActiveTab] = useState<DirectoryCategory>('advocate')
   const [query, setQuery] = useState('')
+  const [sort, setSort] = useState<DirSortOption>('name_az')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -51,8 +67,21 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
     return !q || e.name.toLowerCase().includes(q) || (e.organization ?? '').toLowerCase().includes(q)
   })
 
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sort) {
+      case 'name_az': return a.name.localeCompare(b.name)
+      case 'name_za': return b.name.localeCompare(a.name)
+      case 'newest':  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      case 'oldest':  return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      case 'org_az':  return (a.organization ?? 'zzz').localeCompare(b.organization ?? 'zzz')
+      case 'org_za':  return (b.organization ?? 'zzz').localeCompare(a.organization ?? 'zzz')
+      case 'mode':    return (a.mode ?? 'zzz').localeCompare(b.mode ?? 'zzz')
+      default:        return 0
+    }
+  })
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
+  const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   function handleNew() {
     startTransition(async () => {
@@ -114,13 +143,14 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
         {/* Tabs */}
         <div className="flex gap-1 p-1 rounded-xl bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
           {TABS.map(({ category, label }) => (
-            <button key={category} onClick={() => { setActiveTab(category); setQuery(''); resetPage() }} className={tabClass(activeTab === category)}>
+            <button key={category} onClick={() => { setActiveTab(category); setQuery(''); setSort('name_az'); resetPage() }} className={tabClass(activeTab === category)}>
               {label}
             </button>
           ))}
         </div>
 
-        {/* Search */}
+        {/* Search + sort */}
+        <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
           <input
@@ -135,6 +165,17 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
               <X className="h-3.5 w-3.5" />
             </button>
           )}
+        </div>
+
+        <select
+          value={sort}
+          onChange={(e) => { setSort(e.target.value as DirSortOption); resetPage() }}
+          className={selectClass}
+        >
+          {(Object.keys(DIR_SORT_LABELS) as DirSortOption[]).map((key) => (
+            <option key={key} value={key}>{DIR_SORT_LABELS[key]}</option>
+          ))}
+        </select>
         </div>
 
         {query && (
