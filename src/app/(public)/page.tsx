@@ -3,6 +3,7 @@ import { getPageContent } from '@/actions/page-content';
 import { getSiteSettings } from '@/actions/settings';
 import { getSiteVisibility } from '@/lib/site-visibility';
 import { createClient } from '@/lib/supabase/server';
+import NewsletterSignup from '@/components/home/NewsletterSignup'
 import GoalSection from '@/components/home/GoalSection';
 import ImpactSection from '@/components/home/ImpactSection';
 import MissionSection from '@/components/home/MissionSection';
@@ -281,6 +282,16 @@ export default async function HomePage() {
             />
           </div>
         </section>
+      )}
+
+      {/* Newsletter Signup */}
+      {visibility.signup_section_enabled && (
+        <NewsletterSignup
+          heading={settings?.newsletter_heading || 'Stay Connected'}
+          subtext={settings?.newsletter_subtext || 'Join our community and be the first to hear about events, publications, and resources from the Kustawi Institute.'}
+          successMessage={settings?.newsletter_success_message || "Thank you! You're now subscribed."}
+          consentText={settings?.newsletter_consent_text || 'By subscribing you agree to receive email communications from the Kustawi Institute. Unsubscribe at any time.'}
+        />
       )}
     </div>
   );

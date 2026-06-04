@@ -78,11 +78,12 @@ const DRAWER_GROUPS: NavGroup[] = [
   {
     label: 'Settings',
     items: [
-      { label: 'Settings',   href: '/admin/settings',   icon: Settings },
-      { label: 'Navigation', href: '/admin/navigation', icon: Navigation2 },
-      { label: 'Visibility', href: '/admin/visibility', icon: Eye },
-      { label: 'Footer',     href: '/admin/footer',     icon: PanelBottom },
-      { label: 'Export',     href: '/admin/export',     icon: Download },
+      { label: 'Settings',          href: '/admin/settings',            icon: Settings },
+      { label: 'Newsletter Signup', href: '/admin/newsletter-settings', icon: Mail },
+      { label: 'Navigation',        href: '/admin/navigation',          icon: Navigation2 },
+      { label: 'Visibility',        href: '/admin/visibility',          icon: Eye },
+      { label: 'Footer',            href: '/admin/footer',              icon: PanelBottom },
+      { label: 'Export',            href: '/admin/export',              icon: Download },
     ],
   },
 ]
@@ -100,7 +101,7 @@ export function MobileNav() {
 
   function isActive(href: string, exact?: boolean) {
     if (exact) return pathname === href
-    return pathname.startsWith(href)
+    return pathname === href || pathname.startsWith(href + '/')
   }
 
   function closeDrawer() {
