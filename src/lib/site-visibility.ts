@@ -1,46 +1,53 @@
 export interface SiteVisibility {
-  about_enabled:           boolean
-  mission_enabled:         boolean
-  blogs_enabled:           boolean
-  events_enabled:          boolean
-  reading_list_enabled:    boolean
-  partners_enabled:        boolean
-  newsletter_enabled:      boolean
-  health_wellness_enabled: boolean
-  research_enabled:        boolean
-  intro_section_enabled:   boolean
-  cta_section_enabled:     boolean
-  goal_section_enabled:    boolean
-  impact_section_enabled:  boolean
-  mission_section_enabled:  boolean
-  wellness_section_enabled: boolean
+  about_enabled:             boolean
+  mission_enabled:           boolean
+  blogs_enabled:             boolean
+  events_enabled:            boolean
+  reading_list_enabled:      boolean
+  partners_enabled:          boolean
+  newsletter_enabled:        boolean
+  health_wellness_enabled:   boolean
+  research_enabled:          boolean
+  advocates_enabled:         boolean
+  psychotherapists_enabled:  boolean
+  referral_agencies_enabled: boolean
+  intro_section_enabled:     boolean
+  cta_section_enabled:       boolean
+  goal_section_enabled:      boolean
+  impact_section_enabled:    boolean
+  mission_section_enabled:   boolean
+  wellness_section_enabled:  boolean
 }
 
 const VISIBILITY_KEYS: (keyof SiteVisibility)[] = [
   'about_enabled', 'mission_enabled', 'blogs_enabled',
   'events_enabled', 'reading_list_enabled', 'partners_enabled',
   'newsletter_enabled', 'health_wellness_enabled', 'research_enabled',
+  'advocates_enabled', 'psychotherapists_enabled', 'referral_agencies_enabled',
   'intro_section_enabled', 'cta_section_enabled',
   'goal_section_enabled', 'impact_section_enabled', 'mission_section_enabled',
   'wellness_section_enabled',
 ]
 
 const ALL_ENABLED: SiteVisibility = {
-  about_enabled:           true,
-  mission_enabled:         true,
-  blogs_enabled:           true,
-  events_enabled:          true,
-  reading_list_enabled:    true,
-  partners_enabled:        true,
-  newsletter_enabled:      true,
-  health_wellness_enabled: true,
-  research_enabled:        true,
-  intro_section_enabled:   true,
-  cta_section_enabled:     true,
-  goal_section_enabled:    true,
-  impact_section_enabled:  true,
-  mission_section_enabled: true,
-  wellness_section_enabled: true,
+  about_enabled:             true,
+  mission_enabled:           true,
+  blogs_enabled:             true,
+  events_enabled:            true,
+  reading_list_enabled:      true,
+  partners_enabled:          true,
+  newsletter_enabled:        true,
+  health_wellness_enabled:   true,
+  research_enabled:          true,
+  advocates_enabled:         true,
+  psychotherapists_enabled:  true,
+  referral_agencies_enabled: true,
+  intro_section_enabled:     true,
+  cta_section_enabled:       true,
+  goal_section_enabled:      true,
+  impact_section_enabled:    true,
+  mission_section_enabled:   true,
+  wellness_section_enabled:  true,
 }
 
 import { unstable_cache } from 'next/cache'

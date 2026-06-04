@@ -89,6 +89,9 @@ export interface SiteSettings {
   // Section visibility
   health_wellness_enabled: string
   research_enabled: string
+  advocates_enabled: string
+  psychotherapists_enabled: string
+  referral_agencies_enabled: string
   // Home section visibility
   intro_section_enabled:   string
   cta_section_enabled:     string
@@ -240,6 +243,39 @@ export interface ResearchPost {
   category: ResearchCategory
   published: boolean
   published_at: string | null
+  created_at: string
+  updated_at: string
+}
+
+export type DirectoryCategory = 'advocate' | 'psychotherapist' | 'referral_agency'
+export type DirectoryMode     = 'online' | 'in-person' | 'both'
+
+export const DIRECTORY_CATEGORIES: DirectoryCategory[] = ['advocate', 'psychotherapist', 'referral_agency']
+
+export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
+  advocate:       'Advocates',
+  psychotherapist: 'Psychotherapists',
+  referral_agency: 'Referral Agencies',
+}
+
+export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {
+  online:     'Online',
+  'in-person': 'In-Person',
+  both:       'Online & In-Person',
+}
+
+export interface DirectoryEntry {
+  id: string
+  name: string
+  organization: string | null
+  description: string | null
+  website_url: string | null
+  email: string | null
+  photo_path: string | null
+  category: DirectoryCategory
+  mode: DirectoryMode | null
+  published: boolean
+  sort_order: number
   created_at: string
   updated_at: string
 }

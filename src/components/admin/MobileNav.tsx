@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
   BookOpen, Home, Info, Target, Settings, Newspaper,
-  Calendar, List, Mail, Heart, Star, Microscope, Menu, X, LogOut,
+  Calendar, List, Mail, Heart, Star, Microscope, Users, Menu, X, LogOut,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -52,17 +52,25 @@ const DRAWER_GROUPS: NavGroup[] = [
     ],
   },
   {
+    label: 'Directory',
+    items: [
+      { label: 'All Entries', href: '/admin/directory', icon: Users },
+    ],
+  },
+  {
     label: 'Pages',
     items: [
       { label: 'Home',              href: '/admin/home',               icon: Home },
       { label: 'About',             href: '/admin/about',              icon: Info },
-      { label: 'Mission',           href: '/admin/mission',            icon: Target },
       { label: 'Events Page',            href: '/admin/pages/events',           icon: Calendar },
       { label: 'Newsletter Page',        href: '/admin/pages/newsletter',       icon: Mail },
       { label: 'Reading List Page',      href: '/admin/pages/reading-list',     icon: List },
       { label: 'Partners Page',          href: '/admin/pages/partners',         icon: Handshake },
       { label: 'Health & Wellness Page', href: '/admin/pages/health-wellness',  icon: Heart },
-      { label: 'Research Page',          href: '/admin/pages/research',         icon: Microscope },
+      { label: 'Research Page',          href: '/admin/pages/research',          icon: Microscope },
+      { label: 'Advocates Page',          href: '/admin/pages/advocates',         icon: Users },
+      { label: 'Psychotherapists Page',   href: '/admin/pages/psychotherapists',  icon: Users },
+      { label: 'Referral Agencies Page',  href: '/admin/pages/referral-agencies', icon: Users },
     ],
   },
   {

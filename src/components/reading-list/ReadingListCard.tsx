@@ -32,11 +32,8 @@ export default function ReadingListCard({
       }}
     >
       <div className="flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg hover:border-[var(--color-brand-teal-light)] dark:hover:border-[var(--color-brand-teal)] transition-all duration-300">
-        {/* Cover — portrait 3:4 */}
-        <div
-          className="relative w-full overflow-hidden"
-          style={{ aspectRatio: '3/4' }}
-        >
+        {/* Cover — portrait 3:4, clickable */}
+        <Link href={`/reading-list/${id}`} className="block relative w-full overflow-hidden cursor-pointer" style={{ aspectRatio: '3/4' }}>
           {cover_url ? (
             <Image
               src={cover_url}
@@ -50,7 +47,7 @@ export default function ReadingListCard({
               <BookOpen className="w-12 h-12 text-[var(--color-text-muted)] opacity-40" />
             </div>
           )}
-        </div>
+        </Link>
 
         {/* Body */}
         <div className="flex flex-col flex-1 p-4 space-y-2">
