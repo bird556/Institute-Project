@@ -303,7 +303,7 @@ export interface DirectoryEntry {
   updated_at: string
 }
 
-export type SearchResultType = 'blog' | 'event' | 'reading_list' | 'wellness' | 'research'
+export type SearchResultType = 'blog' | 'event' | 'reading_list' | 'wellness' | 'research' | 'directory'
 
 export interface SearchResult {
   id: string
@@ -313,4 +313,5 @@ export interface SearchResult {
   excerpt: string | null
   published_at?: string | null
   event_date?: string | null
+  cover_url?: string | null
 }

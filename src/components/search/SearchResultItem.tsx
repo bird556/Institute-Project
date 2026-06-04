@@ -1,5 +1,6 @@
 import Link from 'next/link';
-import { BookOpen, Calendar, FileText, Heart, Microscope } from 'lucide-react';
+import Image from 'next/image';
+import { BookOpen, Calendar, FileText, Heart, Microscope, Users } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import type { SearchResult } from '@/types';
 
@@ -43,6 +44,13 @@ const TYPE_CONFIG = {
     color:
       'text-[var(--color-brand-teal)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)]',
   },
+  directory: {
+    label: 'Directory',
+    icon: Users,
+    href: (id: string) => `/${id}`,
+    color:
+      'text-[var(--color-brand-teal)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)]',
+  },
 } as const;
 
 export default function SearchResultItem({ result }: SearchResultItemProps) {
@@ -61,12 +69,19 @@ export default function SearchResultItem({ result }: SearchResultItemProps) {
       href={href}
       className="group flex items-start gap-4 p-5 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:border-[var(--color-brand-teal-light)] hover:shadow-sm transition-all"
     >
-      {/* Icon */}
-      <div className="shrink-0 mt-0.5 w-9 h-9 flex items-center justify-center rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]">
-        <Icon
-          size={16}
-          className="text-[var(--color-brand-teal)] dark:text-white"
-        />
+      {/* Cover image or icon fallback */}
+      <div className="shrink-0 mt-0.5 w-12 h-16 rounded-lg overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center">
+        {result.cover_url ? (
+          <Image
+            src={result.cover_url}
+            alt={result.title}
+            width={48}
+            height={64}
+            className="w-full h-full object-cover"
+          />
+        ) : (
+          <Icon size={18} className="text-[var(--color-brand-teal)] dark:text-white" />
+        )}
       </div>
 
       {/* Content */}

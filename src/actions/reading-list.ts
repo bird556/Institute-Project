@@ -36,14 +36,24 @@ export async function createReadingListItem(): Promise<ActionResult<{ id: string
   return { success: true, data: { id: data.id } }
 }
 
+const TEXT_FIELDS = ['title', 'author', 'external_url'] as const
+
 export async function updateReadingListItem(
   id: string,
   fields: Partial<Omit<ReadingListItem, 'id' | 'created_at'>>,
 ): Promise<ActionResult> {
   const supabase = await createClient()
+
+  const sanitized = { ...fields }
+  for (const key of TEXT_FIELDS) {
+    if (typeof sanitized[key] === 'string') {
+      sanitized[key] = (sanitized[key] as string).trim() as never
+    }
+  }
+
   const { error } = await supabase
     .from('reading_list')
-    .update({ ...fields, updated_at: new Date().toISOString() })
+    .update({ ...sanitized, updated_at: new Date().toISOString() })
     .eq('id', id)
   if (error) return { success: false, error: 'Failed to save reading list item.' }
   revalidatePath('/reading-list', 'layout')
