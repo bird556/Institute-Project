@@ -38,6 +38,7 @@ export default async function DirectoryListPage({ category, pageSlug }: Props) {
     email: e.email,
     mode: e.mode,
     category: e.category,
+    created_at: e.created_at,
   }))
 
   return (

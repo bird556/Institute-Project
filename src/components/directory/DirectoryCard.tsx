@@ -16,6 +16,7 @@ export interface DirectoryCardProps {
   email: string | null
   mode: DirectoryMode | null
   category: DirectoryCategory
+  created_at: string
 }
 
 function PlaceholderIcon({ category }: { category: DirectoryCategory }) {
