@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
+import PublishPill from '@/components/admin/PublishPill'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createWellnessPost, deleteWellnessPost, toggleWellnessPublished } from '@/actions/wellness'
 import { formatDate } from '@/lib/utils'
 import { WELLNESS_TAGS } from '@/types'
@@ -230,22 +232,21 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
                   </div>
                 </div>
 
-                <button
+                <PublishPill
+                  published={post.published}
+                  toggling={togglingId === post.id}
                   onClick={() => handleToggle(post.id, post.published)}
-                  disabled={togglingId === post.id}
-                  className={`text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer transition-colors shrink-0 ${
-                    post.published
-                      ? 'bg-[var(--color-brand-teal)] text-white hover:opacity-80'
-                      : 'bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:bg-[var(--color-surface-hover)]'
-                  }`}
-                >
-                  {togglingId === post.id ? '…' : post.published ? 'Published' : 'Draft'}
-                </button>
+                />
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer shrink-0">
-                    <MoreVertical size={16} className="text-[var(--color-text-muted)]" />
-                  </DropdownMenuTrigger>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer shrink-0">
+                        <MoreVertical size={16} className="text-[var(--color-text-muted)]" />
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                  </Tooltip>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem
                       className="cursor-pointer gap-2"

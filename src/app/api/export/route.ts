@@ -30,6 +30,7 @@ async function fetchFile(
 function collectPaths(
   blogs: Row[], events: Row[], readingList: Row[],
   partners: Row[], wellness: Row[], editions: Row[],
+  research: Row[], directory: Row[],
   siteSettings: Row[]
 ): string[] {
   const paths = new Set<string>()
@@ -47,6 +48,8 @@ function collectPaths(
     if (row.doc_path)   paths.add(row.doc_path as string)
   }
   for (const row of editions)    if (row.cover_path) paths.add(row.cover_path as string)
+  for (const row of research)    if (row.cover_path) paths.add(row.cover_path as string)
+  for (const row of directory)   if (row.photo_path) paths.add(row.photo_path as string)
 
   return [...paths]
 }
@@ -70,6 +73,8 @@ export async function GET() {
     { data: submissions },
     { data: pageContent },
     { data: siteSettings },
+    { data: research },
+    { data: directory },
   ] = await Promise.all([
     supabase.from('blog_posts').select('*'),
     supabase.from('events').select('*'),
@@ -80,11 +85,14 @@ export async function GET() {
     supabase.from('newsletter_submissions').select('*'),
     supabase.from('page_content').select('*'),
     supabase.from('site_settings').select('*'),
+    supabase.from('research_posts').select('*'),
+    supabase.from('directory_entries').select('*'),
   ])
 
   const paths = collectPaths(
     (blogs ?? []) as Row[], (events ?? []) as Row[], (readingList ?? []) as Row[],
     (partners ?? []) as Row[], (wellness ?? []) as Row[], (editions ?? []) as Row[],
+    (research ?? []) as Row[], (directory ?? []) as Row[],
     (siteSettings ?? []) as Row[]
   )
 
@@ -104,6 +112,8 @@ export async function GET() {
     ['newsletter-submissions.json', omitSearchVector((submissions ?? []) as Row[])],
     ['page-content.json',           (pageContent ?? []) as Row[]],
     ['site-settings.json',          (siteSettings ?? []) as Row[]],
+    ['research.json',               omitSearchVector((research ?? []) as Row[])],
+    ['directory.json',              (directory ?? []) as Row[]],
   ]
 
   for (const [filename, data] of datasets) {
