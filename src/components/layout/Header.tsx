@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { Menu, X, Search } from 'lucide-react'
+import { Menu, X, Search, ChevronDown, ChevronUp } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ThemeToggle } from './ThemeToggle'
 import { SearchBar } from './SearchBar'
@@ -33,6 +33,8 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
+  const [eventsDropdownOpen, setEventsDropdownOpen] = useState(false)
+  const [eventsAccordionOpen, setEventsAccordionOpen] = useState(false)
 
   const visibleLinks = navItems.filter((i) => i.visible)
 
@@ -53,20 +55,61 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
 
           {/* Desktop Nav */}
           <nav className="hidden lg:flex items-center gap-6">
-            {visibleLinks.map(({ href, label }) => (
-              <Link
-                key={href}
-                href={href}
-                className={cn(
-                  'text-sm font-medium transition-colors',
-                  pathname === href || (href !== '/' && pathname.startsWith(href + '/'))
-                    ? 'text-brand-teal dark:text-white'
-                    : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
-                )}
-              >
-                {label}
-              </Link>
-            ))}
+            {visibleLinks.map(({ href, label, slug }) => {
+              const isActive = pathname === href || (href !== '/' && pathname.startsWith(href + '/'))
+              const linkClass = cn(
+                'text-sm font-medium transition-colors',
+                isActive ? 'text-brand-teal dark:text-white' : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
+              )
+
+              if (slug === 'events') {
+                return (
+                  <div
+                    key={href}
+                    className="relative"
+                    onMouseEnter={() => setEventsDropdownOpen(true)}
+                    onMouseLeave={() => setEventsDropdownOpen(false)}
+                  >
+                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                      {label}
+                      <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                    </button>
+                    <AnimatePresence>
+                      {eventsDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.15, ease: 'easeOut' }}
+                          className="absolute top-full left-0 mt-2 w-52 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
+                        >
+                          <Link
+                            href="/events?filter=kustawi"
+                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                            onClick={() => setEventsDropdownOpen(false)}
+                          >
+                            Kustawi Events
+                          </Link>
+                          <Link
+                            href="/events?filter=other"
+                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                            onClick={() => setEventsDropdownOpen(false)}
+                          >
+                            Other Events
+                          </Link>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              }
+
+              return (
+                <Link key={href} href={href} className={linkClass}>
+                  {label}
+                </Link>
+              )
+            })}
           </nav>
 
           {/* Right controls */}
@@ -118,21 +161,73 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className="lg:hidden overflow-hidden pb-4 flex flex-col gap-1"
             >
-              {visibleLinks.map(({ href, label }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    'px-3 py-2 rounded-md text-sm font-medium transition-colors',
-                    pathname === href || (href !== '/' && pathname.startsWith(href + '/'))
-                      ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
-                      : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
-                  )}
-                >
-                  {label}
-                </Link>
-              ))}
+              {visibleLinks.map(({ href, label, slug }) => {
+                const isActive = pathname === href || (href !== '/' && pathname.startsWith(href + '/'))
+
+                if (slug === 'events') {
+                  return (
+                    <div key={href}>
+                      <button
+                        onClick={() => setEventsAccordionOpen((v) => !v)}
+                        className={cn(
+                          'w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                          isActive
+                            ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
+                            : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
+                        )}
+                      >
+                        {label}
+                        {eventsAccordionOpen
+                          ? <ChevronUp className="h-3.5 w-3.5 opacity-60" />
+                          : <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                        }
+                      </button>
+                      <AnimatePresence>
+                        {eventsAccordionOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
+                          >
+                            <Link
+                              href="/events?filter=kustawi"
+                              onClick={() => { setMobileOpen(false); setEventsAccordionOpen(false) }}
+                              className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+                            >
+                              Kustawi Events
+                            </Link>
+                            <Link
+                              href="/events?filter=other"
+                              onClick={() => { setMobileOpen(false); setEventsAccordionOpen(false) }}
+                              className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+                            >
+                              Other Events
+                            </Link>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
+
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMobileOpen(false)}
+                    className={cn(
+                      'px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
+                        : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
+                    )}
+                  >
+                    {label}
+                  </Link>
+                )
+              })}
             </motion.nav>
           )}
         </AnimatePresence>

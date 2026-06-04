@@ -36,6 +36,7 @@ export async function createEvent(): Promise<ActionResult<{ id: string }>> {
       description: '',
       event_date: new Date().toISOString(),
       external_url: null,
+      event_type: 'kustawi',
     })
     .select('id')
     .single()

@@ -55,7 +55,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   const { data: moreData } = await supabase
     .from('events')
-    .select('id, title, description, cover_path, location, event_date')
+    .select('id, title, description, cover_path, location, event_date, event_type')
     .eq('published', true)
     .neq('id', event.id)
     .order('event_date', { ascending: true })
@@ -71,6 +71,7 @@ export default async function EventDetailPage({ params }: Props) {
     location: e.location,
     event_date: e.event_date,
     isPast: new Date(e.event_date) < now,
+    event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
   }))
 
   const moreEvents = [
@@ -117,11 +118,22 @@ export default async function EventDetailPage({ params }: Props) {
         {event.title}
       </h1>
 
-      {isPast && (
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 text-sm font-medium">
-          This event has passed.
-        </div>
-      )}
+      <div className="flex flex-wrap items-center gap-3">
+        {event.event_type === 'other' ? (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+            Other Event
+          </span>
+        ) : (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[var(--color-brand-teal)] text-white">
+            Kustawi Event
+          </span>
+        )}
+        {isPast && (
+          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+            This event has passed.
+          </span>
+        )}
+      </div>
 
       {event.external_url && !isPast && (
         <div>
