@@ -93,6 +93,7 @@ export interface SiteSettings {
   advocates_enabled: string
   psychotherapists_enabled: string
   referral_agencies_enabled: string
+  black_mens_groups_enabled: string
   // Home section visibility
   intro_section_enabled:   string
   cta_section_enabled:     string
@@ -270,15 +271,18 @@ export interface ResearchPost {
   updated_at: string
 }
 
-export type DirectoryCategory = 'advocate' | 'psychotherapist' | 'referral_agency'
+export type DirectoryCategory = 'advocate' | 'psychotherapist' | 'referral_agency' | 'black_mens_group'
 export type DirectoryMode     = 'online' | 'in-person' | 'both'
 
-export const DIRECTORY_CATEGORIES: DirectoryCategory[] = ['advocate', 'psychotherapist', 'referral_agency']
+export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
+  'advocate', 'psychotherapist', 'referral_agency', 'black_mens_group',
+]
 
 export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
-  advocate:       'Advocates',
-  psychotherapist: 'Psychotherapists',
-  referral_agency: 'Referral Agencies',
+  advocate:         'Advocates',
+  psychotherapist:  'Psychotherapists',
+  referral_agency:  'Referral Agencies',
+  black_mens_group: "Black Men's Groups",
 }
 
 export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {

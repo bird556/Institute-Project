@@ -8,7 +8,7 @@ import type { SiteSettings } from '@/types'
 
 type VisibilityKey =
   | 'about_enabled' | 'advocates_enabled' | 'psychotherapists_enabled'
-  | 'referral_agencies_enabled' | 'blogs_enabled' | 'events_enabled'
+  | 'referral_agencies_enabled' | 'black_mens_groups_enabled' | 'blogs_enabled' | 'events_enabled'
   | 'reading_list_enabled' | 'partners_enabled' | 'newsletter_enabled'
   | 'health_wellness_enabled' | 'research_enabled' | 'intro_section_enabled'
   | 'goal_section_enabled' | 'impact_section_enabled' | 'mission_section_enabled'
@@ -19,6 +19,7 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'advocates_enabled',         label: 'Advocates',         description: 'When hidden, /advocates and all profile pages redirect to home' },
   { key: 'psychotherapists_enabled',  label: 'Psychotherapists',  description: 'When hidden, /psychotherapists and all profile pages redirect to home' },
   { key: 'referral_agencies_enabled', label: 'Referral Agencies', description: 'When hidden, /referral-agencies and all profile pages redirect to home' },
+  { key: 'black_mens_groups_enabled', label: "Black Men's Groups", description: "When hidden, /black-mens-groups and all profile pages redirect to home" },
   { key: 'blogs_enabled',             label: 'Blog',              description: 'When hidden, /blogs and all blog posts redirect to home' },
   { key: 'events_enabled',            label: 'Events',            description: 'When hidden, /events and all event pages redirect to home' },
   { key: 'reading_list_enabled',      label: 'Reading List',      description: 'When hidden, /reading-list and all items redirect to home' },
@@ -45,6 +46,7 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
     advocates_enabled:         s?.advocates_enabled         !== 'false',
     psychotherapists_enabled:  s?.psychotherapists_enabled  !== 'false',
     referral_agencies_enabled: s?.referral_agencies_enabled !== 'false',
+    black_mens_groups_enabled: s?.black_mens_groups_enabled !== 'false',
     blogs_enabled:             s?.blogs_enabled             !== 'false',
     events_enabled:            s?.events_enabled            !== 'false',
     reading_list_enabled:      s?.reading_list_enabled      !== 'false',

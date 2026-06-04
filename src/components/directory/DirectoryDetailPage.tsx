@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Globe, Mail, ArrowLeft, UserRound, Building2 } from 'lucide-react'
+import { Globe, Mail, ArrowLeft, UserRound, Building2, Users } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { buildMetadata } from '@/lib/metadata'
@@ -11,9 +11,10 @@ import { DetailPageShell } from '@/components/shared/DetailPageShell'
 import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
 
 const BACK_HREFS: Record<DirectoryCategory, string> = {
-  advocate:        '/advocates',
-  psychotherapist: '/psychotherapists',
-  referral_agency: '/referral-agencies',
+  advocate:         '/advocates',
+  psychotherapist:  '/psychotherapists',
+  referral_agency:  '/referral-agencies',
+  black_mens_group: '/black-mens-groups',
 }
 
 export const getDirectoryEntry = cache(async (id: string) => {
@@ -80,6 +81,8 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
               <div className="absolute inset-0 flex items-center justify-center bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]">
                 {entry.category === 'referral_agency'
                   ? <Building2 className="w-20 h-20 text-[var(--color-text-muted)] opacity-30" strokeWidth={1} />
+                  : entry.category === 'black_mens_group'
+                  ? <Users     className="w-20 h-20 text-[var(--color-text-muted)] opacity-30" strokeWidth={1} />
                   : <UserRound  className="w-20 h-20 text-[var(--color-text-muted)] opacity-30" strokeWidth={1} />
                 }
               </div>
@@ -114,6 +117,11 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
           {entry.mode && (
             <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] dark:text-white dark:border-white/30">
               {DIRECTORY_MODE_LABELS[entry.mode as DirectoryMode]}
+            </span>
+          )}
+          {entry.category === 'black_mens_group' && (
+            <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+              Canadian
             </span>
           )}
 
