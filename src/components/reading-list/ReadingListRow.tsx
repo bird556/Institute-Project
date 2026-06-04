@@ -28,6 +28,7 @@ export default function ReadingListRow({
   description_excerpt,
   cover_url,
   external_url,
+  author_region,
   item_type,
 }: ReadingListRowProps) {
   return (
@@ -67,8 +68,17 @@ export default function ReadingListRow({
           )}
         </div>
 
-        {author && (
-          <p className="text-sm text-[var(--color-text-muted)]">{author}</p>
+        {(author || author_region) && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {author && (
+              <p className="text-sm text-[var(--color-text-muted)]">{author}</p>
+            )}
+            {author_region && (
+              <span className="text-xs px-1.5 py-0.5 rounded-full bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+                {author_region === 'canadian' ? 'Canadian' : 'International'}
+              </span>
+            )}
+          </div>
         )}
 
         {description_excerpt && (

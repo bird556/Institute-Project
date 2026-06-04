@@ -31,6 +31,7 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import VisibilityPill from '@/components/admin/VisibilityPill'
+import Pagination from '@/components/shared/Pagination'
 import {
   createPartner,
   deletePartner,
@@ -52,6 +53,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
   const [partners, setPartners] = useState(initial)
   const [query, setQuery] = useState('')
   const [visibilityFilter, setVisibilityFilter] = useState<VisibilityFilter>('all')
+  const [page, setPage] = useState(1)
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
 
@@ -59,7 +61,10 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
 
+  const PAGE_SIZE = 20
   const isFiltering = query !== '' || visibilityFilter !== 'all'
+
+  function resetPage() { setPage(1) }
 
   const filtered = partners.filter((p) => {
     const q = query.toLowerCase()
@@ -140,6 +145,8 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
     }`
 
   const listItems = isFiltering ? filtered : partners
+  const totalPages = Math.ceil(listItems.length / PAGE_SIZE)
+  const paginated  = listItems.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
     <>
@@ -166,13 +173,13 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); resetPage() }}
               placeholder="Search by name…"
               className="w-full sm:w-80 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
             />
             {query && (
               <button
-                onClick={() => setQuery('')}
+                onClick={() => { setQuery(''); resetPage() }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
@@ -182,7 +189,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
 
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {(['all', 'visible', 'hidden'] as VisibilityFilter[]).map((f) => (
-              <button key={f} onClick={() => setVisibilityFilter(f)} className={filterBtnClass(visibilityFilter === f)}>
+              <button key={f} onClick={() => { setVisibilityFilter(f); resetPage() }} className={filterBtnClass(visibilityFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -197,7 +204,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
         )}
 
         {/* List */}
-        {listItems.length === 0 ? (
+        {paginated.length === 0 && listItems.length === 0 ? (
           isFiltering ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4 text-center rounded-xl border border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
               <Building2 className="h-8 w-8 text-[var(--color-text-muted)]" />
@@ -217,7 +224,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
         ) : isFiltering ? (
           // Filtered view — no drag context
           <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-            {listItems.map((partner, i) => (
+            {paginated.map((partner, i) => (
               <SortableRow
                 key={partner.id}
                 partner={partner}
@@ -233,9 +240,9 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
         ) : (
           // Full list with drag-to-reorder
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <SortableContext items={partners.map((p) => p.id)} strategy={verticalListSortingStrategy}>
+            <SortableContext items={paginated.map((p) => p.id)} strategy={verticalListSortingStrategy}>
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-                {partners.map((partner, i) => (
+                {paginated.map((partner, i) => (
                   <SortableRow
                     key={partner.id}
                     partner={partner}
@@ -251,6 +258,8 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
             </SortableContext>
           </DndContext>
         )}
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
 
         <p className="text-xs text-[var(--color-text-muted)]">
           {isFiltering
@@ -301,13 +310,15 @@ function SortableRow({ partner, index, logoUrl, dragDisabled, onEdit, onDelete, 
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04, duration: 0.25 }}
-      className="flex items-center gap-3 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+      className="flex items-center gap-3 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
+      onClick={onEdit}
     >
       {/* Drag handle */}
       <button
         {...attributes}
         {...listeners}
         disabled={dragDisabled}
+        onClick={(e) => e.stopPropagation()}
         className={`shrink-0 p-1 rounded touch-none transition-colors ${
           dragDisabled
             ? 'opacity-30 cursor-not-allowed'
@@ -340,9 +351,12 @@ function SortableRow({ partner, index, logoUrl, dragDisabled, onEdit, onDelete, 
       </div>
 
       {/* Visibility toggle */}
-      <VisibilityPill visible={partner.published} onClick={onToggleVisible} />
+      <div onClick={(e) => e.stopPropagation()}>
+        <VisibilityPill visible={partner.published} onClick={onToggleVisible} />
+      </div>
 
       {/* Actions menu */}
+      <div onClick={(e) => e.stopPropagation()}>
       <DropdownMenu>
         <Tooltip>
           <TooltipTrigger asChild>
@@ -369,6 +383,7 @@ function SortableRow({ partner, index, logoUrl, dragDisabled, onEdit, onDelete, 
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      </div>
     </motion.div>
   )
 }
