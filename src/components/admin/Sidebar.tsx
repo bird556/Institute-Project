@@ -20,6 +20,10 @@ import {
   Star,
   Microscope,
   Users,
+  Navigation2,
+  Eye,
+  PanelBottom,
+  Download,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -94,7 +98,13 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     label: 'Settings',
-    items: [{ label: 'Settings', href: '/admin/settings', icon: Settings }],
+    items: [
+      { label: 'Settings',   href: '/admin/settings',   icon: Settings },
+      { label: 'Navigation', href: '/admin/navigation', icon: Navigation2 },
+      { label: 'Visibility', href: '/admin/visibility', icon: Eye },
+      { label: 'Footer',     href: '/admin/footer',     icon: PanelBottom },
+      { label: 'Export',     href: '/admin/export',     icon: Download },
+    ],
   },
 ];
 
