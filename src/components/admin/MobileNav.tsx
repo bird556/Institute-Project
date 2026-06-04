@@ -7,7 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
   BookOpen, Home, Info, Target, Settings, Newspaper,
-  Calendar, List, Mail, Heart, Star, Microscope, Users, Menu, X, LogOut,
+  Calendar, List, Mail, Heart, Star, Microscope, Users,
+  Navigation2, Eye, PanelBottom, Download,
+  Menu, X, LogOut,
   type LucideIcon,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -76,7 +78,11 @@ const DRAWER_GROUPS: NavGroup[] = [
   {
     label: 'Settings',
     items: [
-      { label: 'Settings', href: '/admin/settings', icon: Settings },
+      { label: 'Settings',   href: '/admin/settings',   icon: Settings },
+      { label: 'Navigation', href: '/admin/navigation', icon: Navigation2 },
+      { label: 'Visibility', href: '/admin/visibility', icon: Eye },
+      { label: 'Footer',     href: '/admin/footer',     icon: PanelBottom },
+      { label: 'Export',     href: '/admin/export',     icon: Download },
     ],
   },
 ]
