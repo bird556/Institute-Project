@@ -28,7 +28,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
+import VisibilityPill from '@/components/admin/VisibilityPill'
 import {
   createPartner,
   deletePartner,
@@ -338,28 +340,18 @@ function SortableRow({ partner, index, logoUrl, dragDisabled, onEdit, onDelete, 
       </div>
 
       {/* Visibility toggle */}
-      <button
-        onClick={onToggleVisible}
-        title={partner.published ? 'Click to hide' : 'Click to show'}
-        className="flex items-center gap-1.5 text-xs font-medium shrink-0 cursor-pointer px-2 py-1 rounded-full transition-colors"
-        style={
-          partner.published
-            ? { color: 'var(--color-brand-teal)', background: 'color-mix(in srgb, var(--color-brand-teal) 12%, transparent)' }
-            : { color: 'var(--color-text-muted)', background: 'var(--color-surface)' }
-        }
-      >
-        <span
-          className="h-1.5 w-1.5 rounded-full shrink-0"
-          style={{ background: partner.published ? 'var(--color-brand-teal)' : 'var(--color-text-muted)' }}
-        />
-        {partner.published ? 'Visible' : 'Hidden'}
-      </button>
+      <VisibilityPill visible={partner.published} onClick={onToggleVisible} />
 
       {/* Actions menu */}
       <DropdownMenu>
-        <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-          <MoreVertical className="h-4 w-4" />
-        </DropdownMenuTrigger>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
+              <MoreVertical className="h-4 w-4" />
+            </DropdownMenuTrigger>
+          </TooltipTrigger>
+          <TooltipContent side="left"><p>More actions</p></TooltipContent>
+        </Tooltip>
         <DropdownMenuContent align="end">
           <DropdownMenuItem onClick={onEdit} className="cursor-pointer gap-2">
             <PenLine className="h-4 w-4" />

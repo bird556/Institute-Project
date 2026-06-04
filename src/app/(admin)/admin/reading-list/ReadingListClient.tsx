@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
+import PublishPill from '@/components/admin/PublishPill'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createReadingListItem, deleteReadingListItem, toggleReadingListPublished } from '@/actions/reading-list'
 import { formatDate } from '@/lib/utils'
 import type { ReadingListItem } from '@/types'
@@ -191,22 +193,21 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
                   </div>
                 </div>
 
-                <button
+                <PublishPill
+                  published={item.published}
+                  toggling={togglingId === item.id}
                   onClick={() => handleToggle(item.id, item.published)}
-                  disabled={togglingId === item.id}
-                  className={`text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer transition-colors shrink-0 ${
-                    item.published
-                      ? 'bg-[var(--color-brand-teal)] text-white hover:opacity-80'
-                      : 'bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:bg-[var(--color-surface-hover)]'
-                  }`}
-                >
-                  {togglingId === item.id ? '…' : item.published ? 'Published' : 'Draft'}
-                </button>
+                />
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-                    <MoreVertical className="h-4 w-4" />
-                  </DropdownMenuTrigger>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
+                        <MoreVertical className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                  </Tooltip>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => router.push(`/admin/reading-list/${item.id}`)} className="cursor-pointer gap-2">
                       <PenLine className="h-4 w-4" />

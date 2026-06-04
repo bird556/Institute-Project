@@ -14,6 +14,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
+import PublishPill from '@/components/admin/PublishPill'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createEvent, deleteEvent, toggleEventPublished } from '@/actions/events'
 import type { Event } from '@/types'
 
@@ -239,22 +241,21 @@ export default function EventListClient({ events: initial }: EventListClientProp
                   </div>
                 </div>
 
-                <button
+                <PublishPill
+                  published={event.published}
+                  toggling={togglingId === event.id}
                   onClick={() => handleToggle(event.id, event.published)}
-                  disabled={togglingId === event.id}
-                  className={`text-xs px-2.5 py-1 rounded-full font-medium cursor-pointer transition-colors shrink-0 ${
-                    event.published
-                      ? 'bg-[var(--color-brand-teal)] text-white hover:opacity-80'
-                      : 'bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:bg-[var(--color-surface-hover)]'
-                  }`}
-                >
-                  {togglingId === event.id ? '…' : event.published ? 'Published' : 'Draft'}
-                </button>
+                />
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-                    <MoreVertical className="h-4 w-4" />
-                  </DropdownMenuTrigger>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
+                        <MoreVertical className="h-4 w-4" />
+                      </DropdownMenuTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                  </Tooltip>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => router.push(`/admin/events/${event.id}`)} className="cursor-pointer gap-2">
                       <PenLine className="h-4 w-4" />

@@ -584,8 +584,8 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
           </h2>
           <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
             Download a complete backup of all your site content and media as a ZIP archive.
-            Includes all posts, events, partners, reading list, wellness posts, newsletter,
-            page content, settings, and all uploaded images and documents.
+            Includes all posts, events, partners, reading list, wellness, research, directory entries,
+            newsletter, page content, settings, and all uploaded images and documents.
           </p>
         </div>
 

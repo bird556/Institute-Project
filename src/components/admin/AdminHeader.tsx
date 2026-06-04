@@ -11,6 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { logoutAction } from '@/actions/auth'
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-/i
@@ -68,15 +69,20 @@ export function AdminHeader({ adminInitial = 'A' }: { adminInitial?: string }) {
       {/* Right: theme toggle + admin avatar */}
       <div className="flex items-center gap-2">
         {/* Theme toggle */}
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          aria-label="Toggle theme"
-          className="cursor-pointer"
-        >
-          {mounted && (theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />)}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Toggle theme"
+              className="cursor-pointer"
+            >
+              {mounted && (theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />)}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom"><p>Toggle dark / light mode</p></TooltipContent>
+        </Tooltip>
 
         {/* Admin avatar dropdown */}
         <DropdownMenu>
