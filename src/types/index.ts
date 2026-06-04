@@ -125,6 +125,12 @@ export interface SiteSettings {
   upcoming_events_section_enabled: string
   upcoming_events_max_count: string
   upcoming_events_heading: string
+  // Newsletter signup section
+  signup_section_enabled: string
+  newsletter_heading: string
+  newsletter_subtext: string
+  newsletter_success_message: string
+  newsletter_consent_text: string
 }
 
 export interface GoalPillar {
