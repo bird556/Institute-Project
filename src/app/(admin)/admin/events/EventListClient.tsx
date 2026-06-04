@@ -17,6 +17,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createEvent, deleteEvent, toggleEventPublished } from '@/actions/events'
+import Pagination from '@/components/shared/Pagination'
 import type { Event } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
@@ -54,6 +55,10 @@ export default function EventListClient({ events: initial }: EventListClientProp
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+
+  const PAGE_SIZE = 20
+  function resetPage() { setPage(1) }
 
   const now = new Date()
 
@@ -78,6 +83,8 @@ export default function EventListClient({ events: initial }: EventListClientProp
   })
 
   const isFiltering = query !== '' || statusFilter !== 'all' || dateFilter !== 'all' || typeFilter !== 'all'
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   async function handleNew() {
     startTransition(async () => {
@@ -147,13 +154,13 @@ export default function EventListClient({ events: initial }: EventListClientProp
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); resetPage() }}
               placeholder="Search by title or location…"
               className="w-full sm:w-80 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
             />
             {query && (
               <button
-                onClick={() => setQuery('')}
+                onClick={() => { setQuery(''); resetPage() }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
@@ -163,7 +170,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
 
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
-              <button key={f} onClick={() => setStatusFilter(f)} className={filterBtnClass(statusFilter === f)}>
+              <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -171,7 +178,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
 
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {(['all', 'upcoming', 'past'] as DateFilter[]).map((f) => (
-              <button key={f} onClick={() => setDateFilter(f)} className={filterBtnClass(dateFilter === f)}>
+              <button key={f} onClick={() => { setDateFilter(f); resetPage() }} className={filterBtnClass(dateFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -179,7 +186,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
 
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {([['all', 'All'], ['kustawi', 'Kustawi'], ['other', 'Other Events']] as [TypeFilter, string][]).map(([f, label]) => (
-              <button key={f} onClick={() => setTypeFilter(f)} className={filterBtnClass(typeFilter === f)}>
+              <button key={f} onClick={() => { setTypeFilter(f); resetPage() }} className={filterBtnClass(typeFilter === f)}>
                 {label}
               </button>
             ))}
@@ -198,13 +205,14 @@ export default function EventListClient({ events: initial }: EventListClientProp
           <EmptyState isFiltering={isFiltering} query={query} onClear={() => { setQuery(''); setStatusFilter('all'); setDateFilter('all'); setTypeFilter('all') }} onNew={handleNew} creating={isPending} />
         ) : (
           <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-            {filtered.map((event, i) => (
+            {paginated.map((event, i) => (
               <motion.div
                 key={event.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.25 }}
-                className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
+                onClick={() => router.push(`/admin/events/${event.id}`)}
               >
                 {/* Thumbnail */}
                 {event.cover_url ? (
@@ -241,12 +249,15 @@ export default function EventListClient({ events: initial }: EventListClientProp
                   </div>
                 </div>
 
-                <PublishPill
-                  published={event.published}
-                  toggling={togglingId === event.id}
-                  onClick={() => handleToggle(event.id, event.published)}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <PublishPill
+                    published={event.published}
+                    toggling={togglingId === event.id}
+                    onClick={() => handleToggle(event.id, event.published)}
+                  />
+                </div>
 
+                <div onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -267,10 +278,13 @@ export default function EventListClient({ events: initial }: EventListClientProp
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
+                </div>
               </motion.div>
             ))}
           </div>
         )}
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       <ConfirmDialog
