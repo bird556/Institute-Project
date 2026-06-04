@@ -110,6 +110,20 @@ export interface SiteSettings {
   // Event section blurbs
   kustawi_blurb: string
   non_affiliated_blurb: string
+  // Social media links
+  social_facebook: string
+  social_instagram: string
+  social_twitter: string
+  social_linkedin: string
+  social_youtube: string
+  // Footer
+  footer_copyright_suffix: string
+  footer_nav_heading: string
+  footer_contact_heading: string
+  // Upcoming events section
+  upcoming_events_section_enabled: string
+  upcoming_events_max_count: string
+  upcoming_events_heading: string
 }
 
 export interface GoalPillar {
@@ -122,6 +136,8 @@ export interface GoalSectionContent {
   title: string
   description: string
   pillars: GoalPillar[]
+  cta_label?: string
+  cta_href?: string
 }
 
 export interface ImpactSectionContent {

@@ -116,6 +116,28 @@ export default function GoalEditor({ initialData, visibilityKey, initialVisible 
         ))}
       </div>
 
+      {/* CTA Button */}
+      <div className="grid sm:grid-cols-2 gap-4 pt-2 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+        <div className="space-y-1.5">
+          <Label htmlFor="goal-cta-label">CTA Button Label</Label>
+          <Input
+            id="goal-cta-label"
+            value={data.cta_label ?? ''}
+            onChange={e => setField('cta_label', e.target.value)}
+            placeholder="Learn More About Us"
+          />
+        </div>
+        <div className="space-y-1.5">
+          <Label htmlFor="goal-cta-href">CTA Button Link</Label>
+          <Input
+            id="goal-cta-href"
+            value={data.cta_href ?? ''}
+            onChange={e => setField('cta_href', e.target.value)}
+            placeholder="/about"
+          />
+        </div>
+      </div>
+
       <div className="flex items-center justify-end gap-3">
         {visibilityKey && (
           <SectionVisibilityToggle visibilityKey={visibilityKey} initialVisible={initialVisible} />

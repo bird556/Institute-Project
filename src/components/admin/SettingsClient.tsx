@@ -66,6 +66,17 @@ const EMPTY: SiteSettings = {
   book_of_the_month_id: '',
   kustawi_blurb: '',
   non_affiliated_blurb: '',
+  social_facebook: '',
+  social_instagram: '',
+  social_twitter: '',
+  social_linkedin: '',
+  social_youtube: '',
+  footer_copyright_suffix: 'All rights reserved.',
+  footer_nav_heading: 'Navigate',
+  footer_contact_heading: 'Contact',
+  upcoming_events_section_enabled: 'true',
+  upcoming_events_max_count: '2',
+  upcoming_events_heading: 'Upcoming Events',
 }
 
 export default function SettingsClient({ initialSettings, initialLogoUrl }: SettingsClientProps) {
@@ -162,7 +173,8 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     goal_section_enabled:    settings.goal_section_enabled    !== 'false',
     impact_section_enabled:  settings.impact_section_enabled  !== 'false',
     mission_section_enabled:  settings.mission_section_enabled  !== 'false',
-    wellness_section_enabled: settings.wellness_section_enabled !== 'false',
+    wellness_section_enabled:          settings.wellness_section_enabled          !== 'false',
+    upcoming_events_section_enabled:   settings.upcoming_events_section_enabled   !== 'false',
     logo_visible:             settings.logo_visible             !== 'false',
     admin_name_visible:      settings.admin_name_visible      !== 'false',
     admin_title_visible:     settings.admin_title_visible     !== 'false',
@@ -200,6 +212,62 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     } finally {
       setExporting(false)
     }
+  }
+
+  // ── Social Media ─────────────────────────────────────────────────────────────
+  const [socialFacebook,  setSocialFacebook]  = useState(settings.social_facebook  ?? '')
+  const [socialInstagram, setSocialInstagram] = useState(settings.social_instagram ?? '')
+  const [socialTwitter,   setSocialTwitter]   = useState(settings.social_twitter   ?? '')
+  const [socialLinkedin,  setSocialLinkedin]  = useState(settings.social_linkedin  ?? '')
+  const [socialYoutube,   setSocialYoutube]   = useState(settings.social_youtube   ?? '')
+  const [savingSocial, setSavingSocial] = useState(false)
+
+  async function handleSaveSocial() {
+    setSavingSocial(true)
+    const res = await updateSiteSettings({
+      social_facebook:  socialFacebook.trim(),
+      social_instagram: socialInstagram.trim(),
+      social_twitter:   socialTwitter.trim(),
+      social_linkedin:  socialLinkedin.trim(),
+      social_youtube:   socialYoutube.trim(),
+    })
+    setSavingSocial(false)
+    if (res.success) toast.success('Social links updated')
+    else toast.error(res.error ?? 'Failed to save')
+  }
+
+  // ── Footer Headings & Copyright ───────────────────────────────────────────────
+  const [footerNavHeading,     setFooterNavHeading]     = useState(settings.footer_nav_heading     ?? 'Navigate')
+  const [footerContactHeading, setFooterContactHeading] = useState(settings.footer_contact_heading ?? 'Contact')
+  const [footerCopyright,      setFooterCopyright]      = useState(settings.footer_copyright_suffix ?? 'All rights reserved.')
+  const [savingFooterMeta, setSavingFooterMeta] = useState(false)
+
+  async function handleSaveFooterMeta() {
+    setSavingFooterMeta(true)
+    const res = await updateSiteSettings({
+      footer_nav_heading:      footerNavHeading.trim(),
+      footer_contact_heading:  footerContactHeading.trim(),
+      footer_copyright_suffix: footerCopyright.trim(),
+    })
+    setSavingFooterMeta(false)
+    if (res.success) toast.success('Footer settings updated')
+    else toast.error(res.error ?? 'Failed to save')
+  }
+
+  // ── Upcoming Events Section ───────────────────────────────────────────────────
+  const [upcomingHeading,  setUpcomingHeading]  = useState(settings.upcoming_events_heading  ?? 'Upcoming Events')
+  const [upcomingMaxCount, setUpcomingMaxCount] = useState(settings.upcoming_events_max_count ?? '2')
+  const [savingUpcoming, setSavingUpcoming] = useState(false)
+
+  async function handleSaveUpcoming() {
+    setSavingUpcoming(true)
+    const res = await updateSiteSettings({
+      upcoming_events_heading:   upcomingHeading.trim(),
+      upcoming_events_max_count: upcomingMaxCount,
+    })
+    setSavingUpcoming(false)
+    if (res.success) toast.success('Upcoming events settings updated')
+    else toast.error(res.error ?? 'Failed to save')
   }
 
   // ── Change Password ─────────────────────────────────────────────────────────
@@ -597,6 +665,163 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
               />
             </div>
           ))}
+        </div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 8: Social Media ───────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Social Media
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Links appear as icons in the footer. Leave blank to hide.
+          </p>
+        </div>
+        <div className="space-y-3">
+          {([
+            { key: 'facebook',  label: 'Facebook',     val: socialFacebook,  set: setSocialFacebook },
+            { key: 'instagram', label: 'Instagram',    val: socialInstagram, set: setSocialInstagram },
+            { key: 'twitter',   label: 'Twitter / X',  val: socialTwitter,   set: setSocialTwitter },
+            { key: 'linkedin',  label: 'LinkedIn',     val: socialLinkedin,  set: setSocialLinkedin },
+            { key: 'youtube',   label: 'YouTube',      val: socialYoutube,   set: setSocialYoutube },
+          ] as const).map(({ key, label, val, set }) => (
+            <div key={key} className="space-y-1">
+              <label className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">{label}</label>
+              <input
+                type="url"
+                value={val}
+                onChange={(e) => set(e.target.value)}
+                placeholder="https://"
+                className="w-full rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
+              />
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-end">
+          <button
+            onClick={handleSaveSocial}
+            disabled={savingSocial}
+            className="px-4 py-2 rounded-lg bg-[var(--color-brand-teal)] text-white text-sm font-medium hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {savingSocial ? 'Saving…' : 'Save Social Links'}
+          </button>
+        </div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 9: Footer Settings ───────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Footer Labels
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Edit the column headings and copyright line in the footer.
+          </p>
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">Navigate Column Heading</label>
+            <input
+              type="text"
+              value={footerNavHeading}
+              onChange={(e) => setFooterNavHeading(e.target.value)}
+              placeholder="Navigate"
+              className="w-full rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">Contact Column Heading</label>
+            <input
+              type="text"
+              value={footerContactHeading}
+              onChange={(e) => setFooterContactHeading(e.target.value)}
+              placeholder="Contact"
+              className="w-full rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
+            />
+          </div>
+          <div className="space-y-1.5 sm:col-span-2">
+            <label className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">Copyright Suffix</label>
+            <input
+              type="text"
+              value={footerCopyright}
+              onChange={(e) => setFooterCopyright(e.target.value)}
+              placeholder="All rights reserved."
+              className="w-full rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
+            />
+            <p className="text-xs text-[var(--color-text-muted)]">Shown after © {new Date().getFullYear()} {'{Site Name}'}.</p>
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <button
+            onClick={handleSaveFooterMeta}
+            disabled={savingFooterMeta}
+            className="px-4 py-2 rounded-lg bg-[var(--color-brand-teal)] text-white text-sm font-medium hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {savingFooterMeta ? 'Saving…' : 'Save Footer Labels'}
+          </button>
+        </div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      {/* ── Section 10: Upcoming Events ───────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">
+            Upcoming Events Section
+          </h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Controls the Upcoming Events block on the home page.
+          </p>
+        </div>
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
+          <div>
+            <p className="text-sm font-medium text-text-primary dark:text-white">Show Upcoming Events on Home</p>
+            <p className="text-xs text-text-muted mt-0.5">When off, the section is hidden even if events exist</p>
+          </div>
+          <Switch
+            checked={visibility.upcoming_events_section_enabled ?? true}
+            onCheckedChange={(checked) => handleToggleVisibility('upcoming_events_section_enabled' as keyof typeof visibility, checked)}
+            className="cursor-pointer shrink-0"
+          />
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">Section Heading</label>
+            <input
+              type="text"
+              value={upcomingHeading}
+              onChange={(e) => setUpcomingHeading(e.target.value)}
+              placeholder="Upcoming Events"
+              className="w-full rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">Events to Show</label>
+            <select
+              value={upcomingMaxCount}
+              onChange={(e) => setUpcomingMaxCount(e.target.value)}
+              className="w-full rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
+            >
+              <option value="2">2 events</option>
+              <option value="4">4 events</option>
+              <option value="6">6 events</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex justify-end">
+          <button
+            onClick={handleSaveUpcoming}
+            disabled={savingUpcoming}
+            className="px-4 py-2 rounded-lg bg-[var(--color-brand-teal)] text-white text-sm font-medium hover:bg-[var(--color-brand-teal-dark)] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {savingUpcoming ? 'Saving…' : 'Save'}
+          </button>
         </div>
       </section>
 
