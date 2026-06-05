@@ -17,6 +17,8 @@ interface HeaderProps {
   siteName?: string
   showReferralAgencies?: boolean
   showBlackMensGroups?: boolean
+  showResearchInstitutes?: boolean
+  showCallForPapers?: boolean
 }
 
 function renderSiteName(name: string) {
@@ -31,7 +33,7 @@ function renderSiteName(name: string) {
   )
 }
 
-export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true }: HeaderProps) {
+export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true, showResearchInstitutes = true, showCallForPapers = true }: HeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -39,6 +41,8 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
   const [eventsAccordionOpen, setEventsAccordionOpen] = useState(false)
   const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false)
   const [servicesAccordionOpen, setServicesAccordionOpen] = useState(false)
+  const [researchDropdownOpen, setResearchDropdownOpen] = useState(false)
+  const [researchAccordionOpen, setResearchAccordionOpen] = useState(false)
 
   const visibleLinks = navItems.filter((i) => i.visible)
 
@@ -168,6 +172,62 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                 )
               }
 
+              if (slug === 'research') {
+                return (
+                  <div
+                    key={href}
+                    className="relative"
+                    onMouseEnter={() => setResearchDropdownOpen(true)}
+                    onMouseLeave={() => setResearchDropdownOpen(false)}
+                  >
+                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                      {label}
+                      <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                    </button>
+                    <AnimatePresence>
+                      {researchDropdownOpen && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -6 }}
+                          transition={{ duration: 0.15, ease: 'easeOut' }}
+                          className="absolute top-full left-0 mt-2 w-56 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
+                        >
+                          {(['announcements', 'recent-publications', 'reports'] as const).map((cat, i) => (
+                            <Link
+                              key={cat}
+                              href={`/research/${cat}`}
+                              className={`block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors ${i > 0 ? 'border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]' : ''}`}
+                              onClick={() => setResearchDropdownOpen(false)}
+                            >
+                              {cat === 'announcements' ? 'Announcements' : cat === 'recent-publications' ? 'Recent Publications' : 'Reports'}
+                            </Link>
+                          ))}
+                          {showResearchInstitutes && (
+                            <Link
+                              href="/research/research-institutes"
+                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                              onClick={() => setResearchDropdownOpen(false)}
+                            >
+                              Research Institutes
+                            </Link>
+                          )}
+                          {showCallForPapers && (
+                            <Link
+                              href="/research/call-for-papers"
+                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                              onClick={() => setResearchDropdownOpen(false)}
+                            >
+                              Call for Papers
+                            </Link>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              }
+
               return (
                 <Link key={href} href={href} className={linkClass}>
                   {label}
@@ -270,6 +330,49 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                               <Link href="/black-mens-groups" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
                                 Black Men&#39;s Groups
                               </Link>
+                            )}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                }
+
+                if (slug === 'research') {
+                  return (
+                    <div key={href}>
+                      <button
+                        onClick={() => setResearchAccordionOpen((v) => !v)}
+                        className={cn(
+                          'w-full flex items-center justify-between px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer',
+                          isActive
+                            ? 'bg-surface dark:bg-dark-surface text-brand-teal dark:text-white'
+                            : 'text-text-muted hover:text-brand-teal dark:hover:text-white'
+                        )}
+                      >
+                        {label}
+                        {researchAccordionOpen
+                          ? <ChevronUp className="h-3.5 w-3.5 opacity-60" />
+                          : <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                        }
+                      </button>
+                      <AnimatePresence>
+                        {researchAccordionOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.15, ease: 'easeOut' }}
+                            className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
+                          >
+                            <Link href="/research/announcements" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Announcements</Link>
+                            <Link href="/research/recent-publications" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Recent Publications</Link>
+                            <Link href="/research/reports" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Reports</Link>
+                            {showResearchInstitutes && (
+                              <Link href="/research/research-institutes" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Research Institutes</Link>
+                            )}
+                            {showCallForPapers && (
+                              <Link href="/research/call-for-papers" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Call for Papers</Link>
                             )}
                           </motion.div>
                         )}

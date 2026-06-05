@@ -39,10 +39,12 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
   const [slug, setSlug]           = useState(post.slug)
   const [excerpt, setExcerpt]     = useState(post.excerpt ?? '')
   const [content, setContent]     = useState(post.content)
-  const [category, setCategory]   = useState<ResearchCategory>(post.category)
-  const [coverPath, setCoverPath] = useState<string | null>(post.cover_path)
-  const [coverUrl, setCoverUrl]   = useState<string | undefined>(initialCoverUrl)
-  const [published, setPublished] = useState(post.published)
+  const [category, setCategory]       = useState<ResearchCategory>(post.category)
+  const [externalUrl, setExternalUrl] = useState(post.external_url ?? '')
+  const [region, setRegion]           = useState<'canadian' | 'world' | ''>(post.region ?? '')
+  const [coverPath, setCoverPath]     = useState<string | null>(post.cover_path)
+  const [coverUrl, setCoverUrl]       = useState<string | undefined>(initialCoverUrl)
+  const [published, setPublished]     = useState(post.published)
 
   const [saving, setSaving]         = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -58,7 +60,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category })
+      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null })
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
@@ -98,7 +100,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
 
   async function handleSave() {
     setSaving(true)
-    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category })
+    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null })
     setSaving(false)
     if (!result.success) { toast.error(result.error ?? 'Save failed.'); return }
     isDirty.current = false
@@ -211,6 +213,19 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
           <div className="space-y-5">
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
               <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                Cover Image
+              </p>
+              <ImageUpload
+                currentUrl={coverUrl}
+                folder="research/covers"
+                onUpload={handleCoverUpload}
+                onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateResearchPost(post.id, { cover_path: null }) }}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              />
+            </div>
+
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
                 Status
               </p>
               <PublishToggle
@@ -240,18 +255,39 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
               </select>
             </div>
 
+            {/* External URL */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
               <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
-                Cover Image
+                External URL
               </p>
-              <ImageUpload
-                currentUrl={coverUrl}
-                folder="research/covers"
-                onUpload={handleCoverUpload}
-                onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateResearchPost(post.id, { cover_path: null }) }}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              <Input
+                type="url"
+                value={externalUrl}
+                onChange={(e) => { setExternalUrl(e.target.value); scheduleAutosave() }}
+                placeholder="https://..."
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Link to an external website, paper, or call announcement.
+              </p>
             </div>
+
+            {/* Region */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                Region
+              </p>
+              <select
+                value={region}
+                onChange={(e) => { setRegion(e.target.value as 'canadian' | 'world' | ''); scheduleAutosave() }}
+                className="w-full h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
+              >
+                <option value="">— None —</option>
+                <option value="canadian">Canadian</option>
+                <option value="world">International</option>
+              </select>
+            </div>
+
           </div>
         </div>
       </div>

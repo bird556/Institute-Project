@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { getPublishedResearchCounts } from '@/actions/research'
 import { getPageContent } from '@/actions/page-content'
+import { getSiteSettings } from '@/actions/settings'
 import { RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchCategory } from '@/types'
 import { buildMetadata } from '@/lib/metadata'
@@ -15,24 +16,37 @@ const CATEGORY_SECTION_KEYS: Record<ResearchCategory, string> = {
   'announcements':       'announcements_description',
   'recent-publications': 'recent_publications_description',
   'reports':             'reports_description',
+  'research-institutes': 'research_institutes_description',
+  'call-for-papers':     'call_for_papers_description',
 }
 
 const CATEGORY_FALLBACKS: Record<ResearchCategory, string> = {
   'announcements':       'Stay up to date with the latest news, calls for submissions, and upcoming opportunities from the institute.',
   'recent-publications': 'Explore recently published research, articles, and scholarly works contributed by our community.',
   'reports':             'Access in-depth reports, analyses, and findings produced by our researchers and collaborators.',
+  'research-institutes': 'Discover research institutes and organisations affiliated with our work.',
+  'call-for-papers':     'Submit your work and respond to active calls for papers, abstracts, and contributions.',
 }
 
 export default async function ResearchPage() {
-  const [{ data: sections }, { data: counts }] = await Promise.all([
+  const [{ data: sections }, { data: counts }, { data: settings }] = await Promise.all([
     getPageContent('research'),
     getPublishedResearchCounts(),
+    getSiteSettings(),
   ])
 
   const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Research'
   const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
 
-  const categories: ResearchCategory[] = ['announcements', 'recent-publications', 'reports']
+  const showResearchInstitutes = settings?.research_institutes_enabled !== 'false'
+  const showCallForPapers      = settings?.call_for_papers_enabled      !== 'false'
+
+  const coreCategories: ResearchCategory[] = ['announcements', 'recent-publications', 'reports']
+  const extraCategories: ResearchCategory[] = [
+    ...(showResearchInstitutes ? ['research-institutes' as ResearchCategory] : []),
+    ...(showCallForPapers      ? ['call-for-papers'     as ResearchCategory] : []),
+  ]
+  const categories = [...coreCategories, ...extraCategories]
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">

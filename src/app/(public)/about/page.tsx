@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { Scale, Brain, Network } from 'lucide-react'
+import { Scale, Brain, Network, Users } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { getPageContent } from '@/actions/page-content'
 import { buildMetadata } from '@/lib/metadata'
@@ -20,9 +20,10 @@ const DIRECTORY_SECTIONS: {
   label: string
   icon: LucideIcon
 }[] = [
-  { section: 'advocates_description',         title: 'Advocates',         href: '/advocates',         label: 'Browse All Advocates',         icon: Scale   },
-  { section: 'psychotherapists_description',  title: 'Psychotherapists',  href: '/psychotherapists',  label: 'Browse All Psychotherapists',  icon: Brain   },
-  { section: 'referral_agencies_description', title: 'Referral Agencies', href: '/referral-agencies', label: 'Browse All Referral Agencies', icon: Network },
+  { section: 'advocates_description',          title: 'Advocates',           href: '/advocates',          label: 'Browse All Advocates',           icon: Scale   },
+  { section: 'psychotherapists_description',  title: 'Psychotherapists',    href: '/psychotherapists',   label: 'Browse All Psychotherapists',    icon: Brain   },
+  { section: 'referral_agencies_description', title: 'Referral Agencies',   href: '/referral-agencies',  label: 'Browse All Referral Agencies',   icon: Network },
+  { section: 'black_mens_groups_description', title: "Black Men's Groups",  href: '/black-mens-groups',  label: "Browse All Black Men's Groups",  icon: Users   },
 ]
 
 function DirectoryCard({ section, title, href, label, Icon, content }: {
@@ -103,25 +104,15 @@ export default async function AboutPage() {
               </div>
             )}
 
-            {/* Directory cards — 2 on top, 1 centred below */}
-            <div className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {DIRECTORY_SECTIONS.slice(0, 2).map(({ section, title, href, label, icon: Icon }) => {
-                  const content = sections?.find((s) => s.section === section)?.content
-                  if (!content) return null
-                  return (
-                    <DirectoryCard key={section} section={section} title={title} href={href} label={label} Icon={Icon} content={content} />
-                  )
-                })}
-              </div>
-              {(() => {
-                const last = DIRECTORY_SECTIONS[2]
-                const content = sections?.find((s) => s.section === last.section)?.content
+            {/* Directory cards — 2×2 grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {DIRECTORY_SECTIONS.map(({ section, title, href, label, icon: Icon }) => {
+                const content = sections?.find((s) => s.section === section)?.content
                 if (!content) return null
                 return (
-                  <DirectoryCard section={last.section} title={last.title} href={last.href} label={last.label} Icon={last.icon} content={content} />
+                  <DirectoryCard key={section} section={section} title={title} href={href} label={label} Icon={Icon} content={content} />
                 )
-              })()}
+              })}
             </div>
           </div>
         </FadeUp>

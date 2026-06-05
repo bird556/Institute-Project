@@ -300,25 +300,6 @@ export default function EditionEditor({
 
           {/* ── Sidebar ──────────────────────────────────────────────────────── */}
           <div className="space-y-4 lg:sticky lg:top-6">
-            {/* Publish */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-4">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
-                Status
-              </p>
-              <PublishToggle
-                published={published}
-                onChange={handlePublishToggle}
-                loading={publishing}
-              />
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full cursor-pointer bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white"
-              >
-                {saving ? 'Saving…' : 'Save Changes'}
-              </Button>
-            </div>
-
             {/* Cover image */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
               <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
@@ -338,6 +319,25 @@ export default function EditionEditor({
                   scheduleAutosave({ title, slug, intro, cover_path: null })
                 }}
               />
+            </div>
+
+            {/* Publish */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-4">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
+                Status
+              </p>
+              <PublishToggle
+                published={published}
+                onChange={handlePublishToggle}
+                loading={publishing}
+              />
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full cursor-pointer bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white"
+              >
+                {saving ? 'Saving…' : 'Save Changes'}
+              </Button>
             </div>
 
             {/* Stats */}

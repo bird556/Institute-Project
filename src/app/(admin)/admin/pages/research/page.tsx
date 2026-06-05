@@ -27,6 +27,18 @@ export default async function ResearchPageHeroEditor() {
       value:     sections?.find((s) => s.section === 'reports_description')?.content ?? '',
       updatedAt: sections?.find((s) => s.section === 'reports_description')?.updated_at,
     },
+    {
+      section:   'research_institutes_description',
+      label:     'Research Institutes — Description',
+      value:     sections?.find((s) => s.section === 'research_institutes_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'research_institutes_description')?.updated_at,
+    },
+    {
+      section:   'call_for_papers_description',
+      label:     'Call for Papers — Description',
+      value:     sections?.find((s) => s.section === 'call_for_papers_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'call_for_papers_description')?.updated_at,
+    },
   ]
 
   return (

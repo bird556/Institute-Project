@@ -1,0 +1,132 @@
+import { cache } from 'react'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import Image from 'next/image'
+import { ExternalLink } from 'lucide-react'
+import type { Metadata } from 'next'
+import { createClient } from '@/lib/supabase/server'
+import ResearchCard from '@/components/research/ResearchCard'
+import { formatDate } from '@/lib/utils'
+import { buildMetadata } from '@/lib/metadata'
+import { DetailPageShell } from '@/components/shared/DetailPageShell'
+
+interface Props { params: Promise<{ id: string }> }
+
+const getPost = cache(async (id: string) => {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('research_posts')
+    .select('*')
+    .eq('id', id)
+    .eq('published', true)
+    .eq('category', 'research-institutes')
+    .single()
+  return data ?? null
+})
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params
+  const post = await getPost(id)
+  if (!post) return buildMetadata({ noIndex: true })
+  const supabase = await createClient()
+  const imageUrl = post.cover_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
+    : null
+  return buildMetadata({ title: post.title, description: post.excerpt ?? undefined, imageUrl })
+}
+
+export default async function ResearchInstituteDetailPage({ params }: Props) {
+  const { id } = await params
+  const post = await getPost(id)
+  if (!post) notFound()
+
+  const supabase = await createClient()
+
+  const coverUrl = post.cover_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
+    : null
+
+  const { data: moreData } = await supabase
+    .from('research_posts')
+    .select('id, title, excerpt, cover_path, category, published_at, region, external_url')
+    .eq('published', true)
+    .eq('category', 'research-institutes')
+    .neq('id', post.id)
+    .order('published_at', { ascending: false })
+    .limit(3)
+
+  const morePosts = (moreData ?? []).map((p) => ({
+    id:           p.id,
+    title:        p.title,
+    excerpt:      p.excerpt,
+    cover_url:    p.cover_path
+      ? supabase.storage.from('institute-media').getPublicUrl(p.cover_path).data.publicUrl
+      : '',
+    category:     p.category as 'research-institutes',
+    published_at: p.published_at,
+    region:       (p.region ?? null) as 'canadian' | 'world' | null,
+    external_url: p.external_url ?? null,
+  }))
+
+  return (
+    <DetailPageShell className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
+      <Link
+        href="/research/research-institutes"
+        className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
+      >
+        ← Back to Research Institutes
+      </Link>
+
+      {coverUrl && (
+        <div className="relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '16/7' }}>
+          <Image src={coverUrl} alt={post.title} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 896px" />
+        </div>
+      )}
+
+      <header className="space-y-4">
+        <div className="flex flex-wrap items-center gap-3">
+          {post.published_at && (
+            <p className="text-sm text-[var(--color-text-muted)]">{formatDate(post.published_at)}</p>
+          )}
+          {post.region && (
+            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
+              post.region === 'canadian'
+                ? 'border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] dark:text-white dark:border-white/30'
+                : 'border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-muted)]'
+            }`}>
+              {post.region === 'canadian' ? 'Canadian' : 'International'}
+            </span>
+          )}
+        </div>
+        <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
+          {post.title}
+        </h1>
+      </header>
+
+      <div className="tiptap-content prose max-w-prose mx-auto" dangerouslySetInnerHTML={{ __html: post.content }} />
+
+      {post.external_url && (
+        <a
+          href={post.external_url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white text-sm font-medium transition-colors"
+        >
+          <ExternalLink className="h-4 w-4" />
+          Visit Institute
+        </a>
+      )}
+
+      {morePosts.length > 0 && (
+        <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">
+          <h2 className="font-display text-2xl font-bold text-[var(--color-brand-teal)] dark:text-white">
+            More Research Institutes
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {morePosts.map((p) => <ResearchCard key={p.id} {...p} />)}
+          </div>
+        </section>
+      )}
+    </DetailPageShell>
+  )
+}

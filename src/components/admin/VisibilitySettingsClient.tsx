@@ -10,7 +10,8 @@ type VisibilityKey =
   | 'about_enabled' | 'advocates_enabled' | 'psychotherapists_enabled'
   | 'referral_agencies_enabled' | 'black_mens_groups_enabled' | 'blogs_enabled' | 'events_enabled'
   | 'reading_list_enabled' | 'partners_enabled' | 'newsletter_enabled'
-  | 'health_wellness_enabled' | 'research_enabled' | 'intro_section_enabled'
+  | 'health_wellness_enabled' | 'research_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled'
+  | 'intro_section_enabled'
   | 'goal_section_enabled' | 'impact_section_enabled' | 'mission_section_enabled'
   | 'cta_section_enabled' | 'wellness_section_enabled'
 
@@ -27,6 +28,8 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'newsletter_enabled',        label: 'Newsletter',        description: 'When hidden, /newsletter and all edition pages redirect to home' },
   { key: 'health_wellness_enabled',   label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
   { key: 'research_enabled',          label: 'Research',          description: 'When hidden, /research and all research posts redirect to home' },
+  { key: 'research_institutes_enabled', label: 'Research Institutes', description: 'When hidden, the Research Institutes category is removed from the nav and research landing page' },
+  { key: 'call_for_papers_enabled',   label: 'Call for Papers',   description: 'When hidden, the Call for Papers category is removed from the nav and research landing page' },
 ]
 
 const HOME_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
@@ -53,7 +56,9 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
     partners_enabled:          s?.partners_enabled          !== 'false',
     newsletter_enabled:        s?.newsletter_enabled        !== 'false',
     health_wellness_enabled:   s?.health_wellness_enabled   !== 'false',
-    research_enabled:          s?.research_enabled          !== 'false',
+    research_enabled:              s?.research_enabled              !== 'false',
+    research_institutes_enabled:   s?.research_institutes_enabled   !== 'false',
+    call_for_papers_enabled:       s?.call_for_papers_enabled       !== 'false',
     intro_section_enabled:     s?.intro_section_enabled     !== 'false',
     goal_section_enabled:      s?.goal_section_enabled      !== 'false',
     impact_section_enabled:    s?.impact_section_enabled    !== 'false',
