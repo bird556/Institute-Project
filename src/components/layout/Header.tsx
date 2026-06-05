@@ -15,6 +15,8 @@ interface HeaderProps {
   navItems: NavItem[]
   logoUrl?: string
   siteName?: string
+  showReferralAgencies?: boolean
+  showBlackMensGroups?: boolean
 }
 
 function renderSiteName(name: string) {
@@ -29,7 +31,7 @@ function renderSiteName(name: string) {
   )
 }
 
-export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProps) {
+export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true }: HeaderProps) {
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -99,6 +101,24 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
                           >
                             Psychotherapists
                           </Link>
+                          {showReferralAgencies && (
+                            <Link
+                              href="/referral-agencies"
+                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                              onClick={() => setServicesDropdownOpen(false)}
+                            >
+                              Referral Agencies
+                            </Link>
+                          )}
+                          {showBlackMensGroups && (
+                            <Link
+                              href="/black-mens-groups"
+                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                              onClick={() => setServicesDropdownOpen(false)}
+                            >
+                              Black Men&#39;s Groups
+                            </Link>
+                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -241,6 +261,16 @@ export function Header({ navItems, logoUrl, siteName = 'Institute' }: HeaderProp
                             <Link href="/psychotherapists" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
                               Psychotherapists
                             </Link>
+                            {showReferralAgencies && (
+                              <Link href="/referral-agencies" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
+                                Referral Agencies
+                              </Link>
+                            )}
+                            {showBlackMensGroups && (
+                              <Link href="/black-mens-groups" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
+                                Black Men&#39;s Groups
+                              </Link>
+                            )}
                           </motion.div>
                         )}
                       </AnimatePresence>

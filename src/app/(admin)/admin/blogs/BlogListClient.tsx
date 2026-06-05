@@ -17,6 +17,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createBlog, deleteBlog, toggleBlogPublished } from '@/actions/blogs'
+import Pagination from '@/components/shared/Pagination'
 import { formatDate } from '@/lib/utils'
 import type { BlogPost } from '@/types'
 
@@ -39,6 +40,10 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+
+  const PAGE_SIZE = 20
+  function resetPage() { setPage(1) }
 
   const filtered = blogs.filter((b) => {
     const q = query.toLowerCase()
@@ -54,6 +59,8 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
   })
 
   const isFiltering = query !== '' || statusFilter !== 'all'
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   async function handleNew() {
     startTransition(async () => {
@@ -123,13 +130,13 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); resetPage() }}
               placeholder="Search by title or excerpt…"
               className="w-full sm:w-80 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
             />
             {query && (
               <button
-                onClick={() => setQuery('')}
+                onClick={() => { setQuery(''); resetPage() }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
@@ -139,7 +146,7 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
 
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
-              <button key={f} onClick={() => setStatusFilter(f)} className={filterBtnClass(statusFilter === f)}>
+              <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -158,13 +165,14 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
           <EmptyState isFiltering={isFiltering} query={query} onClear={() => { setQuery(''); setStatusFilter('all') }} onNew={handleNew} creating={isPending} />
         ) : (
           <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-            {filtered.map((post, i) => (
+            {paginated.map((post, i) => (
               <motion.div
                 key={post.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.04, duration: 0.25 }}
-                className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
+                onClick={() => router.push(`/admin/blogs/${post.id}`)}
               >
                 {/* Thumbnail */}
                 {post.cover_url ? (
@@ -192,36 +200,42 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
                   {formatDate(post.published_at || post.created_at)}
                 </span>
 
-                <PublishPill
-                  published={post.published}
-                  toggling={togglingId === post.id}
-                  onClick={() => handleToggle(post.id, post.published)}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <PublishPill
+                    published={post.published}
+                    toggling={togglingId === post.id}
+                    onClick={() => handleToggle(post.id, post.published)}
+                  />
+                </div>
 
-                <DropdownMenu>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-                        <MoreVertical className="h-4 w-4" />
-                      </DropdownMenuTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent side="left"><p>More actions</p></TooltipContent>
-                  </Tooltip>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => router.push(`/admin/blogs/${post.id}`)} className="cursor-pointer gap-2">
-                      <PenLine className="h-4 w-4" />
-                      Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setDeleteId(post.id)} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
+                          <MoreVertical className="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                    </Tooltip>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => router.push(`/admin/blogs/${post.id}`)} className="cursor-pointer gap-2">
+                        <PenLine className="h-4 w-4" />
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setDeleteId(post.id)} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </motion.div>
             ))}
           </div>
         )}
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       <ConfirmDialog

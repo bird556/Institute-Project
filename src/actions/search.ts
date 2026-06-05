@@ -9,9 +9,10 @@ function coverUrl(supabase: Awaited<ReturnType<typeof createClient>>, path: stri
 }
 
 const DIRECTORY_PATH: Record<string, string> = {
-  advocate:        'advocates',
-  psychotherapist: 'psychotherapists',
-  referral_agency: 'referral-agencies',
+  advocate:         'advocates',
+  psychotherapist:  'psychotherapists',
+  referral_agency:  'referral-agencies',
+  black_mens_group: 'black-mens-groups',
 }
 
 export async function searchContent(query: string): Promise<ActionResult<SearchResult[]>> {

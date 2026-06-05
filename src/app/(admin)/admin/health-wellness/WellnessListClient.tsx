@@ -17,6 +17,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createWellnessPost, deleteWellnessPost, toggleWellnessPublished } from '@/actions/wellness'
+import Pagination from '@/components/shared/Pagination'
 import { formatDate } from '@/lib/utils'
 import { WELLNESS_TAGS } from '@/types'
 import type { WellnessPost, WellnessTag } from '@/types'
@@ -42,6 +43,10 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+
+  const PAGE_SIZE = 20
+  function resetPage() { setPage(1) }
 
   const filtered = posts.filter((p) => {
     const q = query.toLowerCase()
@@ -59,6 +64,8 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
   })
 
   const isFiltering = query !== '' || statusFilter !== 'all' || tagFilter !== 'all'
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
+  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   async function handleNew() {
     startTransition(async () => {
@@ -100,6 +107,7 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
     setQuery('')
     setStatusFilter('all')
     setTagFilter('all')
+    setPage(1)
   }
 
   const filterBtnClass = (active: boolean) =>
@@ -129,13 +137,13 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => { setQuery(e.target.value); resetPage() }}
               placeholder="Search by title or excerpt…"
               className="w-full sm:w-80 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
             />
             {query && (
               <button
-                onClick={() => setQuery('')}
+                onClick={() => { setQuery(''); resetPage() }}
                 className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
               >
                 <X className="h-3.5 w-3.5" />
@@ -145,7 +153,7 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
 
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
-              <button key={f} onClick={() => setStatusFilter(f)} className={filterBtnClass(statusFilter === f)}>
+              <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
               </button>
             ))}
@@ -153,7 +161,7 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
 
           <select
             value={tagFilter}
-            onChange={(e) => setTagFilter(e.target.value as TagFilter)}
+            onChange={(e) => { setTagFilter(e.target.value as TagFilter); resetPage() }}
             className="h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
           >
             <option value="all">All Tags</option>
@@ -199,11 +207,12 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
             variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05 } } }}
             className="space-y-2"
           >
-            {filtered.map((post) => (
+            {paginated.map((post) => (
               <motion.li
                 key={post.id}
                 variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
-                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3"
+                className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] px-4 py-3 cursor-pointer hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                onClick={() => router.push(`/admin/health-wellness/${post.id}`)}
               >
                 {/* Thumbnail */}
                 {post.cover_url ? (
@@ -232,40 +241,46 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
                   </div>
                 </div>
 
-                <PublishPill
-                  published={post.published}
-                  toggling={togglingId === post.id}
-                  onClick={() => handleToggle(post.id, post.published)}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <PublishPill
+                    published={post.published}
+                    toggling={togglingId === post.id}
+                    onClick={() => handleToggle(post.id, post.published)}
+                  />
+                </div>
 
-                <DropdownMenu>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenuTrigger className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer shrink-0">
-                        <MoreVertical size={16} className="text-[var(--color-text-muted)]" />
-                      </DropdownMenuTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent side="left"><p>More actions</p></TooltipContent>
-                  </Tooltip>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem
-                      className="cursor-pointer gap-2"
-                      onClick={() => router.push(`/admin/health-wellness/${post.id}`)}
-                    >
-                      <PenLine size={14} /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="cursor-pointer gap-2 text-destructive focus:text-destructive"
-                      onClick={() => setDeleteId(post.id)}
-                    >
-                      <Trash2 size={14} /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuTrigger className="p-1.5 rounded-md hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer shrink-0">
+                          <MoreVertical size={16} className="text-[var(--color-text-muted)]" />
+                        </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                    </Tooltip>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        className="cursor-pointer gap-2"
+                        onClick={() => router.push(`/admin/health-wellness/${post.id}`)}
+                      >
+                        <PenLine size={14} /> Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="cursor-pointer gap-2 text-destructive focus:text-destructive"
+                        onClick={() => setDeleteId(post.id)}
+                      >
+                        <Trash2 size={14} /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </motion.li>
             ))}
           </motion.ul>
         )}
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       <ConfirmDialog

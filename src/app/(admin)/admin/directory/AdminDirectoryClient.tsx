@@ -14,6 +14,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createDirectoryEntry, deleteDirectoryEntry, toggleDirectoryEntryPublished } from '@/actions/directory'
+import Pagination from '@/components/shared/Pagination'
 import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryEntry } from '@/types'
 
 interface DirectoryListItem extends DirectoryEntry {
@@ -25,10 +26,26 @@ interface Props {
 }
 
 const TABS: { category: DirectoryCategory; label: string }[] = [
-  { category: 'advocate',        label: 'Advocates' },
-  { category: 'psychotherapist', label: 'Psychotherapists' },
-  { category: 'referral_agency', label: 'Referral Agencies' },
+  { category: 'advocate',         label: 'Advocates' },
+  { category: 'psychotherapist',  label: 'Psychotherapists' },
+  { category: 'referral_agency',  label: 'Referral Agencies' },
+  { category: 'black_mens_group', label: "Black Men's Groups" },
 ]
+
+type DirSortOption = 'name_az' | 'name_za' | 'newest' | 'oldest' | 'org_az' | 'org_za' | 'mode'
+
+const DIR_SORT_LABELS: Record<DirSortOption, string> = {
+  name_az: 'Name A → Z',
+  name_za: 'Name Z → A',
+  newest:  'Date Added: Newest',
+  oldest:  'Date Added: Oldest',
+  org_az:  'Organisation A → Z',
+  org_za:  'Organisation Z → A',
+  mode:    'Mode',
+}
+
+const selectClass =
+  'text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] px-3 h-9 cursor-pointer focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors'
 
 export default function AdminDirectoryClient({ entries: initial }: Props) {
   const router = useRouter()
@@ -36,15 +53,36 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
   const [entries, setEntries] = useState(initial)
   const [activeTab, setActiveTab] = useState<DirectoryCategory>('advocate')
   const [query, setQuery] = useState('')
+  const [sort, setSort] = useState<DirSortOption>('name_az')
   const [deleteId, setDeleteId] = useState<string | null>(null)
   const [deleting, setDeleting] = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
+  const [page, setPage] = useState(1)
+
+  const PAGE_SIZE = 20
+  function resetPage() { setPage(1) }
 
   const tabEntries = entries.filter((e) => e.category === activeTab)
   const filtered = tabEntries.filter((e) => {
     const q = query.toLowerCase()
     return !q || e.name.toLowerCase().includes(q) || (e.organization ?? '').toLowerCase().includes(q)
   })
+
+  const sorted = [...filtered].sort((a, b) => {
+    switch (sort) {
+      case 'name_az': return a.name.localeCompare(b.name)
+      case 'name_za': return b.name.localeCompare(a.name)
+      case 'newest':  return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      case 'oldest':  return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+      case 'org_az':  return (a.organization ?? 'zzz').localeCompare(b.organization ?? 'zzz')
+      case 'org_za':  return (b.organization ?? 'zzz').localeCompare(a.organization ?? 'zzz')
+      case 'mode':    return (a.mode ?? 'zzz').localeCompare(b.mode ?? 'zzz')
+      default:        return 0
+    }
+  })
+
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
+  const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   function handleNew() {
     startTransition(async () => {
@@ -106,27 +144,39 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
         {/* Tabs */}
         <div className="flex gap-1 p-1 rounded-xl bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
           {TABS.map(({ category, label }) => (
-            <button key={category} onClick={() => { setActiveTab(category); setQuery('') }} className={tabClass(activeTab === category)}>
+            <button key={category} onClick={() => { setActiveTab(category); setQuery(''); setSort('name_az'); resetPage() }} className={tabClass(activeTab === category)}>
               {label}
             </button>
           ))}
         </div>
 
-        {/* Search */}
+        {/* Search + sort */}
+        <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); resetPage() }}
             placeholder="Search by name or organisation…"
             className="w-full pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
           />
           {query && (
-            <button onClick={() => setQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
+            <button onClick={() => { setQuery(''); resetPage() }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)]">
               <X className="h-3.5 w-3.5" />
             </button>
           )}
+        </div>
+
+        <select
+          value={sort}
+          onChange={(e) => { setSort(e.target.value as DirSortOption); resetPage() }}
+          className={selectClass}
+        >
+          {(Object.keys(DIR_SORT_LABELS) as DirSortOption[]).map((key) => (
+            <option key={key} value={key}>{DIR_SORT_LABELS[key]}</option>
+          ))}
+        </select>
         </div>
 
         {query && (
@@ -157,13 +207,14 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
           </div>
         ) : (
           <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-            {filtered.map((entry, i) => (
+            {paginated.map((entry, i) => (
               <motion.div
                 key={entry.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03, duration: 0.2 }}
-                className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
+                onClick={() => router.push(`/admin/directory/${entry.id}`)}
               >
                 {entry.photo_url ? (
                   <div className="h-10 w-10 rounded-full overflow-hidden relative shrink-0">
@@ -189,34 +240,40 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
                   </div>
                 </div>
 
-                <PublishPill
-                  published={entry.published}
-                  toggling={togglingId === entry.id}
-                  onClick={() => handleToggle(entry.id, entry.published)}
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <PublishPill
+                    published={entry.published}
+                    toggling={togglingId === entry.id}
+                    onClick={() => handleToggle(entry.id, entry.published)}
+                  />
+                </div>
 
-                <DropdownMenu>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-                        <MoreVertical className="h-4 w-4" />
-                      </DropdownMenuTrigger>
-                    </TooltipTrigger>
-                    <TooltipContent side="left"><p>More actions</p></TooltipContent>
-                  </Tooltip>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => router.push(`/admin/directory/${entry.id}`)} className="cursor-pointer gap-2">
-                      <PenLine className="h-4 w-4" /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setDeleteId(entry.id)} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
-                      <Trash2 className="h-4 w-4" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <DropdownMenu>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
+                          <MoreVertical className="h-4 w-4" />
+                        </DropdownMenuTrigger>
+                      </TooltipTrigger>
+                      <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                    </Tooltip>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => router.push(`/admin/directory/${entry.id}`)} className="cursor-pointer gap-2">
+                        <PenLine className="h-4 w-4" /> Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => setDeleteId(entry.id)} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
+                        <Trash2 className="h-4 w-4" /> Delete
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </motion.div>
             ))}
           </div>
         )}
+
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
       </div>
 
       <ConfirmDialog

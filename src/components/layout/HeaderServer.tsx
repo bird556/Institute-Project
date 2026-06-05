@@ -16,5 +16,16 @@ export async function HeaderServer() {
   const siteName = settings?.site_name || 'Institute'
   const navItems = parseNavConfig(settings?.nav_config)
 
-  return <Header navItems={navItems} logoUrl={logoUrl} siteName={siteName} />
+  const showReferralAgencies = settings?.referral_agencies_enabled !== 'false'
+  const showBlackMensGroups  = settings?.black_mens_groups_enabled !== 'false'
+
+  return (
+    <Header
+      navItems={navItems}
+      logoUrl={logoUrl}
+      siteName={siteName}
+      showReferralAgencies={showReferralAgencies}
+      showBlackMensGroups={showBlackMensGroups}
+    />
+  )
 }
