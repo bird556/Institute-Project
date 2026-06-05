@@ -274,6 +274,20 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
 
           {/* ── Sidebar ──────────────────────────────────────────── */}
           <div className="space-y-5">
+            {/* Cover image */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                Cover Image
+              </p>
+              <ImageUpload
+                currentUrl={coverUrl}
+                folder="wellness/covers"
+                onUpload={handleCoverUpload}
+                onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateWellnessPost(post.id, { cover_path: null }) }}
+                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+              />
+            </div>
+
             {/* Publish toggle */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
               <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
@@ -349,20 +363,6 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
                   Add
                 </button>
               </div>
-            </div>
-
-            {/* Cover image */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
-              <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
-                Cover Image
-              </p>
-              <ImageUpload
-                currentUrl={coverUrl}
-                folder="wellness/covers"
-                onUpload={handleCoverUpload}
-                onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateWellnessPost(post.id, { cover_path: null }) }}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
-              />
             </div>
 
             {/* Document download */}

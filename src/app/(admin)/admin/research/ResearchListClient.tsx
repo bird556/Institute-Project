@@ -24,6 +24,7 @@ import type { ResearchPost, ResearchCategory } from '@/types'
 
 type StatusFilter   = 'all' | 'published' | 'drafts'
 type CategoryFilter = 'all' | ResearchCategory
+type SortOrder      = 'recent' | 'oldest' | 'a-z' | 'z-a'
 
 interface ResearchListItem extends ResearchPost {
   cover_url: string | null
@@ -36,6 +37,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
   const [query, setQuery]           = useState('')
   const [statusFilter, setStatusFilter]     = useState<StatusFilter>('all')
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all')
+  const [sortOrder, setSortOrder]           = useState<SortOrder>('recent')
   const [deleteId, setDeleteId]     = useState<string | null>(null)
   const [deleting, setDeleting]     = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -58,9 +60,18 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
     return matchesQuery && matchesStatus && matchesCategory
   })
 
+  const sorted = [...filtered].sort((a, b) => {
+    if (sortOrder === 'a-z') return a.title.localeCompare(b.title)
+    if (sortOrder === 'z-a') return b.title.localeCompare(a.title)
+    const aDate = a.updated_at ? new Date(a.updated_at).getTime() : 0
+    const bDate = b.updated_at ? new Date(b.updated_at).getTime() : 0
+    if (sortOrder === 'oldest') return aDate - bDate
+    return bDate - aDate
+  })
+
   const isFiltering = query !== '' || statusFilter !== 'all' || categoryFilter !== 'all'
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const paginated  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
+  const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   async function handleNew() {
     startTransition(async () => {
@@ -102,6 +113,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
     setQuery('')
     setStatusFilter('all')
     setCategoryFilter('all')
+    setSortOrder('recent')
     setPage(1)
   }
 
@@ -162,11 +174,22 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
               <option key={cat} value={cat}>{RESEARCH_CATEGORY_LABELS[cat]}</option>
             ))}
           </select>
+
+          <select
+            value={sortOrder}
+            onChange={(e) => { setSortOrder(e.target.value as SortOrder); resetPage() }}
+            className="h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
+          >
+            <option value="recent">Date Added: Newest</option>
+            <option value="oldest">Date Added: Oldest</option>
+            <option value="a-z">A–Z</option>
+            <option value="z-a">Z–A</option>
+          </select>
         </div>
 
         {isFiltering && (
           <p className="text-sm text-[var(--color-text-muted)] -mt-2">
-            Showing {filtered.length} of {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+            Showing {sorted.length} of {posts.length} {posts.length === 1 ? 'post' : 'posts'}
           </p>
         )}
 

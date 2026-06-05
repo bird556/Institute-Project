@@ -90,6 +90,8 @@ export interface SiteSettings {
   // Section visibility
   health_wellness_enabled: string
   research_enabled: string
+  research_institutes_enabled: string
+  call_for_papers_enabled: string
   advocates_enabled: string
   psychotherapists_enabled: string
   referral_agencies_enabled: string
@@ -243,18 +245,27 @@ export interface WellnessPost {
   updated_at: string
 }
 
-export type ResearchCategory = 'announcements' | 'recent-publications' | 'reports'
+export type ResearchCategory =
+  | 'announcements'
+  | 'recent-publications'
+  | 'reports'
+  | 'research-institutes'
+  | 'call-for-papers'
 
 export const RESEARCH_CATEGORIES: ResearchCategory[] = [
   'announcements',
   'recent-publications',
   'reports',
+  'research-institutes',
+  'call-for-papers',
 ]
 
 export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
   'announcements':       'Announcements',
   'recent-publications': 'Recent Publications',
   'reports':             'Reports',
+  'research-institutes': 'Research Institutes',
+  'call-for-papers':     'Call for Papers',
 }
 
 export interface ResearchPost {
@@ -265,6 +276,8 @@ export interface ResearchPost {
   content: string
   cover_path: string | null
   category: ResearchCategory
+  external_url: string | null
+  region: 'canadian' | 'world' | null
   published: boolean
   published_at: string | null
   created_at: string

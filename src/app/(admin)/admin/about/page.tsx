@@ -11,9 +11,10 @@ const DIRECTORY_INTRO_SECTIONS = [
 ]
 
 const DIRECTORY_SECTIONS = [
-  { key: 'advocates_description',         label: 'Advocates — Card Description' },
+  { key: 'advocates_description',          label: 'Advocates — Card Description' },
   { key: 'psychotherapists_description',  label: 'Psychotherapists — Card Description' },
   { key: 'referral_agencies_description', label: 'Referral Agencies — Card Description' },
+  { key: 'black_mens_groups_description', label: "Black Men's Groups — Card Description" },
 ]
 
 export default async function AdminAboutPage() {
@@ -62,7 +63,7 @@ export default async function AdminAboutPage() {
             Services Cards
           </h2>
           <p className="text-sm text-[var(--color-text-muted)] mt-1">
-            Description text shown inside each service card on the About page.
+            Description text shown inside each service card on the About page. Leave blank to hide that card.
           </p>
         </div>
         {DIRECTORY_SECTIONS.map(({ key, label }) => {
