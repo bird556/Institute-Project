@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { getSiteSettings } from '@/actions/settings'
-import { getSiteVisibility } from '@/lib/site-visibility'
 import { parseNavConfig } from '@/lib/nav-config'
+import { DIRECTORY_CATEGORIES, DIRECTORY_CATEGORY_LABELS, type DirectoryCategory, type SiteSettings } from '@/types'
 
 function renderSiteName(name: string) {
   const idx = name.indexOf('Institute')
@@ -30,17 +30,26 @@ function SocialLink({ href, label }: { href: string; label: string }) {
   )
 }
 
-const DIRECTORY_LINKS = [
-  { href: '/advocates',         label: 'Advocates',         key: 'advocates_enabled'         },
-  { href: '/psychotherapists',  label: 'Psychotherapists',  key: 'psychotherapists_enabled'  },
-  { href: '/referral-agencies', label: 'Referral Agencies', key: 'referral_agencies_enabled' },
-] as const
+const CATEGORY_HREF: Record<DirectoryCategory, string> = {
+  advocate:                    '/advocates',
+  psychotherapist:             '/psychotherapists',
+  referral_agency:             '/referral-agencies',
+  black_mens_group:            '/black-mens-groups',
+  youth_service_organization:  '/youth-service-organizations',
+  community_organization:      '/community-organizations',
+}
+
+const CATEGORY_VISIBILITY_KEY: Record<DirectoryCategory, keyof SiteSettings> = {
+  advocate:                    'advocates_enabled',
+  psychotherapist:             'psychotherapists_enabled',
+  referral_agency:             'referral_agencies_enabled',
+  black_mens_group:            'black_mens_groups_enabled',
+  youth_service_organization:  'youth_service_organizations_enabled',
+  community_organization:      'community_organizations_enabled',
+}
 
 export async function Footer() {
-  const [{ data: settings }, visibility] = await Promise.all([
-    getSiteSettings(),
-    getSiteVisibility(),
-  ])
+  const { data: settings } = await getSiteSettings()
 
   const siteName        = settings?.site_name || 'Kustawi Institute'
   const siteDescription = settings?.site_description || ''
@@ -56,12 +65,18 @@ export async function Footer() {
   const contactHeading  = settings?.footer_contact_heading  || 'Contact'
   const copyrightSuffix = settings?.footer_copyright_suffix ?? 'All rights reserved.'
 
-  // Build nav links from nav_config — skip Home (/) and the Services dropdown
+  // Build nav links from nav_config, in the same order as the header. "Services" has no
+  // real page of its own (it's a hover-dropdown trigger) — expand it inline into its
+  // directory category children, each gated by its own visibility toggle.
   const navItems = parseNavConfig(settings?.nav_config)
-  const navLinks = navItems.filter((i) => i.visible && i.href !== '/' && i.slug !== 'services')
-
-  // Directory links — each controlled by its own visibility toggle
-  const directoryLinks = DIRECTORY_LINKS.filter(({ key }) => visibility[key])
+  const footerLinks = navItems
+    .filter((i) => i.visible && i.href !== '/')
+    .flatMap((item) => {
+      if (item.slug !== 'services') return [{ href: item.href, label: item.label }]
+      return DIRECTORY_CATEGORIES
+        .filter((cat) => settings?.[CATEGORY_VISIBILITY_KEY[cat]] !== 'false')
+        .map((cat) => ({ href: CATEGORY_HREF[cat], label: DIRECTORY_CATEGORY_LABELS[cat] }))
+    })
 
   // Social links — only show non-empty entries
   const socials = [
@@ -100,14 +115,7 @@ export async function Footer() {
               {navHeading}
             </p>
             <ul className="space-y-2">
-              {navLinks.map(({ href, label }) => (
-                <li key={href}>
-                  <Link href={href} className="text-sm text-white/60 hover:text-white transition-colors">
-                    {label}
-                  </Link>
-                </li>
-              ))}
-              {directoryLinks.map(({ href, label }) => (
+              {footerLinks.map(({ href, label }) => (
                 <li key={href}>
                   <Link href={href} className="text-sm text-white/60 hover:text-white transition-colors">
                     {label}
