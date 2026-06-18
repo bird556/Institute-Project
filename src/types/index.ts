@@ -92,6 +92,7 @@ export interface SiteSettings {
   research_enabled: string
   research_institutes_enabled: string
   call_for_papers_enabled: string
+  sexual_abuse_boys_men_enabled: string
   advocates_enabled: string
   psychotherapists_enabled: string
   referral_agencies_enabled: string
@@ -248,26 +249,37 @@ export interface WellnessPost {
 }
 
 export type ResearchCategory =
-  | 'announcements'
+  | 'announcements'           // displayed as "Call for Publications" — label-only rename
+  | 'call-for-papers'
   | 'recent-publications'
   | 'reports'
   | 'research-institutes'
-  | 'call-for-papers'
+  | 'sexual-abuse-boys-men'
 
 export const RESEARCH_CATEGORIES: ResearchCategory[] = [
   'announcements',
+  'call-for-papers',
   'recent-publications',
   'reports',
   'research-institutes',
-  'call-for-papers',
+  'sexual-abuse-boys-men',
 ]
 
 export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
-  'announcements':       'Announcements',
-  'recent-publications': 'Recent Publications',
-  'reports':             'Reports',
-  'research-institutes': 'Research Institutes',
-  'call-for-papers':     'Call for Papers',
+  'announcements':         'Call for Publications',
+  'call-for-papers':       'Call for Papers',
+  'recent-publications':   'Recent Publications',
+  'reports':               'Reports',
+  'research-institutes':   'Research Institutes',
+  'sexual-abuse-boys-men': 'Sexual Abuse of Boys and Men',
+}
+
+export type ResearchItemType = 'article' | 'book' | 'video'
+
+export const ITEM_TYPE_LABELS: Record<ResearchItemType, string> = {
+  article: 'Article',
+  book:    'Book',
+  video:   'Video',
 }
 
 export interface ResearchPost {
@@ -280,6 +292,8 @@ export interface ResearchPost {
   category: ResearchCategory
   external_url: string | null
   region: 'canadian' | 'world' | null
+  author: string | null
+  item_type: ResearchItemType | null
   published: boolean
   published_at: string | null
   created_at: string

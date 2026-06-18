@@ -22,6 +22,7 @@ export async function HeaderServer() {
   const showCommunityOrganizations    = settings?.community_organizations_enabled    !== 'false'
   const showResearchInstitutes        = settings?.research_institutes_enabled        !== 'false'
   const showCallForPapers             = settings?.call_for_papers_enabled            !== 'false'
+  const showSexualAbuseBoysMen        = settings?.sexual_abuse_boys_men_enabled      !== 'false'
 
   return (
     <Header
@@ -34,6 +35,7 @@ export async function HeaderServer() {
       showCommunityOrganizations={showCommunityOrganizations}
       showResearchInstitutes={showResearchInstitutes}
       showCallForPapers={showCallForPapers}
+      showSexualAbuseBoysMen={showSexualAbuseBoysMen}
     />
   )
 }

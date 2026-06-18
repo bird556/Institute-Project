@@ -11,9 +11,15 @@ export default async function ResearchPageHeroEditor() {
   const descriptions = [
     {
       section:   'announcements_description',
-      label:     'Announcements — Description',
+      label:     'Call for Publications — Description',
       value:     sections?.find((s) => s.section === 'announcements_description')?.content ?? '',
       updatedAt: sections?.find((s) => s.section === 'announcements_description')?.updated_at,
+    },
+    {
+      section:   'call_for_papers_description',
+      label:     'Call for Papers — Description',
+      value:     sections?.find((s) => s.section === 'call_for_papers_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'call_for_papers_description')?.updated_at,
     },
     {
       section:   'recent_publications_description',
@@ -34,10 +40,10 @@ export default async function ResearchPageHeroEditor() {
       updatedAt: sections?.find((s) => s.section === 'research_institutes_description')?.updated_at,
     },
     {
-      section:   'call_for_papers_description',
-      label:     'Call for Papers — Description',
-      value:     sections?.find((s) => s.section === 'call_for_papers_description')?.content ?? '',
-      updatedAt: sections?.find((s) => s.section === 'call_for_papers_description')?.updated_at,
+      section:   'sexual_abuse_boys_men_description',
+      label:     'Sexual Abuse of Boys and Men — Description',
+      value:     sections?.find((s) => s.section === 'sexual_abuse_boys_men_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'sexual_abuse_boys_men_description')?.updated_at,
     },
   ]
 

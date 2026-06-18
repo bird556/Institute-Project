@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Megaphone, ScrollText, BarChart2, Building2, Send, type LucideIcon } from 'lucide-react'
+import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, type LucideIcon } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchCategory } from '@/types'
@@ -20,11 +20,12 @@ interface ResearchCardProps {
 }
 
 const CATEGORY_ICONS: Record<ResearchCategory, LucideIcon> = {
-  'announcements':       Megaphone,
-  'recent-publications': ScrollText,
-  'reports':             BarChart2,
-  'research-institutes': Building2,
-  'call-for-papers':     Send,
+  'announcements':         Megaphone,
+  'call-for-papers':       Send,
+  'recent-publications':   ScrollText,
+  'reports':               BarChart2,
+  'research-institutes':   Building2,
+  'sexual-abuse-boys-men': ShieldAlert,
 }
 
 export default function ResearchCard({
