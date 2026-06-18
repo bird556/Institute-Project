@@ -20,6 +20,20 @@ const INPUT_CLASS =
 export default function FooterSettingsClient({ initialSettings }: { initialSettings: SiteSettings | null }) {
   const s = initialSettings
 
+  // ── Site Description ──────────────────────────────────────────────────────
+  const [siteDescription, setSiteDescription] = useState(s?.site_description ?? '')
+  const [savingDescription, setSavingDescription] = useState(false)
+
+  async function handleSaveDescription() {
+    setSavingDescription(true)
+    const res = await updateSiteSettings({
+      site_description: siteDescription.trim(),
+    })
+    setSavingDescription(false)
+    if (res.success) toast.success('Site description updated')
+    else toast.error(res.error ?? 'Failed to save')
+  }
+
   // ── Footer Info ────────────────────────────────────────────────────────────
   const [adminName,     setAdminName]     = useState(s?.admin_name     ?? '')
   const [adminTitle,    setAdminTitle]    = useState(s?.admin_title    ?? '')
@@ -118,6 +132,32 @@ export default function FooterSettingsClient({ initialSettings }: { initialSetti
 
   return (
     <div className="space-y-8">
+
+      {/* ── Site Description ─────────────────────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">Site Description</h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">A short tagline shown under the site name in the footer.</p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="site-description">Description</Label>
+          <Textarea
+            id="site-description"
+            rows={2}
+            value={siteDescription}
+            onChange={e => setSiteDescription(e.target.value)}
+            placeholder="A short tagline shown under the site name in the footer."
+            maxLength={200}
+          />
+        </div>
+        <div className="flex justify-end">
+          <Button onClick={handleSaveDescription} disabled={savingDescription} className="cursor-pointer">
+            {savingDescription ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
 
       {/* ── Footer Information ──────────────────────────────────────────────── */}
       <section className="space-y-6">

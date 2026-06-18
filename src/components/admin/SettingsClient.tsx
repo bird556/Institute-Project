@@ -5,7 +5,6 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import ImageUpload from '@/components/shared/ImageUpload'
 import { Switch } from '@/components/ui/switch'
 import {
@@ -55,9 +54,8 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     }
   }
 
-  // ── Site Name + Description ─────────────────────────────────────────────────
+  // ── Site Name ───────────────────────────────────────────────────────────────
   const [siteName,        setSiteName]        = useState(s?.site_name        ?? '')
-  const [siteDescription, setSiteDescription] = useState(s?.site_description ?? '')
   const [savingSiteName,  setSavingSiteName]  = useState(false)
 
   async function handleSaveSiteName() {
@@ -67,8 +65,7 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
     }
     setSavingSiteName(true)
     const res = await updateSiteSettings({
-      site_name:        siteName.trim(),
-      site_description: siteDescription.trim(),
+      site_name: siteName.trim(),
     })
     setSavingSiteName(false)
     if (res.success) toast.success('Site name updated')
@@ -167,18 +164,6 @@ export default function SettingsClient({ initialSettings, initialLogoUrl }: Sett
             onChange={e => setSiteName(e.target.value)}
             maxLength={100}
             placeholder="e.g. The Institute"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="site-description">Footer Description</Label>
-          <Textarea
-            id="site-description"
-            rows={2}
-            value={siteDescription}
-            onChange={e => setSiteDescription(e.target.value)}
-            placeholder="A short tagline shown under the site name in the footer."
-            maxLength={200}
           />
         </div>
 
