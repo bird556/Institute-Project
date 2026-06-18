@@ -21,7 +21,7 @@ export default function ImageUpload({
   onUpload,
   onRemove,
   label = 'Cover Image',
-  accept = 'image/jpeg,image/png,image/webp,image/svg+xml',
+  accept = 'image/jpeg,image/png,image/webp,image/svg+xml,image/avif',
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
@@ -127,7 +127,7 @@ export default function ImageUpload({
                 Click or drag to upload
               </p>
               <p className="text-xs text-[var(--color-text-muted)]">
-                JPG, PNG, WebP, SVG — max 5 MB
+                JPG, PNG, WebP, AVIF, SVG — max 5 MB
               </p>
             </>
           )}

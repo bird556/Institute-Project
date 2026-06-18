@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { NextRequest, NextResponse } from 'next/server'
 
-const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml'])
+const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'image/avif'])
 const ACCEPTED_DOC_TYPES   = new Set([
   'application/pdf',
   'application/msword',
@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
     if (!isDoc && !isImage) {
       return NextResponse.json(
-        { error: 'Unsupported file type. Use JPG, PNG, WebP, or SVG.' },
+        { error: 'Unsupported file type. Use JPG, PNG, WebP, AVIF, or SVG.' },
         { status: 415 }
       )
     }

@@ -8,7 +8,9 @@ import type { SiteSettings } from '@/types'
 
 type VisibilityKey =
   | 'about_enabled' | 'advocates_enabled' | 'psychotherapists_enabled'
-  | 'referral_agencies_enabled' | 'black_mens_groups_enabled' | 'blogs_enabled' | 'events_enabled'
+  | 'referral_agencies_enabled' | 'black_mens_groups_enabled'
+  | 'youth_service_organizations_enabled' | 'community_organizations_enabled'
+  | 'blogs_enabled' | 'events_enabled'
   | 'reading_list_enabled' | 'partners_enabled' | 'newsletter_enabled'
   | 'health_wellness_enabled' | 'research_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled'
   | 'intro_section_enabled'
@@ -21,6 +23,8 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'psychotherapists_enabled',  label: 'Psychotherapists',  description: 'When hidden, /psychotherapists and all profile pages redirect to home' },
   { key: 'referral_agencies_enabled', label: 'Referral Agencies', description: 'When hidden, /referral-agencies and all profile pages redirect to home' },
   { key: 'black_mens_groups_enabled', label: "Black Men's Groups", description: "When hidden, /black-mens-groups and all profile pages redirect to home" },
+  { key: 'youth_service_organizations_enabled', label: 'Youth Service Organizations', description: 'When hidden, the category is removed from the Services nav dropdown' },
+  { key: 'community_organizations_enabled',     label: 'Community Organizations',     description: 'When hidden, the category is removed from the Services nav dropdown' },
   { key: 'blogs_enabled',             label: 'Blog',              description: 'When hidden, /blogs and all blog posts redirect to home' },
   { key: 'events_enabled',            label: 'Events',            description: 'When hidden, /events and all event pages redirect to home' },
   { key: 'reading_list_enabled',      label: 'Reading List',      description: 'When hidden, /reading-list and all items redirect to home' },
@@ -50,6 +54,8 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
     psychotherapists_enabled:  s?.psychotherapists_enabled  !== 'false',
     referral_agencies_enabled: s?.referral_agencies_enabled !== 'false',
     black_mens_groups_enabled: s?.black_mens_groups_enabled !== 'false',
+    youth_service_organizations_enabled: s?.youth_service_organizations_enabled !== 'false',
+    community_organizations_enabled:     s?.community_organizations_enabled     !== 'false',
     blogs_enabled:             s?.blogs_enabled             !== 'false',
     events_enabled:            s?.events_enabled            !== 'false',
     reading_list_enabled:      s?.reading_list_enabled      !== 'false',

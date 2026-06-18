@@ -15,7 +15,7 @@ import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createDirectoryEntry, deleteDirectoryEntry, toggleDirectoryEntryPublished } from '@/actions/directory'
 import Pagination from '@/components/shared/Pagination'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryEntry } from '@/types'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryEntry } from '@/types'
 
 interface DirectoryListItem extends DirectoryEntry {
   photo_url: string | null
@@ -26,10 +26,12 @@ interface Props {
 }
 
 const TABS: { category: DirectoryCategory; label: string }[] = [
-  { category: 'advocate',         label: 'Advocates' },
-  { category: 'psychotherapist',  label: 'Psychotherapists' },
-  { category: 'referral_agency',  label: 'Referral Agencies' },
-  { category: 'black_mens_group', label: "Black Men's Groups" },
+  { category: 'advocate',                    label: 'Advocates' },
+  { category: 'psychotherapist',             label: 'Psychotherapists' },
+  { category: 'referral_agency',             label: 'Referral Agencies' },
+  { category: 'black_mens_group',            label: "Black Men's Groups" },
+  { category: 'youth_service_organization',  label: 'Youth Service Organizations' },
+  { category: 'community_organization',      label: 'Community Organizations' },
 ]
 
 type DirSortOption = 'name_az' | 'name_za' | 'newest' | 'oldest' | 'org_az' | 'org_za' | 'mode'
@@ -231,7 +233,7 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">{entry.name}</p>
                   <div className="flex items-center gap-2 mt-0.5">
-                    {entry.organization && (
+                    {entry.organization && !DIRECTORY_HIDE_NAME.includes(entry.category) && (
                       <span className="text-sm text-[var(--color-text-muted)] truncate">{entry.organization}</span>
                     )}
                     {entry.mode && (

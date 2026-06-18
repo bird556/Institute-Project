@@ -284,7 +284,7 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
                 folder="wellness/covers"
                 onUpload={handleCoverUpload}
                 onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateWellnessPost(post.id, { cover_path: null }) }}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                accept="image/jpeg,image/png,image/webp,image/svg+xml,image/avif"
               />
             </div>
 
