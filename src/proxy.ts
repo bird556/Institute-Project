@@ -73,16 +73,22 @@ export async function proxy(request: NextRequest) {
   }
 
   // Sitewide password gate — checked before per-section visibility so a
-  // locked-out visitor never learns which sections exist.
-  const gate = await getSiteGate()
-  if (gate.enabled) {
-    const token = request.cookies.get('site_access_token')?.value
-    const expected = await signGatePassword(gate.password)
-    if (token !== expected) {
-      const url = new URL('/access', request.url)
-      url.searchParams.set('next', pathname)
-      return NextResponse.redirect(url)
+  // locked-out visitor never learns which sections exist. This runs on every
+  // request, so any failure here (e.g. a missing SITE_ACCESS_SECRET) must
+  // fail open rather than 500 the entire site.
+  try {
+    const gate = await getSiteGate()
+    if (gate.enabled) {
+      const token = request.cookies.get('site_access_token')?.value
+      const expected = await signGatePassword(gate.password)
+      if (token !== expected) {
+        const url = new URL('/access', request.url)
+        url.searchParams.set('next', pathname)
+        return NextResponse.redirect(url)
+      }
     }
+  } catch (err) {
+    console.error('Site access gate check failed, allowing request through:', err)
   }
 
   // Redirect to home if a public section is disabled
