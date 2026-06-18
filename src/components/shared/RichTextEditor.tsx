@@ -103,7 +103,7 @@ export default function RichTextEditor({
   async function handleToolbarImage() {
     const input = document.createElement('input')
     input.type = 'file'
-    input.accept = 'image/jpeg,image/png,image/webp,image/svg+xml'
+    input.accept = 'image/jpeg,image/png,image/webp,image/svg+xml,image/avif'
     input.onchange = async () => {
       const file = input.files?.[0]
       if (file) await uploadInlineImage(file)

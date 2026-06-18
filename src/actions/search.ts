@@ -1,7 +1,8 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import type { SearchResult, ActionResult } from '@/types'
+import { DIRECTORY_HIDE_NAME } from '@/types'
+import type { SearchResult, ActionResult, DirectoryCategory } from '@/types'
 
 function coverUrl(supabase: Awaited<ReturnType<typeof createClient>>, path: string | null): string | null {
   if (!path) return null
@@ -9,10 +10,12 @@ function coverUrl(supabase: Awaited<ReturnType<typeof createClient>>, path: stri
 }
 
 const DIRECTORY_PATH: Record<string, string> = {
-  advocate:         'advocates',
-  psychotherapist:  'psychotherapists',
-  referral_agency:  'referral-agencies',
-  black_mens_group: 'black-mens-groups',
+  advocate:                    'advocates',
+  psychotherapist:             'psychotherapists',
+  referral_agency:             'referral-agencies',
+  black_mens_group:            'black-mens-groups',
+  youth_service_organization:  'youth-service-organizations',
+  community_organization:      'community-organizations',
 }
 
 export async function searchContent(query: string): Promise<ActionResult<SearchResult[]>> {
@@ -104,12 +107,13 @@ export async function searchContent(query: string): Promise<ActionResult<SearchR
 
   const directory = (directoryRes.data ?? []).map<SearchResult>((d) => {
     const section = DIRECTORY_PATH[d.category] ?? 'advocates'
+    const hideName = DIRECTORY_HIDE_NAME.includes(d.category as DirectoryCategory)
     return {
       id: `${section}/${d.id}`,
       type: 'directory',
       title: d.name,
       slug: d.id,
-      excerpt: d.organization ?? null,
+      excerpt: hideName ? null : (d.organization ?? null),
       cover_url: coverUrl(supabase, d.photo_path),
     }
   })

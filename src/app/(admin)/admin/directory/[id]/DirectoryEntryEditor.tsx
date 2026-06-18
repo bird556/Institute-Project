@@ -18,7 +18,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateDirectoryEntry, toggleDirectoryEntryPublished, deleteDirectoryEntry } from '@/actions/directory'
 import { formatDate } from '@/lib/utils'
 import type { DirectoryEntry, DirectoryMode } from '@/types'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS } from '@/types'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_ORG_PLACEHOLDER } from '@/types'
 
 const AUTOSAVE_MS = 2000
 
@@ -50,10 +50,11 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
 
   const categoryLabel = DIRECTORY_CATEGORY_LABELS[entry.category]
   const adminHref = '/admin/directory'
+  const hideName = DIRECTORY_HIDE_NAME.includes(entry.category)
 
   function buildFields() {
     return {
-      name,
+      name: hideName ? organization.trim() : name,
       organization: organization || null,
       description,
       website_url: website_url.trim() || null,
@@ -79,7 +80,12 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSave() {
-    if (!name.trim()) { toast.error('Name is required.'); return }
+    if (hideName) {
+      if (!organization.trim()) { toast.error('Organization is required.'); return }
+    } else if (!name.trim()) {
+      toast.error('Name is required.')
+      return
+    }
     setSaving(true)
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     const result = await updateDirectoryEntry(entry.id, buildFields())
@@ -136,13 +142,15 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
           {/* Main */}
           <div className="space-y-4">
-            <div className="space-y-1.5">
-              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Name</Label>
-              <Input value={name} onChange={(e) => { setName(e.target.value); scheduleAutosave() }} placeholder="Full name" className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
-            </div>
+            {!hideName && (
+              <div className="space-y-1.5">
+                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Name</Label>
+                <Input value={name} onChange={(e) => { setName(e.target.value); scheduleAutosave() }} placeholder="Full name" className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+              </div>
+            )}
             <div className="space-y-1.5">
               <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Organisation</Label>
-              <Input value={organization} onChange={(e) => { setOrg(e.target.value); scheduleAutosave() }} placeholder="e.g. Brock University" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+              <Input value={organization} onChange={(e) => { setOrg(e.target.value); scheduleAutosave() }} placeholder={DIRECTORY_ORG_PLACEHOLDER[entry.category]} className={hideName ? 'font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]' : 'text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]'} />
             </div>
             <div className="space-y-1.5">
               <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Description</Label>

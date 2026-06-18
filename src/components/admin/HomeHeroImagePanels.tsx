@@ -76,7 +76,7 @@ export default function HomeHeroImagePanels({
       <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] p-5 space-y-3">
         <div>
           <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
-            Hero Background Image <span className="font-normal text-[var(--color-text-muted)]">(JPEG, PNG, WebP)</span>
+            Hero Background Image <span className="font-normal text-[var(--color-text-muted)]">(JPEG, PNG, WebP, AVIF)</span>
           </p>
           <p className="text-xs text-[var(--color-text-muted)] mt-0.5">
             Displayed as a dimmed full-bleed background behind the hero section.
@@ -88,7 +88,7 @@ export default function HomeHeroImagePanels({
           onUpload={handleBgUpload}
           onRemove={handleBgRemove}
           label=""
-          accept="image/jpeg,image/png,image/webp"
+          accept="image/jpeg,image/png,image/webp,image/avif"
         />
       </div>
     </div>

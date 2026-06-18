@@ -16,10 +16,12 @@ export async function HeaderServer() {
   const siteName = settings?.site_name || 'Institute'
   const navItems = parseNavConfig(settings?.nav_config)
 
-  const showReferralAgencies   = settings?.referral_agencies_enabled   !== 'false'
-  const showBlackMensGroups    = settings?.black_mens_groups_enabled    !== 'false'
-  const showResearchInstitutes = settings?.research_institutes_enabled  !== 'false'
-  const showCallForPapers      = settings?.call_for_papers_enabled      !== 'false'
+  const showReferralAgencies          = settings?.referral_agencies_enabled          !== 'false'
+  const showBlackMensGroups           = settings?.black_mens_groups_enabled          !== 'false'
+  const showYouthServiceOrganizations = settings?.youth_service_organizations_enabled !== 'false'
+  const showCommunityOrganizations    = settings?.community_organizations_enabled    !== 'false'
+  const showResearchInstitutes        = settings?.research_institutes_enabled        !== 'false'
+  const showCallForPapers             = settings?.call_for_papers_enabled            !== 'false'
 
   return (
     <Header
@@ -28,6 +30,8 @@ export async function HeaderServer() {
       siteName={siteName}
       showReferralAgencies={showReferralAgencies}
       showBlackMensGroups={showBlackMensGroups}
+      showYouthServiceOrganizations={showYouthServiceOrganizations}
+      showCommunityOrganizations={showCommunityOrganizations}
       showResearchInstitutes={showResearchInstitutes}
       showCallForPapers={showCallForPapers}
     />

@@ -8,13 +8,15 @@ import { createClient } from '@/lib/supabase/server'
 import { buildMetadata } from '@/lib/metadata'
 import { stripHtml, truncate } from '@/lib/utils'
 import { DetailPageShell } from '@/components/shared/DetailPageShell'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
 
 const BACK_HREFS: Record<DirectoryCategory, string> = {
-  advocate:         '/advocates',
-  psychotherapist:  '/psychotherapists',
-  referral_agency:  '/referral-agencies',
-  black_mens_group: '/black-mens-groups',
+  advocate:                    '/advocates',
+  psychotherapist:             '/psychotherapists',
+  referral_agency:             '/referral-agencies',
+  black_mens_group:            '/black-mens-groups',
+  youth_service_organization:  '/youth-service-organizations',
+  community_organization:      '/community-organizations',
 }
 
 export const getDirectoryEntry = cache(async (id: string) => {
@@ -129,7 +131,7 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
             {entry.name}
           </h1>
 
-          {entry.organization && (
+          {entry.organization && !DIRECTORY_HIDE_NAME.includes(entry.category as DirectoryCategory) && (
             <p className="text-lg text-[var(--color-text-muted)]">{entry.organization}</p>
           )}
 

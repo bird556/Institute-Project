@@ -220,7 +220,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
                 folder="research/covers"
                 onUpload={handleCoverUpload}
                 onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateResearchPost(post.id, { cover_path: null }) }}
-                accept="image/jpeg,image/png,image/webp,image/svg+xml"
+                accept="image/jpeg,image/png,image/webp,image/svg+xml,image/avif"
               />
             </div>
 

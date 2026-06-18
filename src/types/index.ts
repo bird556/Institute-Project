@@ -96,6 +96,8 @@ export interface SiteSettings {
   psychotherapists_enabled: string
   referral_agencies_enabled: string
   black_mens_groups_enabled: string
+  youth_service_organizations_enabled: string
+  community_organizations_enabled: string
   // Home section visibility
   intro_section_enabled:   string
   cta_section_enabled:     string
@@ -284,18 +286,44 @@ export interface ResearchPost {
   updated_at: string
 }
 
-export type DirectoryCategory = 'advocate' | 'psychotherapist' | 'referral_agency' | 'black_mens_group'
+export type DirectoryCategory =
+  | 'advocate'
+  | 'psychotherapist'
+  | 'referral_agency'
+  | 'black_mens_group'
+  | 'youth_service_organization'
+  | 'community_organization'
 export type DirectoryMode     = 'online' | 'in-person' | 'both'
 
 export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
   'advocate', 'psychotherapist', 'referral_agency', 'black_mens_group',
+  'youth_service_organization', 'community_organization',
 ]
 
 export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
-  advocate:         'Advocates',
-  psychotherapist:  'Psychotherapists',
-  referral_agency:  'Referral Agencies',
-  black_mens_group: "Black Men's Groups",
+  advocate:                    'Advocates',
+  psychotherapist:             'Psychotherapists',
+  referral_agency:             'Referral Agencies',
+  black_mens_group:            "Black Men's Groups",
+  youth_service_organization:  'Youth Service Organizations',
+  community_organization:      'Community Organizations',
+}
+
+// Categories where the admin-facing "Name" field is hidden — Organization is
+// the title field instead. `name` is still auto-synced to `organization` on
+// save so every downstream consumer (cards, search, avatar initials) keeps
+// working without extra logic.
+export const DIRECTORY_HIDE_NAME: DirectoryCategory[] = [
+  'advocate', 'youth_service_organization', 'community_organization',
+]
+
+export const DIRECTORY_ORG_PLACEHOLDER: Record<DirectoryCategory, string> = {
+  advocate:                    'e.g. Advocacy Organization',
+  psychotherapist:             'e.g. Psychotherapy Practice',
+  referral_agency:             'e.g. Referral Agency',
+  black_mens_group:            "e.g. Black Men's Group",
+  youth_service_organization:  'e.g. Youth Service Organization',
+  community_organization:      'e.g. Community Organization',
 }
 
 export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {

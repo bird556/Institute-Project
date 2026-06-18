@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Globe, Mail, UserRound, Building2 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
+import { DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
 
 export interface DirectoryCardProps {
   id: string
@@ -29,10 +29,12 @@ function PlaceholderIcon({ category }: { category: DirectoryCategory }) {
 }
 
 const CATEGORY_HREFS: Record<DirectoryCategory, string> = {
-  advocate:         '/advocates',
-  psychotherapist:  '/psychotherapists',
-  referral_agency:  '/referral-agencies',
-  black_mens_group: '/black-mens-groups',
+  advocate:                    '/advocates',
+  psychotherapist:             '/psychotherapists',
+  referral_agency:             '/referral-agencies',
+  black_mens_group:            '/black-mens-groups',
+  youth_service_organization:  '/youth-service-organizations',
+  community_organization:      '/community-organizations',
 }
 
 export default function DirectoryCard({
@@ -75,7 +77,7 @@ export default function DirectoryCard({
             {name}
           </h2>
 
-          {organization && (
+          {organization && !DIRECTORY_HIDE_NAME.includes(category) && (
             <p className="text-sm text-[var(--color-text-muted)] line-clamp-1">{organization}</p>
           )}
 
