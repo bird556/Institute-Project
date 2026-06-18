@@ -21,8 +21,8 @@ import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateResearchPost, toggleResearchPublished, deleteResearchPost } from '@/actions/research'
 import { slugify, formatDate } from '@/lib/utils'
-import { RESEARCH_CATEGORIES, RESEARCH_CATEGORY_LABELS } from '@/types'
-import type { ResearchPost, ResearchCategory } from '@/types'
+import { RESEARCH_CATEGORIES, RESEARCH_CATEGORY_LABELS, ITEM_TYPE_LABELS } from '@/types'
+import type { ResearchPost, ResearchCategory, ResearchItemType } from '@/types'
 
 const EXCERPT_MAX = 300
 const AUTOSAVE_MS = 2000
@@ -42,6 +42,8 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
   const [category, setCategory]       = useState<ResearchCategory>(post.category)
   const [externalUrl, setExternalUrl] = useState(post.external_url ?? '')
   const [region, setRegion]           = useState<'canadian' | 'world' | ''>(post.region ?? '')
+  const [author, setAuthor]           = useState(post.author ?? '')
+  const [itemType, setItemType]       = useState<ResearchItemType | ''>(post.item_type ?? '')
   const [coverPath, setCoverPath]     = useState<string | null>(post.cover_path)
   const [coverUrl, setCoverUrl]       = useState<string | undefined>(initialCoverUrl)
   const [published, setPublished]     = useState(post.published)
@@ -60,7 +62,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null })
+      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null })
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
@@ -100,7 +102,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
 
   async function handleSave() {
     setSaving(true)
-    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null })
+    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null })
     setSaving(false)
     if (!result.success) { toast.error(result.error ?? 'Save failed.'); return }
     isDirty.current = false
@@ -286,6 +288,41 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
                 <option value="canadian">Canadian</option>
                 <option value="world">International</option>
               </select>
+            </div>
+
+            {/* Author */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                Author
+              </p>
+              <Input
+                value={author}
+                onChange={(e) => { setAuthor(e.target.value); scheduleAutosave() }}
+                placeholder="Author name"
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+              />
+            </div>
+
+            {/* Item Type */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+              <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                Item Type
+              </p>
+              <select
+                value={itemType}
+                onChange={(e) => { setItemType(e.target.value as ResearchItemType | ''); scheduleAutosave() }}
+                className="w-full h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
+              >
+                <option value="">— None —</option>
+                {(Object.entries(ITEM_TYPE_LABELS) as [ResearchItemType, string][]).map(([val, label]) => (
+                  <option key={val} value={val}>{label}</option>
+                ))}
+              </select>
+              {category === 'sexual-abuse-boys-men' && (
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  Link to the full paper, book listing, or video using External URL above.
+                </p>
+              )}
             </div>
 
           </div>

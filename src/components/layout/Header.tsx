@@ -10,6 +10,8 @@ import { ThemeToggle } from './ThemeToggle'
 import { SearchBar } from './SearchBar'
 import { cn } from '@/lib/utils'
 import type { NavItem } from '@/lib/nav-config'
+import { RESEARCH_CATEGORIES, RESEARCH_CATEGORY_LABELS } from '@/types'
+import type { ResearchCategory } from '@/types'
 
 interface HeaderProps {
   navItems: NavItem[]
@@ -21,6 +23,7 @@ interface HeaderProps {
   showCommunityOrganizations?: boolean
   showResearchInstitutes?: boolean
   showCallForPapers?: boolean
+  showSexualAbuseBoysMen?: boolean
 }
 
 function renderSiteName(name: string) {
@@ -35,7 +38,13 @@ function renderSiteName(name: string) {
   )
 }
 
-export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true, showYouthServiceOrganizations = true, showCommunityOrganizations = true, showResearchInstitutes = true, showCallForPapers = true }: HeaderProps) {
+export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true, showYouthServiceOrganizations = true, showCommunityOrganizations = true, showResearchInstitutes = true, showCallForPapers = true, showSexualAbuseBoysMen = true }: HeaderProps) {
+  const researchGates: Partial<Record<ResearchCategory, boolean>> = {
+    'research-institutes':   showResearchInstitutes,
+    'call-for-papers':       showCallForPapers,
+    'sexual-abuse-boys-men': showSexualAbuseBoysMen,
+  }
+  const visibleResearchCategories = RESEARCH_CATEGORIES.filter((cat) => researchGates[cat] !== false)
   const pathname = usePathname()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
@@ -213,34 +222,16 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                           transition={{ duration: 0.15, ease: 'easeOut' }}
                           className="absolute top-full left-0 mt-2 w-56 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
                         >
-                          {(['announcements', 'recent-publications', 'reports'] as const).map((cat, i) => (
+                          {visibleResearchCategories.map((cat, i) => (
                             <Link
                               key={cat}
                               href={`/research/${cat}`}
                               className={`block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors ${i > 0 ? 'border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]' : ''}`}
                               onClick={() => setResearchDropdownOpen(false)}
                             >
-                              {cat === 'announcements' ? 'Announcements' : cat === 'recent-publications' ? 'Recent Publications' : 'Reports'}
+                              {RESEARCH_CATEGORY_LABELS[cat]}
                             </Link>
                           ))}
-                          {showResearchInstitutes && (
-                            <Link
-                              href="/research/research-institutes"
-                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
-                              onClick={() => setResearchDropdownOpen(false)}
-                            >
-                              Research Institutes
-                            </Link>
-                          )}
-                          {showCallForPapers && (
-                            <Link
-                              href="/research/call-for-papers"
-                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
-                              onClick={() => setResearchDropdownOpen(false)}
-                            >
-                              Call for Papers
-                            </Link>
-                          )}
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -395,15 +386,16 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             transition={{ duration: 0.15, ease: 'easeOut' }}
                             className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
                           >
-                            <Link href="/research/announcements" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Announcements</Link>
-                            <Link href="/research/recent-publications" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Recent Publications</Link>
-                            <Link href="/research/reports" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Reports</Link>
-                            {showResearchInstitutes && (
-                              <Link href="/research/research-institutes" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Research Institutes</Link>
-                            )}
-                            {showCallForPapers && (
-                              <Link href="/research/call-for-papers" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">Call for Papers</Link>
-                            )}
+                            {visibleResearchCategories.map((cat) => (
+                              <Link
+                                key={cat}
+                                href={`/research/${cat}`}
+                                onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }}
+                                className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+                              >
+                                {RESEARCH_CATEGORY_LABELS[cat]}
+                              </Link>
+                            ))}
                           </motion.div>
                         )}
                       </AnimatePresence>

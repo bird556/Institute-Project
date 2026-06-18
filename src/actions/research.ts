@@ -46,10 +46,11 @@ export async function getPublishedResearchCounts(): Promise<ActionResult<Record<
   if (error) return { success: false, error: 'Failed to load counts.' }
   const counts: Record<ResearchCategory, number> = {
     'announcements': 0,
+    'call-for-papers': 0,
     'recent-publications': 0,
     'reports': 0,
     'research-institutes': 0,
-    'call-for-papers': 0,
+    'sexual-abuse-boys-men': 0,
   }
   for (const row of data ?? []) {
     counts[row.category as ResearchCategory] = (counts[row.category as ResearchCategory] ?? 0) + 1
@@ -70,7 +71,7 @@ export async function createResearchPost(category: ResearchCategory = 'announcem
 
 export async function updateResearchPost(
   id: string,
-  fields: Partial<Pick<ResearchPost, 'title' | 'slug' | 'excerpt' | 'content' | 'cover_path' | 'category' | 'external_url' | 'region'>>,
+  fields: Partial<Pick<ResearchPost, 'title' | 'slug' | 'excerpt' | 'content' | 'cover_path' | 'category' | 'external_url' | 'region' | 'author' | 'item_type'>>,
 ): Promise<ActionResult<ResearchPost>> {
   const supabase = await createClient()
   const { data, error } = await supabase

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
   BookOpen, Home, Info, Target, Settings, Newspaper,
-  Calendar, List, Mail, Heart, Star, Microscope, Building2, Send, Users,
+  Calendar, List, Mail, Heart, Star, Microscope, Building2, Send, ShieldAlert, Users,
   Navigation2, Eye, PanelBottom, Download,
   Menu, X, LogOut,
   type LucideIcon,
@@ -72,6 +72,7 @@ const DRAWER_GROUPS: NavGroup[] = [
       { label: 'Research Page',          href: '/admin/pages/research',          icon: Microscope },
       { label: 'Research Institutes Page', href: '/admin/pages/research-institutes', icon: Building2 },
       { label: 'Call for Papers Page',   href: '/admin/pages/call-for-papers',   icon: Send },
+      { label: 'Sexual Abuse of Boys and Men Page', href: '/admin/pages/sexual-abuse-boys-men', icon: ShieldAlert },
       { label: 'Advocates Page',          href: '/admin/pages/advocates',         icon: Users },
       { label: 'Psychotherapists Page',   href: '/admin/pages/psychotherapists',  icon: Users },
       { label: 'Referral Agencies Page',  href: '/admin/pages/referral-agencies', icon: Users },

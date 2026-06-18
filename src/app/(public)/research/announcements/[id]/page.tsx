@@ -73,7 +73,7 @@ export default async function AnnouncementDetailPage({ params }: Props) {
         href="/research/announcements"
         className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
       >
-        ← Back to Announcements
+        ← Back to Call for Publications
       </Link>
 
       {coverUrl && (
@@ -106,7 +106,7 @@ export default async function AnnouncementDetailPage({ params }: Props) {
       {morePosts.length > 0 && (
         <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">
           <h2 className="font-display text-2xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-            More Announcements
+            More Call for Publications
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {morePosts.map((p) => (

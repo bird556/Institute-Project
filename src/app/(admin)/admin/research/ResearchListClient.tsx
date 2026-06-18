@@ -22,22 +22,26 @@ import { formatDate } from '@/lib/utils'
 import { RESEARCH_CATEGORIES, RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchPost, ResearchCategory } from '@/types'
 
-type StatusFilter   = 'all' | 'published' | 'drafts'
-type CategoryFilter = 'all' | ResearchCategory
-type SortOrder      = 'recent' | 'oldest' | 'a-z' | 'z-a'
+type StatusFilter = 'all' | 'published' | 'drafts'
+type SortOrder     = 'recent' | 'oldest' | 'a-z' | 'z-a'
 
 interface ResearchListItem extends ResearchPost {
   cover_url: string | null
 }
 
+const TABS: { category: ResearchCategory; label: string }[] = RESEARCH_CATEGORIES.map((category) => ({
+  category,
+  label: RESEARCH_CATEGORY_LABELS[category],
+}))
+
 export default function ResearchListClient({ posts: initial }: { posts: ResearchListItem[] }) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
-  const [posts, setPosts]           = useState(initial)
+  const [posts, setPosts]       = useState(initial)
+  const [activeTab, setActiveTab]   = useState<ResearchCategory>('announcements')
   const [query, setQuery]           = useState('')
-  const [statusFilter, setStatusFilter]     = useState<StatusFilter>('all')
-  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>('all')
-  const [sortOrder, setSortOrder]           = useState<SortOrder>('recent')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [sortOrder, setSortOrder]       = useState<SortOrder>('recent')
   const [deleteId, setDeleteId]     = useState<string | null>(null)
   const [deleting, setDeleting]     = useState(false)
   const [togglingId, setTogglingId] = useState<string | null>(null)
@@ -46,7 +50,8 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
   const PAGE_SIZE = 20
   function resetPage() { setPage(1) }
 
-  const filtered = posts.filter((p) => {
+  const tabPosts = posts.filter((p) => p.category === activeTab)
+  const filtered = tabPosts.filter((p) => {
     const q = query.toLowerCase()
     const matchesQuery =
       !q ||
@@ -56,8 +61,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
       statusFilter === 'all' ||
       (statusFilter === 'published' && p.published) ||
       (statusFilter === 'drafts' && !p.published)
-    const matchesCategory = categoryFilter === 'all' || p.category === categoryFilter
-    return matchesQuery && matchesStatus && matchesCategory
+    return matchesQuery && matchesStatus
   })
 
   const sorted = [...filtered].sort((a, b) => {
@@ -69,13 +73,13 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
     return bDate - aDate
   })
 
-  const isFiltering = query !== '' || statusFilter !== 'all' || categoryFilter !== 'all'
+  const isFiltering = query !== '' || statusFilter !== 'all'
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
   const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   async function handleNew() {
     startTransition(async () => {
-      const result = await createResearchPost(categoryFilter !== 'all' ? categoryFilter : 'announcements')
+      const result = await createResearchPost(activeTab)
       if (!result.success || !result.data) {
         toast.error(result.error ?? 'Could not create post.')
         return
@@ -112,10 +116,16 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
   function clearFilters() {
     setQuery('')
     setStatusFilter('all')
-    setCategoryFilter('all')
     setSortOrder('recent')
     setPage(1)
   }
+
+  const tabClass = (active: boolean) =>
+    `px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors whitespace-nowrap ${
+      active
+        ? 'bg-[var(--color-brand-teal)] text-white'
+        : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
+    }`
 
   const filterBtnClass = (active: boolean) =>
     `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
@@ -134,6 +144,15 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
           <Button onClick={handleNew} disabled={isPending} className="cursor-pointer bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white gap-1.5">
             <Plus size={16} /> New Post
           </Button>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-1 p-1 rounded-xl bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit overflow-x-auto">
+          {TABS.map(({ category, label }) => (
+            <button key={category} onClick={() => { setActiveTab(category); setQuery(''); setStatusFilter('all'); setSortOrder('recent'); resetPage() }} className={tabClass(activeTab === category)}>
+              {label}
+            </button>
+          ))}
         </div>
 
         <div className="flex flex-col sm:flex-row flex-wrap gap-3">
@@ -165,17 +184,6 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
           </div>
 
           <select
-            value={categoryFilter}
-            onChange={(e) => { setCategoryFilter(e.target.value as CategoryFilter); resetPage() }}
-            className="h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
-          >
-            <option value="all">All Categories</option>
-            {RESEARCH_CATEGORIES.map((cat) => (
-              <option key={cat} value={cat}>{RESEARCH_CATEGORY_LABELS[cat]}</option>
-            ))}
-          </select>
-
-          <select
             value={sortOrder}
             onChange={(e) => { setSortOrder(e.target.value as SortOrder); resetPage() }}
             className="h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
@@ -189,7 +197,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
 
         {isFiltering && (
           <p className="text-sm text-[var(--color-text-muted)] -mt-2">
-            Showing {sorted.length} of {posts.length} {posts.length === 1 ? 'post' : 'posts'}
+            Showing {sorted.length} of {tabPosts.length} {tabPosts.length === 1 ? 'post' : 'posts'}
           </p>
         )}
 
@@ -198,10 +206,10 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
             <Microscope size={32} className="text-[var(--color-text-muted)]" />
             <div>
               <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">
-                {isFiltering ? `No results${query ? ` for "${query}"` : ''}` : 'No posts yet'}
+                {isFiltering ? `No results${query ? ` for "${query}"` : ''}` : `No ${RESEARCH_CATEGORY_LABELS[activeTab].toLowerCase()} posts yet`}
               </p>
               <p className="text-sm text-[var(--color-text-muted)] mt-1">
-                {isFiltering ? 'Try a different search or clear the filters.' : 'Create your first research post to get started.'}
+                {isFiltering ? 'Try a different search or clear the filters.' : 'Create your first post in this category to get started.'}
               </p>
             </div>
             {isFiltering ? (
@@ -243,9 +251,6 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
                     {post.title}
                   </p>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                    <span className="text-xs text-[var(--color-text-muted)]">
-                      {RESEARCH_CATEGORY_LABELS[post.category]}
-                    </span>
                     <span className="text-xs text-[var(--color-text-muted)]">
                       {formatDate(post.updated_at)}
                     </span>

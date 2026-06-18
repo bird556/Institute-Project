@@ -12,7 +12,7 @@ type VisibilityKey =
   | 'youth_service_organizations_enabled' | 'community_organizations_enabled'
   | 'blogs_enabled' | 'events_enabled'
   | 'reading_list_enabled' | 'partners_enabled' | 'newsletter_enabled'
-  | 'health_wellness_enabled' | 'research_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled'
+  | 'health_wellness_enabled' | 'research_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled' | 'sexual_abuse_boys_men_enabled'
   | 'intro_section_enabled'
   | 'goal_section_enabled' | 'impact_section_enabled' | 'mission_section_enabled'
   | 'cta_section_enabled' | 'wellness_section_enabled'
@@ -34,6 +34,7 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'research_enabled',          label: 'Research',          description: 'When hidden, /research and all research posts redirect to home' },
   { key: 'research_institutes_enabled', label: 'Research Institutes', description: 'When hidden, the Research Institutes category is removed from the nav and research landing page' },
   { key: 'call_for_papers_enabled',   label: 'Call for Papers',   description: 'When hidden, the Call for Papers category is removed from the nav and research landing page' },
+  { key: 'sexual_abuse_boys_men_enabled', label: 'Sexual Abuse of Boys and Men', description: 'When hidden, this category is removed from the nav and research landing page' },
 ]
 
 const HOME_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
@@ -65,6 +66,7 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
     research_enabled:              s?.research_enabled              !== 'false',
     research_institutes_enabled:   s?.research_institutes_enabled   !== 'false',
     call_for_papers_enabled:       s?.call_for_papers_enabled       !== 'false',
+    sexual_abuse_boys_men_enabled: s?.sexual_abuse_boys_men_enabled !== 'false',
     intro_section_enabled:     s?.intro_section_enabled     !== 'false',
     goal_section_enabled:      s?.goal_section_enabled      !== 'false',
     impact_section_enabled:    s?.impact_section_enabled    !== 'false',
