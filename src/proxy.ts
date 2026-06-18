@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { getSiteVisibility, type SiteVisibility } from '@/lib/site-visibility'
+import { getSiteGate, signGatePassword } from '@/lib/site-gate'
 
 const PUBLIC_ADMIN_ROUTES = [
   '/admin/forgot-password',
@@ -32,7 +33,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next()
   }
 
-  if (pathname.startsWith('/admin')) {
+  // Bare /admin renders its own LoginForm/Dashboard based on session state —
+  // it must never be redirected to itself (that's an infinite loop). Only
+  // sub-routes (/admin/blogs, etc.) need the redirect-if-no-session guard.
+  if (pathname === '/admin') {
+    return NextResponse.next()
+  }
+
+  if (pathname.startsWith('/admin/')) {
     const response = NextResponse.next()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,6 +64,27 @@ export async function proxy(request: NextRequest) {
     return response
   }
 
+  // The unlock page itself must never be gated (would redirect-loop). If the
+  // gate is off there's nothing to unlock, so send visitors back to home.
+  if (pathname === '/access') {
+    const { enabled } = await getSiteGate()
+    if (!enabled) return NextResponse.redirect(new URL('/', request.url))
+    return NextResponse.next()
+  }
+
+  // Sitewide password gate — checked before per-section visibility so a
+  // locked-out visitor never learns which sections exist.
+  const gate = await getSiteGate()
+  if (gate.enabled) {
+    const token = request.cookies.get('site_access_token')?.value
+    const expected = await signGatePassword(gate.password)
+    if (token !== expected) {
+      const url = new URL('/access', request.url)
+      url.searchParams.set('next', pathname)
+      return NextResponse.redirect(url)
+    }
+  }
+
   // Redirect to home if a public section is disabled
   for (const [routePrefix, visibilityKey] of Object.entries(SECTION_ROUTES)) {
     if (pathname === routePrefix || pathname.startsWith(routePrefix + '/')) {
@@ -71,19 +100,8 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    '/admin/:path+',
-    '/about',
-    '/mission',
-    '/advocates/:path*',
-    '/psychotherapists/:path*',
-    '/referral-agencies/:path*',
-    '/blogs/:path*',
-    '/events/:path*',
-    '/reading-list/:path*',
-    '/partners',
-    '/newsletter/:path*',
-    '/health-wellness/:path*',
-    '/research/:path*',
-  ],
+  // Catch-all: everything except Next internals, API routes, and static files
+  // (the sitewide access gate needs to cover every public route, not just the
+  // hand-picked list of sections that existed before that feature).
+  matcher: ['/((?!_next|api|favicon.ico|.*\\..*).*)'],
 }

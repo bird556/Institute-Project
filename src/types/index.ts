@@ -137,6 +137,9 @@ export interface SiteSettings {
   newsletter_subtext: string
   newsletter_success_message: string
   newsletter_consent_text: string
+  // Site access gate
+  site_gate_enabled: string
+  site_gate_password: string
 }
 
 export interface GoalPillar {
