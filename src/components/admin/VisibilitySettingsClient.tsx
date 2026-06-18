@@ -19,12 +19,6 @@ type VisibilityKey =
 
 const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
   { key: 'about_enabled',             label: 'About',             description: 'When hidden, /about redirects to home' },
-  { key: 'advocates_enabled',         label: 'Advocates',         description: 'When hidden, /advocates and all profile pages redirect to home' },
-  { key: 'psychotherapists_enabled',  label: 'Psychotherapists',  description: 'When hidden, /psychotherapists and all profile pages redirect to home' },
-  { key: 'referral_agencies_enabled', label: 'Referral Agencies', description: 'When hidden, /referral-agencies and all profile pages redirect to home' },
-  { key: 'black_mens_groups_enabled', label: "Black Men's Groups", description: "When hidden, /black-mens-groups and all profile pages redirect to home" },
-  { key: 'youth_service_organizations_enabled', label: 'Youth Service Organizations', description: 'When hidden, the category is removed from the Services nav dropdown' },
-  { key: 'community_organizations_enabled',     label: 'Community Organizations',     description: 'When hidden, the category is removed from the Services nav dropdown' },
   { key: 'blogs_enabled',             label: 'Blog',              description: 'When hidden, /blogs and all blog posts redirect to home' },
   { key: 'events_enabled',            label: 'Events',            description: 'When hidden, /events and all event pages redirect to home' },
   { key: 'reading_list_enabled',      label: 'Reading List',      description: 'When hidden, /reading-list and all items redirect to home' },
@@ -32,6 +26,18 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'newsletter_enabled',        label: 'Newsletter',        description: 'When hidden, /newsletter and all edition pages redirect to home' },
   { key: 'health_wellness_enabled',   label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
   { key: 'research_enabled',          label: 'Research',          description: 'When hidden, /research and all research posts redirect to home' },
+]
+
+const SERVICES_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
+  { key: 'advocates_enabled',         label: 'Advocates',         description: 'When hidden, /advocates and all profile pages redirect to home' },
+  { key: 'psychotherapists_enabled',  label: 'Psychotherapists',  description: 'When hidden, /psychotherapists and all profile pages redirect to home' },
+  { key: 'referral_agencies_enabled', label: 'Referral Agencies', description: 'When hidden, /referral-agencies and all profile pages redirect to home' },
+  { key: 'black_mens_groups_enabled', label: "Black Men's Groups", description: "When hidden, /black-mens-groups and all profile pages redirect to home" },
+  { key: 'youth_service_organizations_enabled', label: 'Youth Service Organizations', description: 'When hidden, the category is removed from the Services nav dropdown' },
+  { key: 'community_organizations_enabled',     label: 'Community Organizations',     description: 'When hidden, the category is removed from the Services nav dropdown' },
+]
+
+const RESEARCH_CATEGORY_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
   { key: 'research_institutes_enabled', label: 'Research Institutes', description: 'When hidden, the Research Institutes category is removed from the nav and research landing page' },
   { key: 'call_for_papers_enabled',   label: 'Call for Papers',   description: 'When hidden, the Call for Papers category is removed from the nav and research landing page' },
   { key: 'sexual_abuse_boys_men_enabled', label: 'Sexual Abuse of Boys and Men', description: 'When hidden, this category is removed from the nav and research landing page' },
@@ -110,6 +116,30 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
           </p>
         </div>
         <div className="space-y-3">{PAGE_ITEMS.map(renderRow)}</div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">Services Categories</h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Hide individual Services categories from the nav dropdown and public site.
+          </p>
+        </div>
+        <div className="space-y-3">{SERVICES_ITEMS.map(renderRow)}</div>
+      </section>
+
+      <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--color-text-primary)] dark:text-white">Research Categories</h2>
+          <p className="text-sm text-[var(--color-text-muted)] mt-0.5">
+            Hide individual Research categories from the nav dropdown and research landing page.
+          </p>
+        </div>
+        <div className="space-y-3">{RESEARCH_CATEGORY_ITEMS.map(renderRow)}</div>
       </section>
 
       <hr className="border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
