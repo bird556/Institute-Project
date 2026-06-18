@@ -8,7 +8,7 @@ import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
   BookOpen, Home, Info, Target, Settings, Newspaper,
   Calendar, List, Mail, Heart, Star, Microscope, Building2, Send, ShieldAlert, Users,
-  Navigation2, Eye, PanelBottom, Download,
+  Navigation2, Eye, PanelBottom, Download, Lock,
   Menu, X, LogOut,
   type LucideIcon,
 } from 'lucide-react'
@@ -89,6 +89,7 @@ const DRAWER_GROUPS: NavGroup[] = [
       { label: 'Navigation',        href: '/admin/navigation',          icon: Navigation2 },
       { label: 'Visibility',        href: '/admin/visibility',          icon: Eye },
       { label: 'Footer',            href: '/admin/footer',              icon: PanelBottom },
+      { label: 'Site Access',       href: '/admin/access',              icon: Lock },
       { label: 'Export',            href: '/admin/export',              icon: Download },
     ],
   },
