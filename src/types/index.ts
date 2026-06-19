@@ -140,6 +140,9 @@ export interface SiteSettings {
   // Site access gate
   site_gate_enabled: string
   site_gate_password: string
+  // Klaviyo onsite popup
+  klaviyo_popup_enabled: string
+  klaviyo_company_id: string
 }
 
 export interface GoalPillar {
