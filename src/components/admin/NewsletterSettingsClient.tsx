@@ -30,6 +30,10 @@ export default function NewsletterSettingsClient({
   listUrl,
   configured,
 }: Props) {
+  const [popupEnabled,        setPopupEnabled]        = useState(s?.klaviyo_popup_enabled === 'true')
+  const [companyId,           setCompanyId]           = useState(s?.klaviyo_company_id ?? '')
+  const [savingCompanyId,     setSavingCompanyId]     = useState(false)
+
   const [signupEnabled,       setSignupEnabled]       = useState(s?.signup_section_enabled !== 'false')
   const [heading,             setHeading]             = useState(s?.newsletter_heading         ?? 'Stay Connected')
   const [subtext,             setSubtext]             = useState(s?.newsletter_subtext         ?? 'Join our community and be the first to hear about events, publications, and resources from the Kustawi Institute.')
@@ -39,6 +43,23 @@ export default function NewsletterSettingsClient({
   const [savingCopy,          setSavingCopy]          = useState(false)
   const [savingSuccessMsg,    setSavingSuccessMsg]     = useState(false)
   const [savingConsentText,   setSavingConsentText]    = useState(false)
+
+  async function handleTogglePopup(enabled: boolean) {
+    setPopupEnabled(enabled)
+    const res = await toggleSectionVisibility('klaviyo_popup_enabled', enabled)
+    if (!res.success) {
+      setPopupEnabled(!enabled)
+      toast.error(res.error ?? 'Failed to update')
+    }
+  }
+
+  async function handleSaveCompanyId() {
+    setSavingCompanyId(true)
+    const res = await updateSiteSetting('klaviyo_company_id', companyId.trim())
+    setSavingCompanyId(false)
+    if (res.success) toast.success('Company ID updated')
+    else toast.error(res.error ?? 'Failed to save')
+  }
 
   async function handleToggleSignup(enabled: boolean) {
     setSignupEnabled(enabled)
@@ -114,6 +135,49 @@ export default function NewsletterSettingsClient({
             </a>
           </div>
         )}
+      </section>
+
+      <hr className="border-(--color-border) dark:border-dark-border" />
+
+      {/* ── Popup Form (Klaviyo) ─────────────────────────────────────────── */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-base font-semibold text-text-primary dark:text-white">Popup Form (Klaviyo)</h2>
+          <p className="text-sm text-text-muted mt-0.5">
+            Surfaces the Sign-Up Form popup you designed inside Klaviyo&apos;s own dashboard. Its design, timing, and targeting are all controlled there — this just turns the connection on or off.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between gap-4 rounded-lg border border-(--color-border) dark:border-dark-border px-4 py-3">
+          <div>
+            <p className="text-sm font-medium text-text-primary dark:text-white">Show the Klaviyo popup on the site</p>
+            <p className="text-xs text-text-muted mt-0.5">When off, the popup script is not loaded anywhere on the public site.</p>
+          </div>
+          <Switch
+            checked={popupEnabled}
+            onCheckedChange={handleTogglePopup}
+            className="cursor-pointer shrink-0"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="klaviyo-company-id">Company ID</Label>
+          <Input
+            id="klaviyo-company-id"
+            value={companyId}
+            onChange={e => setCompanyId(e.target.value)}
+            placeholder="e.g. YxT5RY"
+          />
+          <p className="text-xs text-text-muted">
+            Find this under Klaviyo → Account → Settings → API Keys → Public API Key (Company ID).
+          </p>
+        </div>
+
+        <div className="flex justify-end">
+          <Button onClick={handleSaveCompanyId} disabled={savingCompanyId} className="cursor-pointer">
+            {savingCompanyId ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
       </section>
 
       <hr className="border-(--color-border) dark:border-dark-border" />
