@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Mail } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { truncate, stripHtml } from '@/lib/utils'
@@ -95,7 +95,16 @@ export default async function ReadingListDetailPage({ params }: Props) {
               className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white text-sm font-medium transition-colors duration-200"
             >
               <ExternalLink className="w-4 h-4" />
-              Find this book
+              {item.item_type === 'bookstore' ? 'Visit Website' : 'Find this book'}
+            </a>
+          )}
+          {item.email && (
+            <a
+              href={`mailto:${item.email}`}
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+            >
+              <Mail className="w-4 h-4" />
+              {item.email}
             </a>
           )}
         </aside>

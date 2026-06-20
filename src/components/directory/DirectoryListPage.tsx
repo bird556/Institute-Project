@@ -37,6 +37,7 @@ export default async function DirectoryListPage({ category, pageSlug }: Props) {
     website_url: e.website_url,
     email: e.email,
     mode: e.mode,
+    province: e.province,
     category: e.category,
     created_at: e.created_at,
   }))

@@ -15,6 +15,7 @@ export interface DirectoryCardProps {
   website_url: string | null
   email: string | null
   mode: DirectoryMode | null
+  province: string | null
   category: DirectoryCategory
   created_at: string
 }
@@ -39,7 +40,7 @@ const CATEGORY_HREFS: Record<DirectoryCategory, string> = {
 
 export default function DirectoryCard({
   id, name, organization, description_excerpt,
-  photo_url, website_url, email, mode, category,
+  photo_url, website_url, email, mode, province, category,
 }: DirectoryCardProps) {
   const href = `${CATEGORY_HREFS[category]}/${id}`
 
@@ -79,6 +80,10 @@ export default function DirectoryCard({
 
           {organization && !DIRECTORY_HIDE_NAME.includes(category) && (
             <p className="text-sm text-[var(--color-text-muted)] line-clamp-1">{organization}</p>
+          )}
+
+          {province && (
+            <p className="text-xs text-[var(--color-text-muted)]">{province}</p>
           )}
 
           {description_excerpt && (

@@ -48,9 +48,12 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [externalUrl, setExternalUrl] = useState(item.external_url ?? '')
   const [urlError, setUrlError] = useState('')
+  const [email, setEmail] = useState(item.email ?? '')
   const [authorRegion, setAuthorRegion] = useState<'canadian' | 'world' | ''>(item.author_region ?? '')
-  const [itemType, setItemType] = useState<'book' | 'thesis_ma' | 'thesis_phd' | ''>(item.item_type ?? '')
+  const [itemType, setItemType] = useState<'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | ''>(item.item_type ?? '')
   const [published, setPublished] = useState(item.published)
+
+  const isBookstore = itemType === 'bookstore'
 
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -67,8 +70,9 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
       description: description || null,
       cover_path: coverPath,
       external_url: externalUrl || null,
+      email: email || null,
       author_region: (authorRegion || null) as 'canadian' | 'world' | null,
-      item_type: (itemType || null) as 'book' | 'thesis_ma' | 'thesis_phd' | null,
+      item_type: (itemType || null) as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null,
     }
   }
 
@@ -97,6 +101,11 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   function handleUrlChange(val: string) {
     setExternalUrl(val)
     setUrlError('')
+    scheduleAutosave()
+  }
+
+  function handleEmailChange(val: string) {
+    setEmail(val)
     scheduleAutosave()
   }
 
@@ -206,13 +215,13 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
             {/* Title */}
             <div className="space-y-1.5">
               <Label htmlFor="title" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                Title
+                {isBookstore ? 'Bookstore Name' : 'Title'}
               </Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="Book or article title"
+                placeholder={isBookstore ? 'e.g. Knowledge Bookstore' : 'Book or article title'}
                 className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
             </div>
@@ -226,7 +235,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
                 content={description}
                 onChange={handleDescriptionChange}
                 folder="reading-list/inline"
-                placeholder="Why is this worth reading? Add annotations, notes, or a summary…"
+                placeholder={isBookstore ? 'What does this bookstore offer?' : 'Why is this worth reading? Add annotations, notes, or a summary…'}
               />
             </div>
           </div>
@@ -251,36 +260,40 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               />
             </div>
 
-            {/* Author */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-              <Label htmlFor="author" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                Author
-              </Label>
-              <Input
-                id="author"
-                value={author}
-                onChange={(e) => handleAuthorChange(e.target.value)}
-                placeholder="e.g. Paulo Freire"
-                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
-              />
-            </div>
+            {/* Author — not applicable to bookstores */}
+            {!isBookstore && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+                <Label htmlFor="author" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                  Author
+                </Label>
+                <Input
+                  id="author"
+                  value={author}
+                  onChange={(e) => handleAuthorChange(e.target.value)}
+                  placeholder="e.g. Paulo Freire"
+                  className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                />
+              </div>
+            )}
 
-            {/* Author Region */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-              <Label htmlFor="author-region" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                Author Region
-              </Label>
-              <select
-                id="author-region"
-                value={authorRegion}
-                onChange={(e) => { setAuthorRegion(e.target.value as 'canadian' | 'world' | ''); scheduleAutosave() }}
-                className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
-              >
-                <option value="">— Not set —</option>
-                <option value="canadian">Canadian</option>
-                <option value="world">International</option>
-              </select>
-            </div>
+            {/* Author Region — not applicable to bookstores */}
+            {!isBookstore && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+                <Label htmlFor="author-region" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                  Author Region
+                </Label>
+                <select
+                  id="author-region"
+                  value={authorRegion}
+                  onChange={(e) => { setAuthorRegion(e.target.value as 'canadian' | 'world' | ''); scheduleAutosave() }}
+                  className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
+                >
+                  <option value="">— Not set —</option>
+                  <option value="canadian">Canadian</option>
+                  <option value="world">International</option>
+                </select>
+              </div>
+            )}
 
             {/* Item Type */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
@@ -290,20 +303,21 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               <select
                 id="item-type"
                 value={itemType}
-                onChange={(e) => { setItemType(e.target.value as 'book' | 'thesis_ma' | 'thesis_phd' | ''); scheduleAutosave() }}
+                onChange={(e) => { setItemType(e.target.value as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | ''); scheduleAutosave() }}
                 className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
               >
                 <option value="">— Not set —</option>
                 <option value="book">Book</option>
                 <option value="thesis_ma">Thesis (M.A.)</option>
                 <option value="thesis_phd">Thesis (Ph.D.)</option>
+                <option value="bookstore">Bookstore</option>
               </select>
             </div>
 
             {/* External URL */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
               <Label htmlFor="external-url" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                External URL
+                {isBookstore ? 'Website URL' : 'External URL'}
               </Label>
               <div className="flex items-center gap-2">
                 <Input
@@ -328,6 +342,21 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               {urlError && (
                 <p className="text-xs text-red-600">{urlError}</p>
               )}
+            </div>
+
+            {/* Email */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="email" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                placeholder="contact@example.com"
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+              />
             </div>
 
             {/* Meta */}

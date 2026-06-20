@@ -10,7 +10,7 @@ const PAGE_SIZE = 16
 export interface ReadingListItem extends ReadingListRowProps {
   created_at: string
   author_region: 'canadian' | 'world' | null
-  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | null
+  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
 }
 
 type SortOption = 'author_az' | 'author_za' | 'newest' | 'oldest' | 'az' | 'za'
@@ -31,7 +31,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
   const [sort, setSort]               = useState<SortOption>('author_az')
   const [authorFilter, setAuthorFilter] = useState('all')
   const [regionFilter, setRegionFilter] = useState<'all' | 'canadian' | 'world'>('all')
-  const [typeFilter, setTypeFilter]     = useState<'all' | 'book' | 'thesis_ma' | 'thesis_phd' | 'thesis'>('all')
+  const [typeFilter, setTypeFilter]     = useState<'all' | 'book' | 'thesis_ma' | 'thesis_phd' | 'thesis' | 'bookstore'>('all')
   const [page, setPage]               = useState(1)
 
   const authors = useMemo(
@@ -153,6 +153,7 @@ export default function ReadingListClient({ items }: { items: ReadingListItem[] 
               <option value="thesis">Theses</option>
               <option value="thesis_ma">Thesis (M.A.)</option>
               <option value="thesis_phd">Thesis (Ph.D.)</option>
+              <option value="bookstore">Bookstores</option>
             </select>
           </div>
         )}

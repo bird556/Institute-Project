@@ -36,7 +36,7 @@ export async function createReadingListItem(): Promise<ActionResult<{ id: string
   return { success: true, data: { id: data.id } }
 }
 
-const TEXT_FIELDS = ['title', 'author', 'external_url'] as const
+const TEXT_FIELDS = ['title', 'author', 'external_url', 'email'] as const
 
 export async function updateReadingListItem(
   id: string,

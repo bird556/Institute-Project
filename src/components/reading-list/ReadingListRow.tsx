@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ExternalLink, BookOpen } from 'lucide-react'
+import { ExternalLink, BookOpen, Mail } from 'lucide-react'
 
 const TYPE_LABELS: Record<string, string> = {
   book:      'Book',
   thesis_ma: 'Thesis (M.A.)',
   thesis_phd: 'Thesis (Ph.D.)',
+  bookstore: 'Bookstore',
 }
 
 export interface ReadingListRowProps {
@@ -17,8 +18,9 @@ export interface ReadingListRowProps {
   description_excerpt: string
   cover_url: string
   external_url?: string | null
+  email?: string | null
   author_region?: 'canadian' | 'world' | null
-  item_type?: 'book' | 'thesis_ma' | 'thesis_phd' | null
+  item_type?: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
 }
 
 export default function ReadingListRow({
@@ -28,6 +30,7 @@ export default function ReadingListRow({
   description_excerpt,
   cover_url,
   external_url,
+  email,
   author_region,
   item_type,
 }: ReadingListRowProps) {
@@ -104,6 +107,16 @@ export default function ReadingListRow({
             >
               <ExternalLink className="w-3.5 h-3.5" />
               External Link
+            </a>
+          )}
+          {email && (
+            <a
+              href={`mailto:${email}`}
+              className="inline-flex items-center gap-1 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Mail className="w-3.5 h-3.5" />
+              Email
             </a>
           )}
         </div>

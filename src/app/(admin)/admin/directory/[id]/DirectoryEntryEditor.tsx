@@ -18,7 +18,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateDirectoryEntry, toggleDirectoryEntryPublished, deleteDirectoryEntry } from '@/actions/directory'
 import { formatDate } from '@/lib/utils'
 import type { DirectoryEntry, DirectoryMode } from '@/types'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_ORG_PLACEHOLDER } from '@/types'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_ORG_PLACEHOLDER, CANADIAN_PROVINCES } from '@/types'
 
 const AUTOSAVE_MS = 2000
 
@@ -36,6 +36,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const [website_url, setWebsite]     = useState(entry.website_url ?? '')
   const [email, setEmail]             = useState(entry.email ?? '')
   const [mode, setMode]               = useState<DirectoryMode | ''>(entry.mode ?? '')
+  const [province, setProvince]       = useState(entry.province ?? '')
   const [photoPath, setPhotoPath]     = useState<string | null>(entry.photo_path)
   const [photoUrl, setPhotoUrl]       = useState<string | undefined>(initialPhotoUrl)
   const [published, setPublished]     = useState(entry.published)
@@ -51,6 +52,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const categoryLabel = DIRECTORY_CATEGORY_LABELS[entry.category]
   const adminHref = '/admin/directory'
   const hideName = DIRECTORY_HIDE_NAME.includes(entry.category)
+  const showProvince = entry.category === 'community_organization'
 
   function buildFields() {
     return {
@@ -60,6 +62,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
       website_url: website_url.trim() || null,
       email: email.trim() || null,
       mode: (mode || null) as DirectoryMode | null,
+      province: province || null,
       photo_path: photoPath,
     }
   }
@@ -189,6 +192,23 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
                   <option value="">Not specified</option>
                   {(Object.entries(DIRECTORY_MODE_LABELS) as [DirectoryMode, string][]).map(([val, label]) => (
                     <option key={val} value={val}>{label}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {/* Province — Community Organizations only */}
+            {showProvince && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Province</Label>
+                <select
+                  value={province}
+                  onChange={(e) => { setProvince(e.target.value); scheduleAutosave() }}
+                  className="w-full h-9 rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
+                >
+                  <option value="">Not specified</option>
+                  {CANADIAN_PROVINCES.map((p) => (
+                    <option key={p} value={p}>{p}</option>
                   ))}
                 </select>
               </div>

@@ -60,7 +60,7 @@ export default async function ReadingListPage() {
   // Fetch all published items
   const { data } = await supabase
     .from('reading_list')
-    .select('id, title, author, description, cover_path, external_url, author_region, item_type, created_at')
+    .select('id, title, author, description, cover_path, external_url, email, author_region, item_type, created_at')
     .eq('published', true)
     .order('created_at', { ascending: false })
 
@@ -73,8 +73,9 @@ export default async function ReadingListPage() {
       ? supabase.storage.from('institute-media').getPublicUrl(r.cover_path).data.publicUrl
       : '',
     external_url: r.external_url,
+    email: r.email,
     author_region: (r.author_region ?? null) as 'canadian' | 'world' | null,
-    item_type: (r.item_type ?? null) as 'book' | 'thesis_ma' | 'thesis_phd' | null,
+    item_type: (r.item_type ?? null) as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null,
     created_at: r.created_at,
   }))
 

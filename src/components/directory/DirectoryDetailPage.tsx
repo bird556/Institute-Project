@@ -135,6 +135,10 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
             <p className="text-lg text-[var(--color-text-muted)]">{entry.organization}</p>
           )}
 
+          {entry.province && (
+            <p className="text-sm text-[var(--color-text-muted)]">{entry.province}</p>
+          )}
+
           {entry.description && (
             <div
               className="tiptap-content pt-4"

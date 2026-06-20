@@ -34,8 +34,9 @@ export interface ReadingListItem {
   description: string | null
   cover_path: string | null
   external_url: string | null
+  email: string | null
   author_region: 'canadian' | 'world' | null
-  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | null
+  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
   published: boolean
   created_at: string
   updated_at: string
@@ -352,6 +353,14 @@ export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {
   both:       'Online & In-Person',
 }
 
+// Canadian provinces/territories — currently only collected for Community Organizations
+export const CANADIAN_PROVINCES = [
+  'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
+  'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia',
+  'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec',
+  'Saskatchewan', 'Yukon',
+] as const
+
 export interface DirectoryEntry {
   id: string
   name: string
@@ -362,6 +371,7 @@ export interface DirectoryEntry {
   photo_path: string | null
   category: DirectoryCategory
   mode: DirectoryMode | null
+  province: string | null
   published: boolean
   sort_order: number
   created_at: string
