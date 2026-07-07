@@ -99,9 +99,7 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
     })
   }
 
-  async function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
+  async function uploadDoc(file: File) {
     setDocUploading(true)
     try {
       const formData = new FormData()
@@ -118,8 +116,20 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
       toast.error('Upload failed.')
     } finally {
       setDocUploading(false)
-      e.target.value = ''
     }
+  }
+
+  function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) uploadDoc(file)
+    e.target.value = ''
+  }
+
+  function handleDocDrop(e: React.DragEvent<HTMLElement>) {
+    e.preventDefault()
+    if (docUploading) return
+    const file = e.dataTransfer.files?.[0]
+    if (file) uploadDoc(file)
   }
 
   async function handleDocRemove() {
@@ -375,7 +385,11 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
               </p>
 
               {docPath ? (
-                <div className="flex items-center gap-2 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] px-3 py-2">
+                <div
+                  className="flex items-center gap-2 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] px-3 py-2"
+                  onDrop={handleDocDrop}
+                  onDragOver={(e) => e.preventDefault()}
+                >
                   <FileText size={16} className="text-[var(--color-brand-teal)] shrink-0" />
                   <span className="text-xs text-[var(--color-text-primary)] dark:text-white truncate flex-1">
                     {docName || docPath.split('/').pop()}
@@ -389,10 +403,14 @@ export default function WellnessEditor({ post, initialCoverUrl }: WellnessEditor
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 cursor-pointer hover:border-[var(--color-brand-teal)] transition-colors">
+                <label
+                  className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 cursor-pointer hover:border-[var(--color-brand-teal)] transition-colors"
+                  onDrop={handleDocDrop}
+                  onDragOver={(e) => e.preventDefault()}
+                >
                   <FileText size={20} className="text-[var(--color-text-muted)]" />
                   <span className="text-xs text-[var(--color-text-muted)]">
-                    {docUploading ? 'Uploading…' : 'Click to upload PDF, DOC, or DOCX'}
+                    {docUploading ? 'Uploading…' : 'Click or drag a file to upload — PDF, DOC, or DOCX'}
                   </span>
                   <input
                     type="file"

@@ -17,6 +17,7 @@ export interface Event {
   slug: string
   description: string
   cover_path: string | null
+  doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   location: string | null
   event_date: string
   external_url: string | null   // Optional link to external registration (e.g. Eventbrite)

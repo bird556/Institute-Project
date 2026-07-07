@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { ArrowLeft, MoreVertical, Trash2 } from 'lucide-react'
+import { ArrowLeft, MoreVertical, Trash2, FileText, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -50,6 +50,9 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [description, setDescription] = useState(event.description)
   const [coverPath, setCoverPath] = useState<string | null>(event.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
+  const [docPath, setDocPath] = useState<string | null>(event.doc_path)
+  const [docName, setDocName] = useState<string>('')
+  const [docUploading, setDocUploading] = useState(false)
   const [location, setLocation] = useState(event.location ?? '')
   const [organizer, setOrganizer] = useState(event.organizer ?? '')
   const [externalUrl, setExternalUrl] = useState(event.external_url ?? '')
@@ -76,6 +79,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       slug,
       description,
       cover_path: coverPath,
+      doc_path: docPath,
       location: location || null,
       organizer: organizer.trim() || null,
       event_date: combineDateTime(eventDate, eventTime),
@@ -95,6 +99,46 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   }
 
   useEffect(() => () => { if (autosaveTimer.current) clearTimeout(autosaveTimer.current) }, [])
+
+  async function uploadDoc(file: File) {
+    setDocUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'events/docs')
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const json = await res.json()
+      if (!res.ok) { toast.error(json.error ?? 'Upload failed.'); return }
+      setDocPath(json.path)
+      setDocName(file.name)
+      await updateEvent(event.id, { doc_path: json.path })
+      toast.success('Document uploaded.')
+    } catch {
+      toast.error('Upload failed.')
+    } finally {
+      setDocUploading(false)
+    }
+  }
+
+  function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) uploadDoc(file)
+    e.target.value = ''
+  }
+
+  function handleDocDrop(e: React.DragEvent<HTMLElement>) {
+    e.preventDefault()
+    if (docUploading) return
+    const file = e.dataTransfer.files?.[0]
+    if (file) uploadDoc(file)
+  }
+
+  async function handleDocRemove() {
+    setDocPath(null)
+    setDocName('')
+    await updateEvent(event.id, { doc_path: null })
+    toast.success('Document removed.')
+  }
 
   function handleTitleChange(val: string) {
     setTitle(val)
@@ -286,6 +330,54 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                   scheduleAutosave()
                 }}
               />
+            </div>
+
+            {/* Downloadable Document */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
+              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
+                Downloadable Document
+              </p>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Optional PDF, DOC, or DOCX that attendees can download from the event page. Max 20 MB.
+              </p>
+
+              {docPath ? (
+                <div
+                  className="flex items-center gap-2 rounded-lg bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2"
+                  onDrop={handleDocDrop}
+                  onDragOver={(e) => e.preventDefault()}
+                >
+                  <FileText size={16} className="text-[var(--color-brand-teal)] shrink-0" />
+                  <span className="text-xs text-[var(--color-text-primary)] dark:text-white truncate flex-1">
+                    {docName || docPath.split('/').pop()}
+                  </span>
+                  <button
+                    onClick={handleDocRemove}
+                    className="text-[var(--color-text-muted)] hover:text-destructive transition-colors cursor-pointer shrink-0"
+                    aria-label="Remove document"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 cursor-pointer hover:border-[var(--color-brand-teal)] transition-colors"
+                  onDrop={handleDocDrop}
+                  onDragOver={(e) => e.preventDefault()}
+                >
+                  <FileText size={20} className="text-[var(--color-text-muted)]" />
+                  <span className="text-xs text-[var(--color-text-muted)]">
+                    {docUploading ? 'Uploading…' : 'Click or drag a file to upload — PDF, DOC, or DOCX'}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className="sr-only"
+                    onChange={handleDocUpload}
+                    disabled={docUploading}
+                  />
+                </label>
+              )}
             </div>
 
             {/* Date & time */}

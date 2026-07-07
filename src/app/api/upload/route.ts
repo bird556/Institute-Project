@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing file or folder.' }, { status: 400 })
     }
 
-    const isDoc   = folder === 'wellness/docs'
+    const isDoc   = folder.endsWith('/docs')
     const isImage = ACCEPTED_IMAGE_TYPES.has(file.type)
     const isDocType = ACCEPTED_DOC_TYPES.has(file.type)
 
