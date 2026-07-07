@@ -149,7 +149,7 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                               className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                               onClick={() => setServicesDropdownOpen(false)}
                             >
-                              Community Organizations
+                              Community and Professional Organizations
                             </Link>
                           )}
                         </motion.div>
@@ -349,7 +349,7 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             )}
                             {showCommunityOrganizations && (
                               <Link href="/community-organizations" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
-                                Community Organizations
+                                Community and Professional Organizations
                               </Link>
                             )}
                           </motion.div>

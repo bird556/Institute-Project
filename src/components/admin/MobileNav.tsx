@@ -78,7 +78,7 @@ const DRAWER_GROUPS: NavGroup[] = [
       { label: 'Referral Agencies Page',  href: '/admin/pages/referral-agencies', icon: Users },
       { label: "Black Men's Groups Page", href: '/admin/pages/black-mens-groups', icon: Users },
       { label: 'Youth Service Organizations Page', href: '/admin/pages/youth-service-organizations', icon: Users },
-      { label: 'Community Organizations Page',     href: '/admin/pages/community-organizations',     icon: Users },
+      { label: 'Community and Professional Organizations Page',     href: '/admin/pages/community-organizations',     icon: Users },
     ],
   },
   {

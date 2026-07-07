@@ -31,7 +31,7 @@ const TABS: { category: DirectoryCategory; label: string }[] = [
   { category: 'referral_agency',             label: 'Referral Agencies' },
   { category: 'black_mens_group',            label: "Black Men's Groups" },
   { category: 'youth_service_organization',  label: 'Youth Service Organizations' },
-  { category: 'community_organization',      label: 'Community Organizations' },
+  { category: 'community_organization',      label: 'Community and Professional Organizations' },
 ]
 
 type DirSortOption = 'name_az' | 'name_za' | 'newest' | 'oldest' | 'org_az' | 'org_za' | 'mode'
@@ -41,8 +41,8 @@ const DIR_SORT_LABELS: Record<DirSortOption, string> = {
   name_za: 'Name Z → A',
   newest:  'Date Added: Newest',
   oldest:  'Date Added: Oldest',
-  org_az:  'Organisation A → Z',
-  org_za:  'Organisation Z → A',
+  org_az:  'Organization A → Z',
+  org_za:  'Organization Z → A',
   mode:    'Mode',
 }
 
@@ -160,7 +160,7 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
             type="text"
             value={query}
             onChange={(e) => { setQuery(e.target.value); resetPage() }}
-            placeholder="Search by name or organisation…"
+            placeholder="Search by name or organization…"
             className="w-full pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
           />
           {query && (

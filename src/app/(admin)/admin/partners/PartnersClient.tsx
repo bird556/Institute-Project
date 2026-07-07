@@ -396,7 +396,7 @@ function EmptyState({ onNew, creating }: { onNew: () => void; creating: boolean 
       </div>
       <div>
         <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">No partners yet</p>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1">Add your first partner organisation to get started.</p>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Add your first partner organization to get started.</p>
       </div>
       <Button
         onClick={onNew}
