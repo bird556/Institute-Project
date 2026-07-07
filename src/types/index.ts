@@ -327,7 +327,7 @@ export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
   referral_agency:             'Referral Agencies',
   black_mens_group:            "Black Men's Groups",
   youth_service_organization:  'Youth Service Organizations',
-  community_organization:      'Community Organizations',
+  community_organization:      'Community and Professional Organizations',
 }
 
 // Categories where the admin-facing "Name" field is hidden — Organization is
@@ -344,7 +344,7 @@ export const DIRECTORY_ORG_PLACEHOLDER: Record<DirectoryCategory, string> = {
   referral_agency:             'e.g. Referral Agency',
   black_mens_group:            "e.g. Black Men's Group",
   youth_service_organization:  'e.g. Youth Service Organization',
-  community_organization:      'e.g. Community Organization',
+  community_organization:      'e.g. Community or Professional Organization',
 }
 
 export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {

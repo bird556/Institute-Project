@@ -152,7 +152,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               </div>
             )}
             <div className="space-y-1.5">
-              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Organisation</Label>
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Organization</Label>
               <Input value={organization} onChange={(e) => { setOrg(e.target.value); scheduleAutosave() }} placeholder={DIRECTORY_ORG_PLACEHOLDER[entry.category]} className={hideName ? 'font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]' : 'text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]'} />
             </div>
             <div className="space-y-1.5">

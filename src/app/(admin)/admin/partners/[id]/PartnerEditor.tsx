@@ -109,7 +109,7 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
 
   function validate(): boolean {
     if (!name.trim()) {
-      toast.error('Organisation name is required.')
+      toast.error('Organization name is required.')
       return false
     }
     if (websiteUrl && !isValidUrl(websiteUrl)) {
@@ -191,13 +191,13 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
             {/* Name */}
             <div className="space-y-1.5">
               <Label htmlFor="name" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                Organisation Name
+                Organization Name
               </Label>
               <Input
                 id="name"
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
-                placeholder="Partner organisation name"
+                placeholder="Partner organization name"
                 className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
             </div>
@@ -211,7 +211,7 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
                 content={description}
                 onChange={handleDescriptionChange}
                 folder="partners/inline"
-                placeholder="Write a description for this partner organisation…"
+                placeholder="Write a description for this partner organization…"
                 minHeight={250}
               />
             </div>

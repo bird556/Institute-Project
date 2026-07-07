@@ -258,7 +258,7 @@ export const mockEvents: MockEvent[] = [
       <h2>What to Expect</h2>
       <p>Two full days of keynote sessions, workshops, and facilitated dialogue. Participants will leave with a concrete action plan tailored to their institutional context.</p>
       <h2>Who Should Attend</h2>
-      <p>Principals, heads of department, curriculum leads, and anyone shaping the strategic direction of a school or educational organisation.</p>
+      <p>Principals, heads of department, curriculum leads, and anyone shaping the strategic direction of a school or educational organization.</p>
     `.trim(),
     cover_url:
       'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=800&q=80',
@@ -470,7 +470,7 @@ export const mockPartners: MockPartner[] = [
     logo_url:
       'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400&q=80',
     description:
-      'A cross-sector initiative connecting schools with local businesses and community organisations to expand experiential learning opportunities for students.',
+      'A cross-sector initiative connecting schools with local businesses and community organizations to expand experiential learning opportunities for students.',
     website_url: 'https://example.com/bright-futures',
     sort_order: 2,
     published: true,
@@ -556,7 +556,7 @@ export const mockPageContent: MockPageContent[] = [
     id: 'pc-home-cta',
     page: 'home',
     section: 'cta',
-    content: `<h2>Get Involved</h2><p>Whether you are an educator looking to grow, a school leader seeking strategic support, or an organisation interested in partnership — we want to hear from you.</p>`,
+    content: `<h2>Get Involved</h2><p>Whether you are an educator looking to grow, a school leader seeking strategic support, or an organization interested in partnership — we want to hear from you.</p>`,
     updated_at: '2025-03-01T10:00:00Z',
   },
   {
@@ -648,7 +648,7 @@ export const mockPageContent: MockPageContent[] = [
     id: 'pc-about-intro',
     page: 'about',
     section: 'intro',
-    content: `<h1>About the Institute</h1><p>We are an independent, non-partisan educational research and professional development organisation. Our work spans curriculum design, teacher professional learning, leadership coaching, and education policy analysis.</p>`,
+    content: `<h1>About the Institute</h1><p>We are an independent, non-partisan educational research and professional development organization. Our work spans curriculum design, teacher professional learning, leadership coaching, and education policy analysis.</p>`,
     updated_at: '2025-02-15T10:00:00Z',
   },
   {
@@ -669,7 +669,7 @@ export const mockPageContent: MockPageContent[] = [
     id: 'pc-about-history',
     page: 'about',
     section: 'history',
-    content: `<h2>Our History</h2><p>The Institute was founded in 2001 by a small group of educators frustrated with the disconnect between education research and classroom practice. What began as a study group has grown into a nationally recognised organisation working with hundreds of schools each year.</p>`,
+    content: `<h2>Our History</h2><p>The Institute was founded in 2001 by a small group of educators frustrated with the disconnect between education research and classroom practice. What began as a study group has grown into a nationally recognized organization working with hundreds of schools each year.</p>`,
     updated_at: '2025-02-15T10:00:00Z',
   },
 
@@ -741,7 +741,7 @@ export const mockPageContent: MockPageContent[] = [
     id: 'pc-partners-hero-subtitle',
     page: 'partners',
     section: 'hero_subtitle',
-    content: 'Organisations we work with to advance our mission.',
+    content: 'Organizations we work with to advance our mission.',
     updated_at: new Date().toISOString(),
   },
 

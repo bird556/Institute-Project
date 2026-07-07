@@ -34,7 +34,7 @@ const SERVICES_ITEMS: { key: VisibilityKey; label: string; description: string }
   { key: 'referral_agencies_enabled', label: 'Referral Agencies', description: 'When hidden, /referral-agencies and all profile pages redirect to home' },
   { key: 'black_mens_groups_enabled', label: "Black Men's Groups", description: "When hidden, /black-mens-groups and all profile pages redirect to home" },
   { key: 'youth_service_organizations_enabled', label: 'Youth Service Organizations', description: 'When hidden, the category is removed from the Services nav dropdown' },
-  { key: 'community_organizations_enabled',     label: 'Community Organizations',     description: 'When hidden, the category is removed from the Services nav dropdown' },
+  { key: 'community_organizations_enabled',     label: 'Community and Professional Organizations',     description: 'When hidden, the category is removed from the Services nav dropdown' },
 ]
 
 const RESEARCH_CATEGORY_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [

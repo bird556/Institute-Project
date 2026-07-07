@@ -26,7 +26,7 @@ const CATEGORY_FALLBACKS: Record<ResearchCategory, string> = {
   'call-for-papers':       'Submit your work and respond to active calls for papers, abstracts, and contributions.',
   'recent-publications':   'Explore recently published research, articles, and scholarly works contributed by our community.',
   'reports':               'Access in-depth reports, analyses, and findings produced by our researchers and collaborators.',
-  'research-institutes':   'Discover research institutes and organisations affiliated with our work.',
+  'research-institutes':   'Discover research institutes and organizations affiliated with our work.',
   'sexual-abuse-boys-men': 'Research papers, books, and films on the sexual abuse of boys and men.',
 }
 
