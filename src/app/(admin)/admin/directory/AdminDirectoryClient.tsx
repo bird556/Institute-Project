@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { MoreVertical, PenLine, Trash2, Plus, User, Search, X } from 'lucide-react'
 import Image from 'next/image'
@@ -49,11 +49,16 @@ const DIR_SORT_LABELS: Record<DirSortOption, string> = {
 const selectClass =
   'text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] px-3 h-9 cursor-pointer focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors'
 
+const TAB_CATEGORIES = TABS.map((t) => t.category)
+
 export default function AdminDirectoryClient({ entries: initial }: Props) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [entries, setEntries] = useState(initial)
-  const [activeTab, setActiveTab] = useState<DirectoryCategory>('advocate')
+  const tabParam = searchParams.get('tab')
+  const initialTab = TAB_CATEGORIES.includes(tabParam as DirectoryCategory) ? (tabParam as DirectoryCategory) : 'advocate'
+  const [activeTab, setActiveTab] = useState<DirectoryCategory>(initialTab)
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState<DirSortOption>('name_az')
   const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -108,6 +113,14 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
     toast.success('Entry deleted.')
   }
 
+  function handleTabChange(category: DirectoryCategory) {
+    setActiveTab(category)
+    setQuery('')
+    setSort('name_az')
+    resetPage()
+    router.replace(`/admin/directory?tab=${category}`, { scroll: false })
+  }
+
   async function handleToggle(id: string, current: boolean) {
     setTogglingId(id)
     setEntries((prev) => prev.map((e) => e.id === id ? { ...e, published: !current } : e))
@@ -146,7 +159,7 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
         {/* Tabs */}
         <div className="flex gap-1 p-1 rounded-xl bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
           {TABS.map(({ category, label }) => (
-            <button key={category} onClick={() => { setActiveTab(category); setQuery(''); setSort('name_az'); resetPage() }} className={tabClass(activeTab === category)}>
+            <button key={category} onClick={() => handleTabChange(category)} className={tabClass(activeTab === category)}>
               {label}
             </button>
           ))}
