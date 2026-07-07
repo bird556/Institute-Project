@@ -18,7 +18,7 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateDirectoryEntry, toggleDirectoryEntryPublished, deleteDirectoryEntry } from '@/actions/directory'
 import { formatDate } from '@/lib/utils'
 import type { DirectoryEntry, DirectoryMode } from '@/types'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_ORG_PLACEHOLDER, CANADIAN_PROVINCES } from '@/types'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_SHOW_PROVINCE, DIRECTORY_ORG_PLACEHOLDER, CANADIAN_PROVINCES } from '@/types'
 
 const AUTOSAVE_MS = 2000
 
@@ -52,7 +52,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const categoryLabel = DIRECTORY_CATEGORY_LABELS[entry.category]
   const adminHref = '/admin/directory'
   const hideName = DIRECTORY_HIDE_NAME.includes(entry.category)
-  const showProvince = entry.category === 'community_organization'
+  const showProvince = DIRECTORY_SHOW_PROVINCE.includes(entry.category)
 
   function buildFields() {
     return {
@@ -197,7 +197,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               </div>
             )}
 
-            {/* Province — Community Organizations only */}
+            {/* Province */}
             {showProvince && (
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
                 <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Province</Label>
@@ -220,13 +220,11 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               <Input type="url" value={website_url} onChange={(e) => { setWebsite(e.target.value); scheduleAutosave() }} placeholder="https://example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
             </div>
 
-            {/* Email — hidden for Black Men's Groups */}
-            {entry.category !== 'black_mens_group' && (
-              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Email</Label>
-                <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }} placeholder="contact@example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
-              </div>
-            )}
+            {/* Email */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Email</Label>
+              <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }} placeholder="contact@example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+            </div>
 
             {/* Meta */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
