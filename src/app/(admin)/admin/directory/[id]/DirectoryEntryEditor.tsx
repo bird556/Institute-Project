@@ -50,7 +50,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const isDirty = useRef(false)
 
   const categoryLabel = DIRECTORY_CATEGORY_LABELS[entry.category]
-  const adminHref = '/admin/directory'
+  const adminHref = `/admin/directory?tab=${entry.category}`
   const hideName = DIRECTORY_HIDE_NAME.includes(entry.category)
   const showProvince = DIRECTORY_SHOW_PROVINCE.includes(entry.category)
 
