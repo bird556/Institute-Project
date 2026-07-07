@@ -11,7 +11,7 @@ import { updateSiteSettings, toggleSectionVisibility } from '@/actions/settings'
 import type { SiteSettings } from '@/types'
 
 type FooterVisKey =
-  | 'admin_name_visible' | 'admin_title_visible' | 'admin_email_visible'
+  | 'admin_name_visible' | 'admin_title_visible' | 'admin_email_visible' | 'admin_email_2_visible'
   | 'contact_phone_visible' | 'address_visible' | 'upcoming_events_section_enabled'
 
 const INPUT_CLASS =
@@ -38,6 +38,7 @@ export default function FooterSettingsClient({ initialSettings }: { initialSetti
   const [adminName,     setAdminName]     = useState(s?.admin_name     ?? '')
   const [adminTitle,    setAdminTitle]    = useState(s?.admin_title    ?? '')
   const [adminEmail,    setAdminEmail]    = useState(s?.admin_email    ?? '')
+  const [adminEmail2,   setAdminEmail2]   = useState(s?.admin_email_2  ?? '')
   const [contactPhone,  setContactPhone]  = useState(s?.contact_phone  ?? '')
   const [address,       setAddress]       = useState(s?.address        ?? '')
   const [savingFooter,  setSavingFooter]  = useState(false)
@@ -46,6 +47,7 @@ export default function FooterSettingsClient({ initialSettings }: { initialSetti
     admin_name_visible:              s?.admin_name_visible              !== 'false',
     admin_title_visible:             s?.admin_title_visible             !== 'false',
     admin_email_visible:             s?.admin_email_visible             !== 'false',
+    admin_email_2_visible:           s?.admin_email_2_visible           !== 'false',
     contact_phone_visible:           s?.contact_phone_visible           !== 'false',
     address_visible:                 s?.address_visible                 !== 'false',
     upcoming_events_section_enabled: s?.upcoming_events_section_enabled !== 'false',
@@ -66,6 +68,7 @@ export default function FooterSettingsClient({ initialSettings }: { initialSetti
       admin_name:    adminName.trim(),
       admin_title:   adminTitle.trim(),
       admin_email:   adminEmail.trim(),
+      admin_email_2: adminEmail2.trim(),
       contact_phone: contactPhone.trim(),
       address:       address.trim(),
     })
@@ -202,6 +205,18 @@ export default function FooterSettingsClient({ initialSettings }: { initialSetti
               </div>
             </div>
             <Input id="admin-email" type="email" value={adminEmail} onChange={e => setAdminEmail(e.target.value)} placeholder="e.g. name@university.ca" />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="admin-email-2">Email 2</Label>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[var(--color-text-muted)]">Visible</span>
+                <Switch checked={footerVis.admin_email_2_visible} onCheckedChange={v => handleToggleVis('admin_email_2_visible', v)} className="cursor-pointer" />
+              </div>
+            </div>
+            <Input id="admin-email-2" type="email" value={adminEmail2} onChange={e => setAdminEmail2(e.target.value)} placeholder="e.g. secondcontact@university.ca" />
+            <p className="text-xs text-[var(--color-text-muted)]">Optional second email — shown as its own separate clickable link in the footer.</p>
           </div>
 
           <div className="space-y-2">
