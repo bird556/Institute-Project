@@ -152,7 +152,7 @@ export default function EditionEditor({
     setConfirmOpen(false)
     if (!result.success) { toast.error(result.error ?? 'Failed to delete.'); return }
     toast.success('Edition deleted.')
-    router.push('/admin/newsletter')
+    router.push('/admin/newsletter?tab=editions')
   }
 
   // ── Submission management ─────────────────────────────────────────────────
@@ -189,7 +189,7 @@ export default function EditionEditor({
         {/* Top bar */}
         <div className="flex flex-wrap items-center gap-3 justify-between">
           <Link
-            href="/admin/newsletter"
+            href="/admin/newsletter?tab=editions"
             className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] transition-colors cursor-pointer"
           >
             <ArrowLeft className="h-4 w-4" />

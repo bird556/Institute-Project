@@ -107,7 +107,7 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
     setDeleting(false)
     if (!result.success) { toast.error(result.error ?? 'Failed to delete.'); return }
     toast.success('Submission deleted.')
-    router.push('/admin/newsletter')
+    router.push('/admin/newsletter?tab=submissions')
   }
 
   async function handleSave() {
@@ -138,7 +138,7 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
       {/* Top bar */}
       <div className="flex flex-wrap items-center gap-3 justify-between">
         <Link
-          href="/admin/newsletter"
+          href="/admin/newsletter?tab=submissions"
           className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] transition-colors cursor-pointer"
         >
           <ArrowLeft className="h-4 w-4" />
