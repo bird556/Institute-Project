@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import {
   Newspaper,
@@ -59,8 +59,16 @@ const TYPE_ICON: Record<SubmissionType, React.ElementType> = {
 
 export default function NewsletterClient({ submissions: initial, editions: initialEditions }: Props) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
-  const [mainTab, setMainTab]               = useState<MainTab>('submissions')
+  const tabParam = searchParams.get('tab')
+  const initialTab: MainTab = tabParam === 'editions' ? 'editions' : 'submissions'
+  const [mainTab, setMainTabState]           = useState<MainTab>(initialTab)
+
+  function setMainTab(tab: MainTab) {
+    setMainTabState(tab)
+    router.replace(`/admin/newsletter?tab=${tab}`, { scroll: false })
+  }
   const [statusFilter, setStatusFilter]     = useState<StatusFilter>('all')
   const [typeFilter, setTypeFilter]         = useState<TypeFilter>('all')
   const [submissionQuery, setSubmissionQuery] = useState('')

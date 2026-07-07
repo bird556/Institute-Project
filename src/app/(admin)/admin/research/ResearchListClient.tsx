@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { MoreVertical, PenLine, Trash2, Plus, Microscope, Search, X } from 'lucide-react'
 import Image from 'next/image'
@@ -34,11 +34,16 @@ const TABS: { category: ResearchCategory; label: string }[] = RESEARCH_CATEGORIE
   label: RESEARCH_CATEGORY_LABELS[category],
 }))
 
+const TAB_CATEGORIES = TABS.map((t) => t.category)
+
 export default function ResearchListClient({ posts: initial }: { posts: ResearchListItem[] }) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [posts, setPosts]       = useState(initial)
-  const [activeTab, setActiveTab]   = useState<ResearchCategory>('announcements')
+  const tabParam = searchParams.get('tab')
+  const initialTab = TAB_CATEGORIES.includes(tabParam as ResearchCategory) ? (tabParam as ResearchCategory) : 'announcements'
+  const [activeTab, setActiveTab]   = useState<ResearchCategory>(initialTab)
   const [query, setQuery]           = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
   const [sortOrder, setSortOrder]       = useState<SortOrder>('recent')
@@ -76,6 +81,15 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
   const isFiltering = query !== '' || statusFilter !== 'all'
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE)
   const paginated  = sorted.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+  function handleTabChange(category: ResearchCategory) {
+    setActiveTab(category)
+    setQuery('')
+    setStatusFilter('all')
+    setSortOrder('recent')
+    resetPage()
+    router.replace(`/admin/research?tab=${category}`, { scroll: false })
+  }
 
   async function handleNew() {
     startTransition(async () => {
@@ -149,7 +163,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
         {/* Tabs */}
         <div className="flex gap-1 p-1 rounded-xl bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit overflow-x-auto">
           {TABS.map(({ category, label }) => (
-            <button key={category} onClick={() => { setActiveTab(category); setQuery(''); setStatusFilter('all'); setSortOrder('recent'); resetPage() }} className={tabClass(activeTab === category)}>
+            <button key={category} onClick={() => handleTabChange(category)} className={tabClass(activeTab === category)}>
               {label}
             </button>
           ))}

@@ -57,6 +57,8 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isDirty = useRef(false)
 
+  const adminHref = `/admin/research?tab=${post.category}`
+
   function scheduleAutosave() {
     isDirty.current = true
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
@@ -125,7 +127,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
     setDeleting(false)
     if (!result.success) { toast.error(result.error ?? 'Delete failed.'); return }
     toast.success('Post deleted.')
-    router.push('/admin/research')
+    router.push(adminHref)
   }
 
   return (
@@ -133,7 +135,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
       <div className="max-w-5xl mx-auto space-y-6">
         <div className="flex items-center justify-between gap-3">
           <Link
-            href="/admin/research"
+            href={adminHref}
             className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] transition-colors"
           >
             <ArrowLeft size={15} /> All Posts
