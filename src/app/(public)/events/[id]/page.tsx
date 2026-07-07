@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Calendar, ExternalLink, User } from 'lucide-react'
+import { MapPin, Calendar, ExternalLink, User, FileDown } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import EventCard from '@/components/events/EventCard'
@@ -48,6 +48,10 @@ export default async function EventDetailPage({ params }: Props) {
   const supabase = await createClient()
   const coverUrl = event.cover_path
     ? supabase.storage.from('institute-media').getPublicUrl(event.cover_path).data.publicUrl
+    : null
+
+  const docUrl = event.doc_path
+    ? supabase.storage.from('institute-media').getPublicUrl(event.doc_path).data.publicUrl
     : null
 
   const now = new Date()
@@ -160,6 +164,19 @@ export default async function EventDetailPage({ params }: Props) {
         className="tiptap-content"
         dangerouslySetInnerHTML={{ __html: event.description }}
       />
+
+      {docUrl && (
+        <a
+          href={docUrl}
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal)] hover:text-white transition-colors text-sm font-medium"
+        >
+          <FileDown className="h-4 w-4" />
+          Download Document
+        </a>
+      )}
 
       {moreEvents.length > 0 && (
         <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">
