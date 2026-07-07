@@ -12,7 +12,7 @@ type VisibilityKey =
   | 'youth_service_organizations_enabled' | 'community_organizations_enabled'
   | 'blogs_enabled' | 'events_enabled'
   | 'reading_list_enabled' | 'partners_enabled' | 'newsletter_enabled'
-  | 'health_wellness_enabled' | 'research_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled' | 'sexual_abuse_boys_men_enabled'
+  | 'health_wellness_enabled' | 'research_enabled' | 'values_page_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled' | 'sexual_abuse_boys_men_enabled'
   | 'intro_section_enabled'
   | 'goal_section_enabled' | 'impact_section_enabled' | 'mission_section_enabled'
   | 'cta_section_enabled' | 'wellness_section_enabled'
@@ -26,6 +26,7 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'newsletter_enabled',        label: 'Newsletter',        description: 'When hidden, /newsletter and all edition pages redirect to home' },
   { key: 'health_wellness_enabled',   label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
   { key: 'research_enabled',          label: 'Research',          description: 'When hidden, /research and all research posts redirect to home' },
+  { key: 'values_page_enabled',       label: 'Values',            description: 'When hidden, /values redirects to home' },
 ]
 
 const SERVICES_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
@@ -70,6 +71,7 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
     newsletter_enabled:        s?.newsletter_enabled        !== 'false',
     health_wellness_enabled:   s?.health_wellness_enabled   !== 'false',
     research_enabled:              s?.research_enabled              !== 'false',
+    values_page_enabled:           s?.values_page_enabled           !== 'false',
     research_institutes_enabled:   s?.research_institutes_enabled   !== 'false',
     call_for_papers_enabled:       s?.call_for_papers_enabled       !== 'false',
     sexual_abuse_boys_men_enabled: s?.sexual_abuse_boys_men_enabled !== 'false',

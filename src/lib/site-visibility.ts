@@ -8,6 +8,7 @@ export interface SiteVisibility {
   newsletter_enabled:        boolean
   health_wellness_enabled:   boolean
   research_enabled:          boolean
+  values_page_enabled:       boolean
   advocates_enabled:         boolean
   psychotherapists_enabled:  boolean
   referral_agencies_enabled: boolean
@@ -24,7 +25,7 @@ export interface SiteVisibility {
 const VISIBILITY_KEYS: (keyof SiteVisibility)[] = [
   'about_enabled', 'mission_enabled', 'blogs_enabled',
   'events_enabled', 'reading_list_enabled', 'partners_enabled',
-  'newsletter_enabled', 'health_wellness_enabled', 'research_enabled',
+  'newsletter_enabled', 'health_wellness_enabled', 'research_enabled', 'values_page_enabled',
   'advocates_enabled', 'psychotherapists_enabled', 'referral_agencies_enabled',
   'intro_section_enabled', 'cta_section_enabled',
   'goal_section_enabled', 'impact_section_enabled', 'mission_section_enabled',
@@ -42,6 +43,7 @@ const ALL_ENABLED: SiteVisibility = {
   newsletter_enabled:        true,
   health_wellness_enabled:   true,
   research_enabled:          true,
+  values_page_enabled:       true,
   advocates_enabled:         true,
   psychotherapists_enabled:  true,
   referral_agencies_enabled: true,

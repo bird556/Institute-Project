@@ -93,6 +93,7 @@ export interface SiteSettings {
   // Section visibility
   health_wellness_enabled: string
   research_enabled: string
+  values_page_enabled: string
   research_institutes_enabled: string
   call_for_papers_enabled: string
   sexual_abuse_boys_men_enabled: string
@@ -367,6 +368,21 @@ export const CANADIAN_PROVINCES = [
   'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec',
   'Saskatchewan', 'Yukon',
 ] as const
+
+// Values page — seven pillars of COURAGE, offered in multiple languages.
+// Fixed in code (same precedent as DIRECTORY_CATEGORIES) — pillar text itself
+// is admin-editable via page_content sections `pillars_{code}`.
+export interface ValuesLanguage {
+  code: string
+  label: string
+}
+
+export const VALUES_LANGUAGES: ValuesLanguage[] = [
+  { code: 'en', label: 'English' },
+  { code: 'fr', label: 'Français' },
+  { code: 'es', label: 'Español' },
+  { code: 'sw', label: 'Kiswahili' },
+]
 
 export interface DirectoryEntry {
   id: string
