@@ -11,7 +11,7 @@ export default async function ResearchPageHeroEditor() {
   const descriptions = [
     {
       section:   'announcements_description',
-      label:     'Call for Publications — Description',
+      label:     'Call for Participants — Description',
       value:     sections?.find((s) => s.section === 'announcements_description')?.content ?? '',
       updatedAt: sections?.find((s) => s.section === 'announcements_description')?.updated_at,
     },

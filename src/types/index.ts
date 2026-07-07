@@ -256,7 +256,7 @@ export interface WellnessPost {
 }
 
 export type ResearchCategory =
-  | 'announcements'           // displayed as "Call for Publications" — label-only rename
+  | 'announcements'           // displayed as "Call for Participants" — label-only rename
   | 'call-for-papers'
   | 'recent-publications'
   | 'reports'
@@ -273,7 +273,7 @@ export const RESEARCH_CATEGORIES: ResearchCategory[] = [
 ]
 
 export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
-  'announcements':         'Call for Publications',
+  'announcements':         'Call for Participants',
   'call-for-papers':       'Call for Papers',
   'recent-publications':   'Recent Publications',
   'reports':               'Reports',

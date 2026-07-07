@@ -7,7 +7,7 @@ import ResearchGrid from '@/components/research/ResearchGrid'
 import { buildMetadata } from '@/lib/metadata'
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadata({ title: 'Call for Publications — Research' })
+  return buildMetadata({ title: 'Call for Participants — Research' })
 }
 
 export default async function AnnouncementsPage() {
@@ -45,7 +45,7 @@ export default async function AnnouncementsPage() {
           <ChevronLeft size={15} /> Research
         </Link>
         <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          Call for Publications
+          Call for Participants
         </h1>
         {subtitle && (
           <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{subtitle}</p>
