@@ -335,7 +335,12 @@ export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
 // save so every downstream consumer (cards, search, avatar initials) keeps
 // working without extra logic.
 export const DIRECTORY_HIDE_NAME: DirectoryCategory[] = [
-  'advocate', 'youth_service_organization', 'community_organization',
+  'advocate', 'youth_service_organization', 'community_organization', 'referral_agency',
+]
+
+// Categories where a Province field is collected
+export const DIRECTORY_SHOW_PROVINCE: DirectoryCategory[] = [
+  'community_organization', 'advocate', 'black_mens_group', 'referral_agency', 'youth_service_organization',
 ]
 
 export const DIRECTORY_ORG_PLACEHOLDER: Record<DirectoryCategory, string> = {
@@ -353,7 +358,7 @@ export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {
   both:       'Online & In-Person',
 }
 
-// Canadian provinces/territories — currently only collected for Community Organizations
+// Canadian provinces/territories — collected for categories in DIRECTORY_SHOW_PROVINCE
 export const CANADIAN_PROVINCES = [
   'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
   'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia',
