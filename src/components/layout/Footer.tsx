@@ -57,9 +57,10 @@ export async function Footer() {
   const adminName  = settings?.admin_name_visible  !== 'false' && settings?.admin_name  ? settings.admin_name  : null
   const adminTitle = settings?.admin_title_visible !== 'false' && settings?.admin_title ? settings.admin_title : null
   const adminEmail = settings?.admin_email_visible !== 'false' && settings?.admin_email ? settings.admin_email : null
+  const adminEmail2 = settings?.admin_email_2_visible !== 'false' && settings?.admin_email_2 ? settings.admin_email_2 : null
   const phone      = settings?.contact_phone_visible !== 'false' && settings?.contact_phone ? settings.contact_phone : null
   const address    = settings?.address_visible       !== 'false' && settings?.address       ? settings.address       : null
-  const hasContact = adminName || adminTitle || adminEmail || phone || address
+  const hasContact = adminName || adminTitle || adminEmail || adminEmail2 || phone || address
 
   const navHeading      = settings?.footer_nav_heading      || 'Navigate'
   const contactHeading  = settings?.footer_contact_heading  || 'Contact'
@@ -137,6 +138,11 @@ export async function Footer() {
                 {adminEmail && (
                   <a href={`mailto:${adminEmail}`} className="block text-sm text-[hsl(35_60%_50%)] hover:underline">
                     {adminEmail}
+                  </a>
+                )}
+                {adminEmail2 && (
+                  <a href={`mailto:${adminEmail2}`} className="block text-sm text-[hsl(35_60%_50%)] hover:underline">
+                    {adminEmail2}
                   </a>
                 )}
                 {phone && (
