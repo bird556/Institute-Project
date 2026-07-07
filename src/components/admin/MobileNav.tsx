@@ -8,7 +8,7 @@ import {
   LayoutDashboard, FileText, CalendarDays, Handshake,
   BookOpen, Home, Info, Target, Settings, Newspaper,
   Calendar, List, Mail, Heart, Star, Microscope, Building2, Send, ShieldAlert, Users,
-  Navigation2, Eye, PanelBottom, Download, Lock,
+  Navigation2, Eye, PanelBottom, Download, Lock, Compass,
   Menu, X, LogOut,
   type LucideIcon,
 } from 'lucide-react'
@@ -70,6 +70,7 @@ const DRAWER_GROUPS: NavGroup[] = [
       { label: 'Partners Page',          href: '/admin/pages/partners',         icon: Handshake },
       { label: 'Health & Wellness Page', href: '/admin/pages/health-wellness',  icon: Heart },
       { label: 'Research Page',          href: '/admin/pages/research',          icon: Microscope },
+      { label: 'Values Page',            href: '/admin/pages/values',            icon: Compass },
       { label: 'Research Institutes Page', href: '/admin/pages/research-institutes', icon: Building2 },
       { label: 'Call for Papers Page',   href: '/admin/pages/call-for-papers',   icon: Send },
       { label: 'Sexual Abuse of Boys and Men Page', href: '/admin/pages/sexual-abuse-boys-men', icon: ShieldAlert },
