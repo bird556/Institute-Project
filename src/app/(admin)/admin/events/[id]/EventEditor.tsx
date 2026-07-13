@@ -42,6 +42,10 @@ function combineDateTime(date: string, time: string): string {
   return `${date}T${time}:00.000Z`
 }
 
+function isValidDateStr(date: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(new Date(`${date}T00:00:00.000Z`).getTime())
+}
+
 export default function EventEditor({ event, initialCoverUrl }: EventEditorProps) {
   const router = useRouter()
 
@@ -82,7 +86,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       doc_path: docPath,
       location: location || null,
       organizer: organizer.trim() || null,
-      event_date: combineDateTime(eventDate, eventTime),
+      event_date: isValidDateStr(eventDate) ? combineDateTime(eventDate, eventTime) : event.event_date,
       external_url: externalUrl.trim() || null,
       event_type: eventType,
     }
@@ -179,6 +183,10 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
     }
     if (!eventDate) {
       setDateError('Event date is required.')
+      return false
+    }
+    if (!isValidDateStr(eventDate)) {
+      setDateError('Event date is invalid.')
       return false
     }
     return true

@@ -33,6 +33,8 @@ interface EventListClientProps {
 }
 
 function formatEventDate(iso: string): string {
+  const date = new Date(iso)
+  if (Number.isNaN(date.getTime())) return 'Invalid date'
   return new Intl.DateTimeFormat('en-CA', {
     year: 'numeric',
     month: 'long',
@@ -41,7 +43,7 @@ function formatEventDate(iso: string): string {
     minute: '2-digit',
     hour12: true,
     timeZone: 'UTC',
-  }).format(new Date(iso))
+  }).format(date)
 }
 
 export default function EventListClient({ events: initial }: EventListClientProps) {
