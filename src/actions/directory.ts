@@ -32,7 +32,7 @@ export async function createDirectoryEntry(
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('directory_entries')
-    .insert({ name: 'Untitled Entry', category, description: '', published: false })
+    .insert({ name: '', category, description: '', published: false })
     .select('id')
     .single()
   if (error) return { success: false, error: 'Failed to create entry.' }

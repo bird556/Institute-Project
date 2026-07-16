@@ -31,9 +31,9 @@ export async function POST(request: NextRequest) {
     const isImage = ACCEPTED_IMAGE_TYPES.has(file.type)
     const isDocType = ACCEPTED_DOC_TYPES.has(file.type)
 
-    if (isDoc && !isDocType) {
+    if (isDoc && !isDocType && !isImage) {
       return NextResponse.json(
-        { error: 'Unsupported document type. Use PDF, DOC, or DOCX.' },
+        { error: 'Unsupported file type. Use PDF, DOC, DOCX, JPG, PNG, WebP, or AVIF.' },
         { status: 415 }
       )
     }

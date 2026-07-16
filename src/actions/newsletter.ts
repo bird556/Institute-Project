@@ -37,7 +37,7 @@ export async function createEdition(): Promise<ActionResult<NewsletterEdition>> 
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('newsletter_editions')
-    .insert({ title: 'Untitled Edition', slug: `edition-${Date.now()}`, intro: '', published: false })
+    .insert({ title: '', slug: `edition-${Date.now()}`, intro: '', published: false })
     .select()
     .single()
   if (error) return { success: false, error: 'Failed to create edition.' }

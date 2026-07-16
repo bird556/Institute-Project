@@ -19,6 +19,7 @@ const CATEGORY_SECTION_KEYS: Record<ResearchCategory, string> = {
   'reports':               'reports_description',
   'research-institutes':   'research_institutes_description',
   'sexual-abuse-boys-men': 'sexual_abuse_boys_men_description',
+  'current-issues':        'current_issues_description',
 }
 
 const CATEGORY_FALLBACKS: Record<ResearchCategory, string> = {
@@ -28,6 +29,7 @@ const CATEGORY_FALLBACKS: Record<ResearchCategory, string> = {
   'reports':               'Access in-depth reports, analyses, and findings produced by our researchers and collaborators.',
   'research-institutes':   'Discover research institutes and organizations affiliated with our work.',
   'sexual-abuse-boys-men': 'Research papers, books, and films on the sexual abuse of boys and men.',
+  'current-issues':        'Perspectives and resources on current issues affecting our community.',
 }
 
 // Categories without an entry here are always shown (no visibility toggle)

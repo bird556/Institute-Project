@@ -45,6 +45,12 @@ export default async function ResearchPageHeroEditor() {
       value:     sections?.find((s) => s.section === 'sexual_abuse_boys_men_description')?.content ?? '',
       updatedAt: sections?.find((s) => s.section === 'sexual_abuse_boys_men_description')?.updated_at,
     },
+    {
+      section:   'current_issues_description',
+      label:     'Current Issues — Description',
+      value:     sections?.find((s) => s.section === 'current_issues_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'current_issues_description')?.updated_at,
+    },
   ]
 
   return (

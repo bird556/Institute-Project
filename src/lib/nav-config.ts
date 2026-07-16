@@ -8,7 +8,7 @@ export interface NavItem {
 export const ALL_NAV_DEFINITIONS: Omit<NavItem, 'visible'>[] = [
   { slug: 'home',            label: 'Home',             href: '/'               },
   { slug: 'events',          label: 'Events',           href: '/events'         },
-  { slug: 'services',        label: 'Services',         href: '/advocates'      },
+  { slug: 'services',        label: 'Access to Services', href: '/advocates'     },
   { slug: 'health-wellness', label: 'Health & Wellness', href: '/health-wellness' },
   { slug: 'reading-list',   label: 'Reading List',     href: '/reading-list'   },
   { slug: 'research',        label: 'Research',         href: '/research'       },
@@ -23,7 +23,7 @@ export const ALL_NAV_DEFINITIONS: Omit<NavItem, 'visible'>[] = [
 export const DEFAULT_NAV_CONFIG: NavItem[] = [
   { slug: 'home',            label: 'Home',             href: '/',                visible: true  },
   { slug: 'events',          label: 'Events',           href: '/events',          visible: true  },
-  { slug: 'services',        label: 'Services',         href: '/advocates',       visible: true  },
+  { slug: 'services',        label: 'Access to Services', href: '/advocates',     visible: true  },
   { slug: 'health-wellness', label: 'Health & Wellness', href: '/health-wellness', visible: true  },
   { slug: 'reading-list',   label: 'Reading List',     href: '/reading-list',    visible: true  },
   { slug: 'research',        label: 'Research',         href: '/research',        visible: true  },

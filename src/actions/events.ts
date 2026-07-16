@@ -31,7 +31,7 @@ export async function createEvent(): Promise<ActionResult<{ id: string }>> {
   const { data, error } = await supabase
     .from('events')
     .insert({
-      title: 'Untitled Event',
+      title: '',
       slug: `untitled-event-${Date.now()}`,
       description: '',
       event_date: new Date().toISOString(),

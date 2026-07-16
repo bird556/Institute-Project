@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ExternalLink } from 'lucide-react'
+import { ExternalLink, Mail, FileDown } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import ResearchCard from '@/components/research/ResearchCard'
@@ -44,6 +44,9 @@ export default async function CallForPaperDetailPage({ params }: Props) {
 
   const coverUrl = post.cover_path
     ? supabase.storage.from('institute-media').getPublicUrl(post.cover_path).data.publicUrl
+    : null
+  const docUrl = post.doc_path
+    ? supabase.storage.from('institute-media').getPublicUrl(post.doc_path).data.publicUrl
     : null
 
   const { data: moreData } = await supabase
@@ -101,6 +104,15 @@ export default async function CallForPaperDetailPage({ params }: Props) {
         <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
           {post.title}
         </h1>
+        {post.email && (
+          <a
+            href={`mailto:${post.email}`}
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
+          >
+            <Mail className="w-4 h-4" />
+            {post.email}
+          </a>
+        )}
       </header>
 
       <div className="tiptap-content prose max-w-prose mx-auto" dangerouslySetInnerHTML={{ __html: post.content }} />
@@ -114,6 +126,19 @@ export default async function CallForPaperDetailPage({ params }: Props) {
         >
           <ExternalLink className="h-4 w-4" />
           View Submission Details
+        </a>
+      )}
+
+      {docUrl && (
+        <a
+          href={docUrl}
+          download
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal)] hover:text-white transition-colors text-sm font-medium"
+        >
+          <FileDown className="h-4 w-4" />
+          Download Document
         </a>
       )}
 

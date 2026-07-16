@@ -25,18 +25,20 @@ export async function getReadingListItemById(id: string): Promise<ActionResult<R
   return { success: true, data }
 }
 
-export async function createReadingListItem(): Promise<ActionResult<{ id: string }>> {
+export async function createReadingListItem(
+  itemType: ReadingListItem['item_type'] = null,
+): Promise<ActionResult<{ id: string }>> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('reading_list')
-    .insert({ title: 'Untitled', description: '' })
+    .insert({ title: '', description: '', item_type: itemType })
     .select('id')
     .single()
   if (error) return { success: false, error: 'Failed to create reading list item.' }
   return { success: true, data: { id: data.id } }
 }
 
-const TEXT_FIELDS = ['title', 'author', 'external_url', 'email'] as const
+const TEXT_FIELDS = ['title', 'author', 'external_url', 'video_url', 'email'] as const
 
 export async function updateReadingListItem(
   id: string,

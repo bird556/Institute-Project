@@ -2,7 +2,7 @@ import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ExternalLink, Mail } from 'lucide-react'
+import { ExternalLink, Mail, Video } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { truncate, stripHtml } from '@/lib/utils'
@@ -11,6 +11,13 @@ import { DetailPageShell } from '@/components/shared/DetailPageShell'
 
 interface Props {
   params: Promise<{ id: string }>
+}
+
+const EXTERNAL_LINK_LABELS: Record<string, string> = {
+  bookstore:  'Visit Website',
+  thesis_ma:  'Read Thesis',
+  thesis_phd: 'Read Thesis',
+  book:       'Find this book',
 }
 
 const getItem = cache(async (id: string) => {
@@ -95,7 +102,18 @@ export default async function ReadingListDetailPage({ params }: Props) {
               className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white text-sm font-medium transition-colors duration-200"
             >
               <ExternalLink className="w-4 h-4" />
-              {item.item_type === 'bookstore' ? 'Visit Website' : 'Find this book'}
+              {EXTERNAL_LINK_LABELS[item.item_type ?? 'book'] ?? 'Find this book'}
+            </a>
+          )}
+          {item.video_url && (
+            <a
+              href={item.video_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+            >
+              <Video className="w-4 h-4" />
+              Watch Video
             </a>
           )}
           {item.email && (

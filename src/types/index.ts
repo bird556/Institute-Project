@@ -38,6 +38,7 @@ export interface ReadingListItem {
   email: string | null
   author_region: 'canadian' | 'world' | null
   item_type: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
+  video_url: string | null
   published: boolean
   created_at: string
   updated_at: string
@@ -266,6 +267,7 @@ export type ResearchCategory =
   | 'reports'
   | 'research-institutes'
   | 'sexual-abuse-boys-men'
+  | 'current-issues'
 
 export const RESEARCH_CATEGORIES: ResearchCategory[] = [
   'announcements',
@@ -274,6 +276,7 @@ export const RESEARCH_CATEGORIES: ResearchCategory[] = [
   'reports',
   'research-institutes',
   'sexual-abuse-boys-men',
+  'current-issues',
 ]
 
 export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
@@ -283,6 +286,7 @@ export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
   'reports':               'Reports',
   'research-institutes':   'Research Institutes',
   'sexual-abuse-boys-men': 'Sexual Abuse of Boys and Men',
+  'current-issues':        'Current Issues',
 }
 
 export type ResearchItemType = 'article' | 'book' | 'video'
@@ -300,11 +304,13 @@ export interface ResearchPost {
   excerpt: string | null
   content: string
   cover_path: string | null
+  doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   category: ResearchCategory
   external_url: string | null
   region: 'canadian' | 'world' | null
   author: string | null
   item_type: ResearchItemType | null
+  email: string | null
   published: boolean
   published_at: string | null
   created_at: string

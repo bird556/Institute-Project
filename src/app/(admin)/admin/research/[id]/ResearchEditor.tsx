@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { ArrowLeft, MoreVertical, Trash2 } from 'lucide-react'
+import { ArrowLeft, MoreVertical, Trash2, FileText, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -44,8 +44,12 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
   const [region, setRegion]           = useState<'canadian' | 'world' | ''>(post.region ?? '')
   const [author, setAuthor]           = useState(post.author ?? '')
   const [itemType, setItemType]       = useState<ResearchItemType | ''>(post.item_type ?? '')
+  const [email, setEmail]             = useState(post.email ?? '')
   const [coverPath, setCoverPath]     = useState<string | null>(post.cover_path)
   const [coverUrl, setCoverUrl]       = useState<string | undefined>(initialCoverUrl)
+  const [docPath, setDocPath]         = useState<string | null>(post.doc_path)
+  const [docName, setDocName]         = useState<string>('')
+  const [docUploading, setDocUploading] = useState(false)
   const [published, setPublished]     = useState(post.published)
 
   const [saving, setSaving]         = useState(false)
@@ -58,13 +62,55 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
   const isDirty = useRef(false)
 
   const adminHref = `/admin/research?tab=${post.category}`
+  const showEmail = category === 'announcements' || category === 'call-for-papers'
+  const showDoc   = category === 'announcements' || category === 'call-for-papers'
+
+  async function uploadDoc(file: File) {
+    setDocUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('folder', 'research/docs')
+      const res = await fetch('/api/upload', { method: 'POST', body: formData })
+      const json = await res.json()
+      if (!res.ok) { toast.error(json.error ?? 'Upload failed.'); return }
+      setDocPath(json.path)
+      setDocName(file.name)
+      await updateResearchPost(post.id, { doc_path: json.path })
+      toast.success('Document uploaded.')
+    } catch {
+      toast.error('Upload failed.')
+    } finally {
+      setDocUploading(false)
+    }
+  }
+
+  function handleDocUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) uploadDoc(file)
+    e.target.value = ''
+  }
+
+  function handleDocDrop(e: React.DragEvent<HTMLElement>) {
+    e.preventDefault()
+    if (docUploading) return
+    const file = e.dataTransfer.files?.[0]
+    if (file) uploadDoc(file)
+  }
+
+  async function handleDocRemove() {
+    setDocPath(null)
+    setDocName('')
+    await updateResearchPost(post.id, { doc_path: null })
+    toast.success('Document removed.')
+  }
 
   function scheduleAutosave() {
     isDirty.current = true
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null })
+      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, doc_path: docPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null, email: email.trim() || null })
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
@@ -104,7 +150,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
 
   async function handleSave() {
     setSaving(true)
-    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null })
+    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, doc_path: docPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null, email: email.trim() || null })
     setSaving(false)
     if (!result.success) { toast.error(result.error ?? 'Save failed.'); return }
     isDirty.current = false
@@ -228,6 +274,56 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
               />
             </div>
 
+            {/* Downloadable Document — Call for Participants / Call for Papers only */}
+            {showDoc && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                  Downloadable Document
+                </p>
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  Optional PDF, DOC, DOCX, or image (JPG, PNG, WebP, AVIF) that visitors can download from this post. Max 20 MB.
+                </p>
+
+                {docPath ? (
+                  <div
+                    className="flex items-center gap-2 rounded-lg bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] px-3 py-2"
+                    onDrop={handleDocDrop}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    <FileText size={16} className="text-[var(--color-brand-teal)] shrink-0" />
+                    <span className="text-xs text-[var(--color-text-primary)] dark:text-white truncate flex-1">
+                      {docName || docPath.split('/').pop()}
+                    </span>
+                    <button
+                      onClick={handleDocRemove}
+                      className="text-[var(--color-text-muted)] hover:text-destructive transition-colors cursor-pointer shrink-0"
+                      aria-label="Remove document"
+                    >
+                      <X size={14} />
+                    </button>
+                  </div>
+                ) : (
+                  <label
+                    className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 cursor-pointer hover:border-[var(--color-brand-teal)] transition-colors"
+                    onDrop={handleDocDrop}
+                    onDragOver={(e) => e.preventDefault()}
+                  >
+                    <FileText size={20} className="text-[var(--color-text-muted)]" />
+                    <span className="text-xs text-[var(--color-text-muted)]">
+                      {docUploading ? 'Uploading…' : 'Click or drag a file to upload — PDF, DOC, DOCX, or image'}
+                    </span>
+                    <input
+                      type="file"
+                      accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp,image/avif"
+                      className="sr-only"
+                      onChange={handleDocUpload}
+                      disabled={docUploading}
+                    />
+                  </label>
+                )}
+              </div>
+            )}
+
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
               <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
                 Status
@@ -326,6 +422,25 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
                 </p>
               )}
             </div>
+
+            {/* Email — Call for Participants / Call for Papers only */}
+            {showEmail && (
+              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 space-y-3">
+                <p className="text-sm font-semibold text-[var(--color-text-primary)] dark:text-white">
+                  Email
+                </p>
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }}
+                  placeholder="contact@example.com"
+                  className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                />
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  Contact email shown on the public post for this opportunity.
+                </p>
+              </div>
+            )}
 
           </div>
         </div>
