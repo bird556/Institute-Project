@@ -51,6 +51,7 @@ export async function getPublishedResearchCounts(): Promise<ActionResult<Record<
     'reports': 0,
     'research-institutes': 0,
     'sexual-abuse-boys-men': 0,
+    'current-issues': 0,
   }
   for (const row of data ?? []) {
     counts[row.category as ResearchCategory] = (counts[row.category as ResearchCategory] ?? 0) + 1
@@ -62,7 +63,7 @@ export async function createResearchPost(category: ResearchCategory = 'announcem
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('research_posts')
-    .insert({ title: 'Untitled', slug: `untitled-${Date.now()}`, content: '', category })
+    .insert({ title: '', slug: `untitled-${Date.now()}`, content: '', category })
     .select('id')
     .single()
   if (error) return { success: false, error: 'Failed to create research post.' }
@@ -71,7 +72,7 @@ export async function createResearchPost(category: ResearchCategory = 'announcem
 
 export async function updateResearchPost(
   id: string,
-  fields: Partial<Pick<ResearchPost, 'title' | 'slug' | 'excerpt' | 'content' | 'cover_path' | 'category' | 'external_url' | 'region' | 'author' | 'item_type'>>,
+  fields: Partial<Pick<ResearchPost, 'title' | 'slug' | 'excerpt' | 'content' | 'cover_path' | 'doc_path' | 'category' | 'external_url' | 'region' | 'author' | 'item_type' | 'email'>>,
 ): Promise<ActionResult<ResearchPost>> {
   const supabase = await createClient()
   const { data, error } = await supabase

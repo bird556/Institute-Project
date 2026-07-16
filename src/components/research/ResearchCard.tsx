@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, type LucideIcon } from 'lucide-react'
+import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, Newspaper, type LucideIcon } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchCategory } from '@/types'
@@ -26,6 +26,7 @@ const CATEGORY_ICONS: Record<ResearchCategory, LucideIcon> = {
   'reports':               BarChart2,
   'research-institutes':   Building2,
   'sexual-abuse-boys-men': ShieldAlert,
+  'current-issues':        Newspaper,
 }
 
 export default function ResearchCard({

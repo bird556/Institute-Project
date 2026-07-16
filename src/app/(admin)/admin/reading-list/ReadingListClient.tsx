@@ -22,6 +22,7 @@ import type { ReadingListItem } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
 type RegionTab = 'all' | 'canadian' | 'world'
+type GroupTab = 'bibliography' | 'theses'
 
 type AdminSortOption =
   | 'author_az'
@@ -60,6 +61,7 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
   const [items, setItems] = useState(initial)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
+  const [groupTab, setGroupTab] = useState<GroupTab>('bibliography')
   const [regionTab, setRegionTab] = useState<RegionTab>('all')
   const [sort, setSort] = useState<AdminSortOption>('author_az')
   const [page, setPage] = useState(1)
@@ -83,7 +85,9 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
       (statusFilter === 'drafts' && !item.published)
     const matchesRegion =
       regionTab === 'all' || item.author_region === regionTab
-    return matchesQuery && matchesStatus && matchesRegion
+    const isThesis = item.item_type === 'thesis_ma' || item.item_type === 'thesis_phd'
+    const matchesGroup = groupTab === 'bibliography' ? !isThesis : isThesis
+    return matchesQuery && matchesStatus && matchesRegion && matchesGroup
   })
 
   const sorted = [...filtered].sort((a, b) => {
@@ -107,7 +111,7 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
 
   async function handleNew() {
     startTransition(async () => {
-      const result = await createReadingListItem()
+      const result = await createReadingListItem(groupTab === 'theses' ? 'thesis_ma' : null)
       if (!result.success || !result.data) {
         toast.error(result.error ?? 'Could not create item.')
         return
@@ -167,6 +171,26 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
             <Plus className="h-4 w-4" />
             New Item
           </Button>
+        </div>
+
+        {/* Bibliography / Theses tabs */}
+        <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
+          {([
+            { value: 'bibliography', label: 'Bibliography' },
+            { value: 'theses',       label: 'MA and PhD Theses' },
+          ] as { value: GroupTab; label: string }[]).map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => { setGroupTab(value); resetPage() }}
+              className={`px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+                groupTab === value
+                  ? 'bg-[var(--color-brand-teal)] text-white font-medium'
+                  : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
         {/* Region tabs */}

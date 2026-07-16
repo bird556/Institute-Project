@@ -24,6 +24,12 @@ import type { ReadingListItem } from '@/types'
 
 const AUTOSAVE_MS = 2000
 
+const EXTERNAL_URL_LABELS: Record<string, string> = {
+  bookstore:  'Website URL',
+  thesis_ma:  'Thesis URL',
+  thesis_phd: 'Thesis URL',
+}
+
 interface ReadingListEditorProps {
   item: ReadingListItem
   initialCoverUrl?: string
@@ -48,6 +54,8 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [externalUrl, setExternalUrl] = useState(item.external_url ?? '')
   const [urlError, setUrlError] = useState('')
+  const [videoUrl, setVideoUrl] = useState(item.video_url ?? '')
+  const [videoUrlError, setVideoUrlError] = useState('')
   const [email, setEmail] = useState(item.email ?? '')
   const [authorRegion, setAuthorRegion] = useState<'canadian' | 'world' | ''>(item.author_region ?? '')
   const [itemType, setItemType] = useState<'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | ''>(item.item_type ?? '')
@@ -70,6 +78,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
       description: description || null,
       cover_path: coverPath,
       external_url: externalUrl || null,
+      video_url: videoUrl || null,
       email: email || null,
       author_region: (authorRegion || null) as 'canadian' | 'world' | null,
       item_type: (itemType || null) as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null,
@@ -104,6 +113,12 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
     scheduleAutosave()
   }
 
+  function handleVideoUrlChange(val: string) {
+    setVideoUrl(val)
+    setVideoUrlError('')
+    scheduleAutosave()
+  }
+
   function handleEmailChange(val: string) {
     setEmail(val)
     scheduleAutosave()
@@ -121,6 +136,10 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
     }
     if (externalUrl && !isValidUrl(externalUrl)) {
       setUrlError('Please enter a valid URL (include https://).')
+      return false
+    }
+    if (videoUrl && !isValidUrl(videoUrl)) {
+      setVideoUrlError('Please enter a valid URL (include https://).')
       return false
     }
     return true
@@ -317,7 +336,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
             {/* External URL */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
               <Label htmlFor="external-url" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                {isBookstore ? 'Website URL' : 'External URL'}
+                {EXTERNAL_URL_LABELS[itemType] ?? 'External URL'}
               </Label>
               <div className="flex items-center gap-2">
                 <Input
@@ -342,6 +361,45 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               {urlError && (
                 <p className="text-xs text-red-600">{urlError}</p>
               )}
+              {(itemType === 'thesis_ma' || itemType === 'thesis_phd') && (
+                <p className="text-xs text-[var(--color-text-muted)]">
+                  Link to where the thesis can be read online (e.g. a university repository).
+                </p>
+              )}
+            </div>
+
+            {/* Video URL — optional, independent of Item Type. A book, thesis,
+                or bookstore entry can also have a video attached. */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="video-url" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Video URL (optional)
+              </Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="video-url"
+                  value={videoUrl}
+                  onChange={(e) => handleVideoUrlChange(e.target.value)}
+                  placeholder="https://youtube.com/..."
+                  className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                />
+                {videoUrl && isValidUrl(videoUrl) && (
+                  <a
+                    href={videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    title="Open link"
+                    className="shrink-0 p-2 rounded-md text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+              {videoUrlError && (
+                <p className="text-xs text-red-600">{videoUrlError}</p>
+              )}
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Optional — add a video link (e.g. YouTube, Vimeo) to any entry, regardless of its Item Type.
+              </p>
             </div>
 
             {/* Email */}

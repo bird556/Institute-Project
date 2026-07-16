@@ -29,7 +29,7 @@ export async function createWellnessPost(): Promise<ActionResult<{ id: string }>
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('wellness_posts')
-    .insert({ title: 'Untitled', slug: `untitled-${Date.now()}`, content: '', tags: [] })
+    .insert({ title: '', slug: `untitled-${Date.now()}`, content: '', tags: [] })
     .select('id')
     .single()
   if (error) return { success: false, error: 'Failed to create wellness post.' }

@@ -30,7 +30,7 @@ export async function createBlog(): Promise<ActionResult<{ id: string }>> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('blog_posts')
-    .insert({ title: 'Untitled', slug: `untitled-${Date.now()}`, content: '' })
+    .insert({ title: '', slug: `untitled-${Date.now()}`, content: '' })
     .select('id')
     .single()
   if (error) return { success: false, error: 'Failed to create blog post.' }
