@@ -94,13 +94,13 @@ export default async function EventDetailPage({ params }: Props) {
       </Link>
 
       {coverUrl && (
-        <div className="relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '16/7' }}>
+        <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/7' }}>
           <Image
             src={coverUrl}
             alt={event.title}
             fill
             priority
-            className={`object-cover${isPast ? ' grayscale-[30%]' : ''}`}
+            className={`object-contain${isPast ? ' grayscale-[30%]' : ''}`}
             sizes="(max-width: 1024px) 100vw, 896px"
           />
         </div>

@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import { RESEARCH_CATEGORIES } from '@/types'
 import type { ResearchPost, ResearchCategory, ActionResult } from '@/types'
 
 export async function getAdminResearchPosts(): Promise<ActionResult<ResearchPost[]>> {
@@ -44,15 +45,9 @@ export async function getPublishedResearchCounts(): Promise<ActionResult<Record<
     .select('category')
     .eq('published', true)
   if (error) return { success: false, error: 'Failed to load counts.' }
-  const counts: Record<ResearchCategory, number> = {
-    'announcements': 0,
-    'call-for-papers': 0,
-    'recent-publications': 0,
-    'reports': 0,
-    'research-institutes': 0,
-    'sexual-abuse-boys-men': 0,
-    'current-issues': 0,
-  }
+  const counts = Object.fromEntries(
+    RESEARCH_CATEGORIES.map((cat) => [cat, 0]),
+  ) as Record<ResearchCategory, number>
   for (const row of data ?? []) {
     counts[row.category as ResearchCategory] = (counts[row.category as ResearchCategory] ?? 0) + 1
   }

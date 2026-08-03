@@ -251,7 +251,7 @@ export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
                 }}
                 placeholder="Short description shown in post listings…"
                 rows={4}
-                className="resize-none text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                className="resize-y text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
               <p className="text-xs text-[var(--color-text-muted)] text-right">
                 {excerpt.length} / {EXCERPT_MAX}

@@ -376,7 +376,7 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
               onChange={(e) => setAdminNote(e.target.value)}
               placeholder="Internal note — not shown publicly…"
               rows={4}
-              className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
+              className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
             />
           </div>
 
@@ -467,7 +467,7 @@ export default function SubmissionReviewer({ submission: initial, editions }: Pr
               placeholder="Reason for rejection…"
               rows={4}
               autoFocus
-              className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
+              className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
             />
             <div className="flex gap-2 justify-end">
               <Button

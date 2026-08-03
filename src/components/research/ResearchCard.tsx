@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, Newspaper, type LucideIcon } from 'lucide-react'
+import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, Newspaper, Accessibility, Users, type LucideIcon } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchCategory } from '@/types'
@@ -27,6 +27,8 @@ const CATEGORY_ICONS: Record<ResearchCategory, LucideIcon> = {
   'research-institutes':   Building2,
   'sexual-abuse-boys-men': ShieldAlert,
   'current-issues':        Newspaper,
+  'disabilities':          Accessibility,
+  'sexualities':           Users,
 }
 
 export default function ResearchCard({
@@ -48,12 +50,12 @@ export default function ResearchCard({
         className="group flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg transition-shadow"
       >
         {cover_url ? (
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <div className="relative w-full overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/9' }}>
             <Image
               src={cover_url}
               alt={title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>

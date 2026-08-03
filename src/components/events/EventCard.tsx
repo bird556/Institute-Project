@@ -40,13 +40,13 @@ export default function EventCard({
         className="flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg hover:border-[var(--color-brand-teal-light)] dark:hover:border-[var(--color-brand-teal)] transition-all duration-300"
       >
         {/* Cover image */}
-        <div className="relative aspect-video w-full overflow-hidden">
+        <div className="relative aspect-video w-full overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]">
           {cover_url ? (
             <Image
               src={cover_url}
               alt={title}
               fill
-              className={`object-cover transition-transform duration-500 group-hover:scale-105${isPast ? ' grayscale-[40%]' : ''}`}
+              className={`object-contain transition-transform duration-500 group-hover:scale-105${isPast ? ' grayscale-[40%]' : ''}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (

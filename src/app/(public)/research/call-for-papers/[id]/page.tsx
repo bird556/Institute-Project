@@ -81,8 +81,8 @@ export default async function CallForPaperDetailPage({ params }: Props) {
       </Link>
 
       {coverUrl && (
-        <div className="relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '16/7' }}>
-          <Image src={coverUrl} alt={post.title} fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 896px" />
+        <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/7' }}>
+          <Image src={coverUrl} alt={post.title} fill priority className="object-contain" sizes="(max-width: 1024px) 100vw, 896px" />
         </div>
       )}
 

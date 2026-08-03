@@ -73,12 +73,12 @@ export default function ImageUpload({
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
         >
-          <div className="relative w-full aspect-video">
+          <div className="relative w-full aspect-video bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]">
             <Image
               src={currentUrl}
               alt="Cover preview"
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="(max-width: 768px) 100vw, 400px"
             />
           </div>

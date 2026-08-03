@@ -29,7 +29,7 @@ const selectClass =
   'text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] px-3 py-2 cursor-pointer focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]'
 
 export default function SexualAbuseBoysMenClient({ items }: { items: SexualAbuseBoysMenItem[] }) {
-  const [sort, setSort]             = useState<SortOption>('author_az')
+  const [sort, setSort]             = useState<SortOption>('az')
   const [authorFilter, setAuthorFilter] = useState('all')
   const [typeFilter, setTypeFilter]     = useState<TypeFilter>('all')
   const [page, setPage]             = useState(1)

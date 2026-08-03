@@ -79,13 +79,13 @@ export default async function SexualAbuseBoysMenDetailPage({ params }: Props) {
 
         <aside className="space-y-5 sticky top-24">
           {coverUrl && (
-            <div className="relative w-full rounded-xl overflow-hidden shadow-md" style={{ aspectRatio: '3/4' }}>
+            <div className="relative w-full rounded-xl overflow-hidden shadow-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '3/4' }}>
               <Image
                 src={coverUrl}
                 alt={post.title}
                 fill
                 priority
-                className="object-cover"
+                className="object-contain"
                 sizes="220px"
               />
             </div>

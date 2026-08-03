@@ -6,7 +6,7 @@ import WellnessGrid from './WellnessGrid'
 import { buildMetadata } from '@/lib/metadata'
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadata({ title: 'Health & Wellness' })
+  return buildMetadata({ title: 'Healing & Wellness' })
 }
 
 export default async function HealthWellnessPage() {
@@ -14,7 +14,7 @@ export default async function HealthWellnessPage() {
     getPageContent('health_wellness'),
     createClient(),
   ])
-  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Health & Wellness'
+  const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Healing & Wellness'
   const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
 
   const { data } = await supabase
