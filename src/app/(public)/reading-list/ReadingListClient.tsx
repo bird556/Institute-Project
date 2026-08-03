@@ -3,15 +3,17 @@
 import { useState, useMemo, useRef, useEffect } from 'react'
 import { ChevronDown } from 'lucide-react'
 import ReadingListRows from './ReadingListRows'
+import BookstoreRows from './BookstoreRows'
 import Pagination from '@/components/shared/Pagination'
 import type { ReadingListRowProps } from '@/components/reading-list/ReadingListRow'
+import type { BookstoreRowProps } from '@/components/reading-list/BookstoreRow'
 
 const PAGE_SIZE = 16
 
 export interface ReadingListItem extends ReadingListRowProps {
   created_at: string
   author_region: 'canadian' | 'world' | null
-  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
+  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | null
 }
 
 type SortOption = 'author_az' | 'author_za' | 'newest' | 'oldest' | 'az' | 'za'
@@ -30,10 +32,12 @@ const selectClass =
 
 export default function ReadingListClient({
   items,
+  bookstores,
   initialSection,
 }: {
   items: ReadingListItem[]
-  initialSection: 'bibliography' | 'theses' | null
+  bookstores: BookstoreRowProps[]
+  initialSection: 'bibliography' | 'theses' | 'bookstores' | null
 }) {
   const bibliographyItems = useMemo(
     () => items.filter((i) => i.item_type !== 'thesis_ma' && i.item_type !== 'thesis_phd'),
@@ -45,10 +49,13 @@ export default function ReadingListClient({
   )
 
   const thesesRef = useRef<HTMLDivElement>(null)
+  const bookstoresRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (initialSection === 'theses') {
       thesesRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    } else if (initialSection === 'bookstores') {
+      bookstoresRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -58,10 +65,9 @@ export default function ReadingListClient({
       <ReadingListSection
         title="Bibliography"
         items={bibliographyItems}
-        defaultOpen={initialSection !== 'theses'}
+        defaultOpen={initialSection !== 'theses' && initialSection !== 'bookstores'}
         typeOptions={[
           { value: 'book', label: 'Books' },
-          { value: 'bookstore', label: 'Bookstores' },
         ]}
       />
       <div ref={thesesRef}>
@@ -75,7 +81,130 @@ export default function ReadingListClient({
           ]}
         />
       </div>
+      <div ref={bookstoresRef}>
+        <BookstoreSection
+          items={bookstores}
+          defaultOpen={initialSection === 'bookstores' || (initialSection === null && bookstores.length > 0)}
+        />
+      </div>
     </div>
+  )
+}
+
+type BookstoreSortOption = 'name_az' | 'name_za'
+
+const BOOKSTORE_SORT_LABELS: Record<BookstoreSortOption, string> = {
+  name_az: 'Name A → Z',
+  name_za: 'Name Z → A',
+}
+
+function BookstoreSection({
+  items,
+  defaultOpen,
+}: {
+  items: BookstoreRowProps[]
+  defaultOpen: boolean
+}) {
+  const [open, setOpen]                 = useState(defaultOpen)
+  const [sort, setSort]                 = useState<BookstoreSortOption>('name_az')
+  const [provinceFilter, setProvinceFilter] = useState('all')
+  const [page, setPage]                 = useState(1)
+
+  const provinces = useMemo(
+    () => [...new Set(items.map((i) => i.province).filter(Boolean))].sort() as string[],
+    [items],
+  )
+
+  const displayed = useMemo(() => {
+    let result = items.filter((i) => provinceFilter === 'all' || i.province === provinceFilter)
+    switch (sort) {
+      case 'name_az': result = [...result].sort((a, b) => a.name.localeCompare(b.name)); break
+      case 'name_za': result = [...result].sort((a, b) => b.name.localeCompare(a.name)); break
+    }
+    return result
+  }, [items, sort, provinceFilter])
+
+  const totalPages = Math.ceil(displayed.length / PAGE_SIZE)
+  const paginated  = displayed.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+  const isFiltered = provinceFilter !== 'all'
+
+  function resetPage() { setPage(1) }
+
+  return (
+    <section className="rounded-2xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="w-full flex items-center justify-between gap-3 px-5 py-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] cursor-pointer"
+      >
+        <span className="font-display text-xl font-bold text-[var(--color-brand-teal)] dark:text-white">
+          Bookstores
+        </span>
+        <span className="flex items-center gap-2 text-sm text-[var(--color-text-muted)]">
+          {items.length} {items.length === 1 ? 'store' : 'stores'}
+          <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
+        </span>
+      </button>
+
+      {open && (
+        <div className="p-5 space-y-6 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+          {items.length === 0 ? (
+            <p className="text-[var(--color-text-muted)] py-4">No bookstores yet — check back soon.</p>
+          ) : (
+            <>
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-[var(--color-text-muted)] font-medium whitespace-nowrap">
+                    Sort by
+                  </label>
+                  <select
+                    value={sort}
+                    onChange={(e) => { setSort(e.target.value as BookstoreSortOption); resetPage() }}
+                    className={selectClass}
+                  >
+                    {(Object.keys(BOOKSTORE_SORT_LABELS) as BookstoreSortOption[]).map((key) => (
+                      <option key={key} value={key}>{BOOKSTORE_SORT_LABELS[key]}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {provinces.length >= 2 && (
+                  <div className="flex items-center gap-2">
+                    <label className="text-sm text-[var(--color-text-muted)] font-medium whitespace-nowrap">
+                      Province
+                    </label>
+                    <select
+                      value={provinceFilter}
+                      onChange={(e) => { setProvinceFilter(e.target.value); resetPage() }}
+                      className={selectClass}
+                    >
+                      <option value="all">All provinces</option>
+                      {provinces.map((p) => (
+                        <option key={p} value={p}>{p}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <span className="ml-auto text-sm text-[var(--color-text-muted)]">
+                  {isFiltered
+                    ? `${displayed.length} of ${items.length} stores`
+                    : `${items.length} store${items.length !== 1 ? 's' : ''}`}
+                </span>
+              </div>
+
+              {displayed.length === 0 ? (
+                <p className="text-[var(--color-text-muted)] py-8">No bookstores match your filter.</p>
+              ) : (
+                <>
+                  <BookstoreRows items={paginated} />
+                  <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+                </>
+              )}
+            </>
+          )}
+        </div>
+      )}
+    </section>
   )
 }
 

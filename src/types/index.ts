@@ -37,7 +37,7 @@ export interface ReadingListItem {
   external_url: string | null
   email: string | null
   author_region: 'canadian' | 'world' | null
-  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
+  item_type: 'book' | 'thesis_ma' | 'thesis_phd' | null
   video_url: string | null
   published: boolean
   created_at: string
@@ -381,6 +381,23 @@ export const CANADIAN_PROVINCES = [
   'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec',
   'Saskatchewan', 'Yukon',
 ] as const
+
+// Bookstores — third section on the public Reading List page, alongside
+// Bibliography and MA/PhD Theses. Physical/online bookstore locations, not
+// individual reading-list items.
+export interface Bookstore {
+  id: string
+  name: string
+  province: string | null
+  address: string | null
+  phone_number: string | null
+  website_url: string | null
+  photo_path: string | null
+  published: boolean
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
 
 // Values page — seven pillars of COURAGE, offered in multiple languages.
 // Fixed in code (same precedent as DIRECTORY_CATEGORIES) — pillar text itself

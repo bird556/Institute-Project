@@ -20,7 +20,10 @@ export default async function ReadingListPage({ searchParams }: Props) {
     getPageContent('reading_list'),
     createClient(),
   ])
-  const initialSection = section === 'theses' ? 'theses' : section === 'bibliography' ? 'bibliography' : null
+  const initialSection =
+    section === 'theses' ? 'theses' :
+    section === 'bibliography' ? 'bibliography' :
+    section === 'bookstores' ? 'bookstores' : null
   const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? 'Reading List'
   const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
 
@@ -82,8 +85,27 @@ export default async function ReadingListPage({ searchParams }: Props) {
     video_url: r.video_url,
     email: r.email,
     author_region: (r.author_region ?? null) as 'canadian' | 'world' | null,
-    item_type: (r.item_type ?? null) as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null,
+    item_type: (r.item_type ?? null) as 'book' | 'thesis_ma' | 'thesis_phd' | null,
     created_at: r.created_at,
+  }))
+
+  // Fetch published bookstores
+  const { data: bookstoreData } = await supabase
+    .from('bookstores')
+    .select('id, name, province, address, phone_number, website_url, photo_path')
+    .eq('published', true)
+    .order('name', { ascending: true })
+
+  const bookstores = (bookstoreData ?? []).map((b) => ({
+    id: b.id,
+    name: b.name,
+    province: b.province,
+    address: b.address,
+    phone_number: b.phone_number,
+    website_url: b.website_url,
+    photo_url: b.photo_path
+      ? supabase.storage.from('institute-media').getPublicUrl(b.photo_path).data.publicUrl
+      : null,
   }))
 
   return (
@@ -99,13 +121,7 @@ export default async function ReadingListPage({ searchParams }: Props) {
 
       {botm && <BookOfMonthCard {...botm} />}
 
-      {items.length === 0 ? (
-        <p className="text-[var(--color-text-muted)] py-8">
-          No items yet — check back soon.
-        </p>
-      ) : (
-        <ReadingListClient items={items} initialSection={initialSection} />
-      )}
+      <ReadingListClient items={items} bookstores={bookstores} initialSection={initialSection} />
     </div>
   )
 }

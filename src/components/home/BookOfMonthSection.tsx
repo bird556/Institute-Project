@@ -39,7 +39,7 @@ export default function BookOfMonthSection({ item }: Props) {
                   src={item.cover_url}
                   alt={item.title}
                   fill
-                  className="object-contain"
+                  className="object-cover object-top"
                   sizes="128px"
                 />
               ) : (

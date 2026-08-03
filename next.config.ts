@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
     ]
   },
   images: {
+    qualities: [75, 90],
     remotePatterns: [
       // Unsplash — mock cover images during development
       {

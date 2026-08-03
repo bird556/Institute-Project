@@ -24,7 +24,7 @@ export default function BookOfMonthCard({ id, title, author, description_excerpt
               src={cover_url}
               alt={title}
               fill
-              className="object-contain"
+              className="object-cover"
               sizes="(max-width: 640px) 90vw, 144px"
             />
           ) : (

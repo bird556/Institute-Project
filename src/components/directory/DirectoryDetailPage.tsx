@@ -106,10 +106,10 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
           {entry.email && (
             <a
               href={`mailto:${entry.email}`}
-              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+              className="flex items-center justify-center gap-2 w-full min-w-0 px-4 py-2.5 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
             >
-              <Mail className="w-4 h-4" />
-              {entry.email}
+              <Mail className="w-4 h-4 shrink-0" />
+              <span className="break-all">{entry.email}</span>
             </a>
           )}
         </div>

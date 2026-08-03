@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 import { MoreVertical, PenLine, Trash2, Plus, BookOpen, Search, X } from 'lucide-react'
 import Image from 'next/image'
@@ -18,11 +18,14 @@ import PublishPill from '@/components/admin/PublishPill'
 import Pagination from '@/components/shared/Pagination'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createReadingListItem, deleteReadingListItem, toggleReadingListPublished } from '@/actions/reading-list'
+import { createBookstore } from '@/actions/bookstores'
+import BookstoresClient, { type BookstoreListItem } from './BookstoresClient'
 import type { ReadingListItem } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
 type RegionTab = 'all' | 'canadian' | 'world'
-type GroupTab = 'bibliography' | 'theses'
+type GroupTab = 'bibliography' | 'theses' | 'bookstores'
+const GROUP_TABS: GroupTab[] = ['bibliography', 'theses', 'bookstores']
 
 type AdminSortOption =
   | 'author_az'
@@ -51,17 +54,21 @@ interface ReadingListListItem extends ReadingListItem {
 
 interface ReadingListClientProps {
   items: ReadingListListItem[]
+  bookstores: BookstoreListItem[]
 }
 
 const PAGE_SIZE = 20
 
-export default function ReadingListClient({ items: initial }: ReadingListClientProps) {
+export default function ReadingListClient({ items: initial, bookstores }: ReadingListClientProps) {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [isPending, startTransition] = useTransition()
   const [items, setItems] = useState(initial)
   const [query, setQuery] = useState('')
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all')
-  const [groupTab, setGroupTab] = useState<GroupTab>('bibliography')
+  const tabParam = searchParams.get('tab')
+  const initialTab = GROUP_TABS.includes(tabParam as GroupTab) ? (tabParam as GroupTab) : 'bibliography'
+  const [groupTab, setGroupTab] = useState<GroupTab>(initialTab)
   const [regionTab, setRegionTab] = useState<RegionTab>('all')
   const [sort, setSort] = useState<AdminSortOption>('author_az')
   const [page, setPage] = useState(1)
@@ -86,7 +93,7 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
     const matchesRegion =
       regionTab === 'all' || item.author_region === regionTab
     const isThesis = item.item_type === 'thesis_ma' || item.item_type === 'thesis_phd'
-    const matchesGroup = groupTab === 'bibliography' ? !isThesis : isThesis
+    const matchesGroup = groupTab === 'theses' ? isThesis : groupTab === 'bibliography' ? !isThesis : false
     return matchesQuery && matchesStatus && matchesRegion && matchesGroup
   })
 
@@ -110,6 +117,17 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
   const isFiltering = query !== '' || statusFilter !== 'all'
 
   async function handleNew() {
+    if (groupTab === 'bookstores') {
+      startTransition(async () => {
+        const result = await createBookstore()
+        if (!result.success || !result.data) {
+          toast.error(result.error ?? 'Could not create bookstore.')
+          return
+        }
+        router.push(`/admin/bookstores/${result.data.id}`)
+      })
+      return
+    }
     startTransition(async () => {
       const result = await createReadingListItem(groupTab === 'theses' ? 'thesis_ma' : null)
       if (!result.success || !result.data) {
@@ -169,15 +187,16 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
             className="cursor-pointer bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white gap-1.5"
           >
             <Plus className="h-4 w-4" />
-            New Item
+            {groupTab === 'bookstores' ? 'New Bookstore' : 'New Item'}
           </Button>
         </div>
 
-        {/* Bibliography / Theses tabs */}
+        {/* Bibliography / Theses / Bookstores tabs */}
         <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
           {([
             { value: 'bibliography', label: 'Bibliography' },
             { value: 'theses',       label: 'MA and PhD Theses' },
+            { value: 'bookstores',   label: 'Bookstores' },
           ] as { value: GroupTab; label: string }[]).map(({ value, label }) => (
             <button
               key={value}
@@ -194,7 +213,7 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
         </div>
 
         {/* Region tabs */}
-        {hasRegionData && (
+        {hasRegionData && groupTab !== 'bookstores' && (
           <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
             {([
               { value: 'all',      label: 'All' },
@@ -216,135 +235,141 @@ export default function ReadingListClient({ items: initial }: ReadingListClientP
           </div>
         )}
 
-        {/* Search + sort + filter bar */}
-        <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => { setQuery(e.target.value); resetPage() }}
-              placeholder="Search by title or author…"
-              className="w-full sm:w-72 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
-            />
-            {query && (
-              <button
-                onClick={() => { setQuery(''); resetPage() }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
-              >
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* Sort */}
-          <select
-            value={sort}
-            onChange={(e) => { setSort(e.target.value as AdminSortOption); resetPage() }}
-            className={selectClass}
-          >
-            {(Object.keys(SORT_LABELS) as AdminSortOption[]).map((key) => (
-              <option key={key} value={key}>{SORT_LABELS[key]}</option>
-            ))}
-          </select>
-
-          {/* Status filter pills */}
-          <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
-            {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
-              <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
-                {f.charAt(0).toUpperCase() + f.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Result count */}
-        {isFiltering && (
-          <p className="text-sm text-[var(--color-text-muted)] -mt-2">
-            Showing {filtered.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
-          </p>
-        )}
-
-        {/* List */}
-        {sorted.length === 0 ? (
-          <EmptyState isFiltering={isFiltering} query={query} onClear={() => { setQuery(''); setStatusFilter('all'); resetPage() }} onNew={handleNew} creating={isPending} />
+        {groupTab === 'bookstores' ? (
+          <BookstoresClient items={bookstores} onNew={handleNew} creating={isPending} />
         ) : (
           <>
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
-              {paginated.map((item, i) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.04, duration: 0.25 }}
-                  className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
-                  onClick={() => router.push(`/admin/reading-list/${item.id}`)}
-                >
-                  {/* Thumbnail — portrait 64×48 */}
-                  {item.cover_url ? (
-                    <div className="relative h-16 w-12 rounded-md overflow-hidden shrink-0">
-                      <Image src={item.cover_url} alt={item.title} fill className="object-cover" sizes="48px" />
-                    </div>
-                  ) : (
-                    <div className="h-16 w-12 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
-                      <BookOpen className="h-5 w-5 text-[var(--color-text-muted)]" />
-                    </div>
-                  )}
+            {/* Search + sort + filter bar */}
+            <div className="flex flex-col sm:flex-row gap-3 flex-wrap">
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[var(--color-text-muted)] pointer-events-none" />
+                <input
+                  type="text"
+                  value={query}
+                  onChange={(e) => { setQuery(e.target.value); resetPage() }}
+                  placeholder="Search by title or author…"
+                  className="w-full sm:w-72 pl-9 pr-8 h-9 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] placeholder:text-[var(--color-text-muted)] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors"
+                />
+                {query && (
+                  <button
+                    onClick={() => { setQuery(''); resetPage() }}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] transition-colors"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
 
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
-                      {item.title}
-                    </p>
-                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-                      {item.author && (
-                        <span className="text-sm text-[var(--color-text-muted)] truncate">
-                          {item.author}
-                        </span>
-                      )}
-                      {item.author_region && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] shrink-0">
-                          {item.author_region === 'canadian' ? 'Canadian' : 'International'}
-                        </span>
-                      )}
-                    </div>
-                  </div>
+              {/* Sort */}
+              <select
+                value={sort}
+                onChange={(e) => { setSort(e.target.value as AdminSortOption); resetPage() }}
+                className={selectClass}
+              >
+                {(Object.keys(SORT_LABELS) as AdminSortOption[]).map((key) => (
+                  <option key={key} value={key}>{SORT_LABELS[key]}</option>
+                ))}
+              </select>
 
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <PublishPill
-                      published={item.published}
-                      toggling={togglingId === item.id}
-                      onClick={() => handleToggle(item.id, item.published)}
-                    />
-                  </div>
-
-                  <div onClick={(e) => e.stopPropagation()}>
-                    <DropdownMenu>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-                            <MoreVertical className="h-4 w-4" />
-                          </DropdownMenuTrigger>
-                        </TooltipTrigger>
-                        <TooltipContent side="left"><p>More actions</p></TooltipContent>
-                      </Tooltip>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push(`/admin/reading-list/${item.id}`)} className="cursor-pointer gap-2">
-                          <PenLine className="h-4 w-4" />
-                          Edit
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => setDeleteId(item.id)} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
-                          <Trash2 className="h-4 w-4" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </motion.div>
-              ))}
+              {/* Status filter pills */}
+              <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
+                {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
+                  <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
+                    {f.charAt(0).toUpperCase() + f.slice(1)}
+                  </button>
+                ))}
+              </div>
             </div>
 
-            <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+            {/* Result count */}
+            {isFiltering && (
+              <p className="text-sm text-[var(--color-text-muted)] -mt-2">
+                Showing {filtered.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
+              </p>
+            )}
+
+            {/* List */}
+            {sorted.length === 0 ? (
+              <EmptyState isFiltering={isFiltering} query={query} onClear={() => { setQuery(''); setStatusFilter('all'); resetPage() }} onNew={handleNew} creating={isPending} />
+            ) : (
+              <>
+                <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] overflow-hidden">
+                  {paginated.map((item, i) => (
+                    <motion.div
+                      key={item.id}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.04, duration: 0.25 }}
+                      className="flex items-center gap-4 px-4 py-3 border-b last:border-b-0 border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors cursor-pointer"
+                      onClick={() => router.push(`/admin/reading-list/${item.id}`)}
+                    >
+                      {/* Thumbnail — portrait 64×48 */}
+                      {item.cover_url ? (
+                        <div className="relative h-16 w-12 rounded-md overflow-hidden shrink-0">
+                          <Image src={item.cover_url} alt={item.title} fill className="object-cover" sizes="48px" />
+                        </div>
+                      ) : (
+                        <div className="h-16 w-12 rounded-md bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
+                          <BookOpen className="h-5 w-5 text-[var(--color-text-muted)]" />
+                        </div>
+                      )}
+
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
+                          {item.title}
+                        </p>
+                        <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                          {item.author && (
+                            <span className="text-sm text-[var(--color-text-muted)] truncate">
+                              {item.author}
+                            </span>
+                          )}
+                          {item.author_region && (
+                            <span className="text-xs px-1.5 py-0.5 rounded bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] shrink-0">
+                              {item.author_region === 'canadian' ? 'Canadian' : 'International'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <PublishPill
+                          published={item.published}
+                          toggling={togglingId === item.id}
+                          onClick={() => handleToggle(item.id, item.published)}
+                        />
+                      </div>
+
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <DropdownMenu>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <DropdownMenuTrigger className="p-1 rounded cursor-pointer text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] dark:hover:text-[#e8ecec] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
+                                <MoreVertical className="h-4 w-4" />
+                              </DropdownMenuTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent side="left"><p>More actions</p></TooltipContent>
+                          </Tooltip>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => router.push(`/admin/reading-list/${item.id}`)} className="cursor-pointer gap-2">
+                              <PenLine className="h-4 w-4" />
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setDeleteId(item.id)} className="cursor-pointer gap-2 text-red-600 focus:text-red-600">
+                              <Trash2 className="h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+              </>
+            )}
           </>
         )}
       </div>
