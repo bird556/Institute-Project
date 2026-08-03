@@ -35,12 +35,12 @@ export default function WellnessCard({
       >
         {/* Cover image */}
         {showImage ? (
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
+          <div className="relative w-full overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/9' }}>
             <Image
               src={cover_url}
               alt={title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              className="object-contain transition-transform duration-300 group-hover:scale-[1.02]"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               onError={() => setImgError(true)}
             />

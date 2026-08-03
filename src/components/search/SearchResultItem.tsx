@@ -31,7 +31,7 @@ const TYPE_CONFIG = {
       'text-[var(--color-brand-teal)] bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)]',
   },
   wellness: {
-    label: 'Health & Wellness',
+    label: 'Healing & Wellness',
     icon: Heart,
     href: (id: string) => `/health-wellness/${id}`,
     color:

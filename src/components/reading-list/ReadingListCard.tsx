@@ -33,13 +33,13 @@ export default function ReadingListCard({
     >
       <div className="flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg hover:border-[var(--color-brand-teal-light)] dark:hover:border-[var(--color-brand-teal)] transition-all duration-300">
         {/* Cover — portrait 3:4, clickable */}
-        <Link href={`/reading-list/${id}`} className="block relative w-full overflow-hidden cursor-pointer" style={{ aspectRatio: '3/4' }}>
+        <Link href={`/reading-list/${id}`} className="block relative w-full overflow-hidden cursor-pointer bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '3/4' }}>
           {cover_url ? (
             <Image
               src={cover_url}
               alt={title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className="object-contain transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 20vw"
             />
           ) : (

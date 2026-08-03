@@ -268,6 +268,8 @@ export type ResearchCategory =
   | 'research-institutes'
   | 'sexual-abuse-boys-men'
   | 'current-issues'
+  | 'disabilities'
+  | 'sexualities'
 
 export const RESEARCH_CATEGORIES: ResearchCategory[] = [
   'announcements',
@@ -277,6 +279,8 @@ export const RESEARCH_CATEGORIES: ResearchCategory[] = [
   'research-institutes',
   'sexual-abuse-boys-men',
   'current-issues',
+  'disabilities',
+  'sexualities',
 ]
 
 export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
@@ -287,6 +291,8 @@ export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
   'research-institutes':   'Research Institutes',
   'sexual-abuse-boys-men': 'Sexual Abuse of Boys and Men',
   'current-issues':        'Current Issues',
+  'disabilities':          'Disabilities',
+  'sexualities':           'Sexualities',
 }
 
 export type ResearchItemType = 'article' | 'book' | 'video'
@@ -386,9 +392,14 @@ export interface ValuesLanguage {
 
 export const VALUES_LANGUAGES: ValuesLanguage[] = [
   { code: 'en', label: 'English' },
-  { code: 'fr', label: 'Français' },
+  { code: 'am', label: 'Amharic' },
+  { code: 'ar', label: 'Arabic' },
+  { code: 'er', label: 'Eritrean' },
   { code: 'es', label: 'Español' },
+  { code: 'fr', label: 'Français' },
   { code: 'sw', label: 'Kiswahili' },
+  { code: 'so', label: 'Somali' },
+  { code: 'ti', label: 'Tigrayan' },
 ]
 
 export interface DirectoryEntry {

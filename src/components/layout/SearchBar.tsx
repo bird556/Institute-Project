@@ -25,7 +25,7 @@ const TYPE_LABEL = {
   blog: 'Blog',
   event: 'Event',
   reading_list: 'Reading',
-  wellness: 'Health & Wellness',
+  wellness: 'Healing & Wellness',
   research: 'Research',
   directory: 'Directory',
 } as const;

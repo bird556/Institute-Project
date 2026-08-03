@@ -62,6 +62,13 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   const [published, setPublished] = useState(item.published)
 
   const isBookstore = itemType === 'bookstore'
+  const section = (itemType === 'thesis_ma' || itemType === 'thesis_phd') ? 'theses' : 'bibliography'
+
+  function handleSectionChange(next: 'bibliography' | 'theses') {
+    if (next === section) return
+    setItemType(next === 'theses' ? 'thesis_ma' : 'book')
+    scheduleAutosave()
+  }
 
   const [saving, setSaving] = useState(false)
   const [publishing, setPublishing] = useState(false)
@@ -313,6 +320,31 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
                 </select>
               </div>
             )}
+
+            {/* Section — quick toggle between Bibliography and Theses */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Section
+              </Label>
+              <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] w-fit">
+                {([
+                  { value: 'bibliography', label: 'Bibliography' },
+                  { value: 'theses',       label: 'MA and PhD Theses' },
+                ] as { value: 'bibliography' | 'theses'; label: string }[]).map(({ value, label }) => (
+                  <button
+                    key={value}
+                    onClick={() => handleSectionChange(value)}
+                    className={`px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+                      section === value
+                        ? 'bg-[var(--color-brand-teal)] text-white font-medium'
+                        : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
             {/* Item Type */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">

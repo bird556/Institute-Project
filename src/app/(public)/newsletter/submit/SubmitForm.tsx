@@ -316,7 +316,7 @@ export default function SubmitForm() {
                 placeholder="A brief summary of your submission…"
                 rows={4}
                 required
-                className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
+                className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
               />
             </Field>
 
@@ -337,7 +337,7 @@ export default function SubmitForm() {
                 placeholder="Full text of your submission…"
                 rows={10}
                 required
-                className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
+                className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 py-2 resize-y focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] placeholder:text-[var(--color-text-muted)]"
               />
             </Field>
 

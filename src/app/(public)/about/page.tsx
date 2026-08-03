@@ -8,7 +8,7 @@ import { FadeUp } from '@/components/shared/FadeUp'
 import { stripHtml } from '@/lib/utils'
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadata({ title: 'About' })
+  return buildMetadata({ title: 'Founder' })
 }
 
 const ABOUT_SECTIONS = ['intro', 'mission', 'team', 'history']

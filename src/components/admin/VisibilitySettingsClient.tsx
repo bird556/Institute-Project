@@ -24,7 +24,7 @@ const PAGE_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'reading_list_enabled',      label: 'Reading List',      description: 'When hidden, /reading-list and all items redirect to home' },
   { key: 'partners_enabled',          label: 'Partners',          description: 'When hidden, /partners redirects to home' },
   { key: 'newsletter_enabled',        label: 'Newsletter',        description: 'When hidden, /newsletter and all edition pages redirect to home' },
-  { key: 'health_wellness_enabled',   label: 'Health & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
+  { key: 'health_wellness_enabled',   label: 'Healing & Wellness', description: 'When hidden, /health-wellness and all posts redirect to home' },
   { key: 'research_enabled',          label: 'Research',          description: 'When hidden, /research and all research posts redirect to home' },
   { key: 'values_page_enabled',       label: 'Values',            description: 'When hidden, /values redirects to home' },
 ]
@@ -50,7 +50,7 @@ const HOME_ITEMS: { key: VisibilityKey; label: string; description: string }[] =
   { key: 'impact_section_enabled',   label: 'The Challenge',     description: 'Show/hide the Addressing Hidden Crises section on the home page' },
   { key: 'mission_section_enabled',  label: 'What We Do',        description: 'Show/hide the Remembering Creative Power section on the home page' },
   { key: 'cta_section_enabled',      label: 'Call to Action',    description: 'Show/hide the Call to Action section on the home page' },
-  { key: 'wellness_section_enabled', label: 'Health & Wellness', description: 'Show/hide the Health & Wellness featured section on the home page' },
+  { key: 'wellness_section_enabled', label: 'Healing & Wellness', description: 'Show/hide the Healing & Wellness featured section on the home page' },
 ]
 
 export default function VisibilitySettingsClient({ initialSettings }: { initialSettings: SiteSettings | null }) {

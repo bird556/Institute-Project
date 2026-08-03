@@ -60,7 +60,7 @@ export default function WellnessFeaturedEditor({
     })
     setSaving(false)
     if (res.success) {
-      toast.success('Health & Wellness section saved.')
+      toast.success('Healing & Wellness section saved.')
     } else {
       toast.error(res.error ?? 'Failed to save.')
     }
@@ -69,7 +69,7 @@ export default function WellnessFeaturedEditor({
   return (
     <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] p-6 space-y-5">
       <h2 className="text-sm font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
-        Health &amp; Wellness Section
+        Healing &amp; Wellness Section
       </h2>
       <p className="text-sm text-[var(--color-text-muted)] -mt-2">
         Featured wellness posts shown on the home page below &ldquo;What We Do&rdquo;.
@@ -83,7 +83,7 @@ export default function WellnessFeaturedEditor({
           maxLength={200}
           value={blurb}
           onChange={(e) => setBlurb(e.target.value)}
-          placeholder="One sentence describing who Health & Wellness is for…"
+          placeholder="One sentence describing who Healing & Wellness is for…"
         />
         <p className="text-xs text-[var(--color-text-muted)]">{blurb.length}/200</p>
       </div>

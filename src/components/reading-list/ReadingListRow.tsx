@@ -52,7 +52,7 @@ export default function ReadingListRow({
               src={cover_url}
               alt={title}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="64px"
             />
           ) : (

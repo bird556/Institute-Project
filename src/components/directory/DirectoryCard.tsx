@@ -52,13 +52,13 @@ export default function DirectoryCard({
     >
       <div className="flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg hover:border-[var(--color-brand-teal-light)] dark:hover:border-[var(--color-brand-teal)] transition-all duration-300">
         {/* Photo — clickable */}
-        <Link href={href} className="block relative w-full overflow-hidden cursor-pointer" style={{ aspectRatio: '1/1' }}>
+        <Link href={href} className="block relative w-full overflow-hidden cursor-pointer bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '1/1' }}>
           {photo_url ? (
             <Image
               src={photo_url}
               alt={name}
               fill
-              className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+              className="object-contain transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
             />
           ) : (

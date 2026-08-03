@@ -51,6 +51,18 @@ export default async function ResearchPageHeroEditor() {
       value:     sections?.find((s) => s.section === 'current_issues_description')?.content ?? '',
       updatedAt: sections?.find((s) => s.section === 'current_issues_description')?.updated_at,
     },
+    {
+      section:   'disabilities_description',
+      label:     'Disabilities — Description',
+      value:     sections?.find((s) => s.section === 'disabilities_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'disabilities_description')?.updated_at,
+    },
+    {
+      section:   'sexualities_description',
+      label:     'Sexualities — Description',
+      value:     sections?.find((s) => s.section === 'sexualities_description')?.content ?? '',
+      updatedAt: sections?.find((s) => s.section === 'sexualities_description')?.updated_at,
+    },
   ]
 
   return (

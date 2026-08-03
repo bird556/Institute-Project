@@ -5,7 +5,7 @@ import { VALUES_LANGUAGES } from '@/types'
 import ValuesLanguageTabs from '@/components/values/ValuesLanguageTabs'
 
 export async function generateMetadata(): Promise<Metadata> {
-  return buildMetadata({ title: 'Values' })
+  return buildMetadata({ title: 'Mission & Values' })
 }
 
 export default async function ValuesPage() {

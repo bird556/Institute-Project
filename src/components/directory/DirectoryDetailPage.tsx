@@ -69,14 +69,14 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
       <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-10 items-start">
         {/* Photo column */}
         <div className="space-y-4">
-          <div className="relative w-full rounded-2xl overflow-hidden" style={{ aspectRatio: '1/1' }}>
+          <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '1/1' }}>
             {photoUrl ? (
               <Image
                 src={photoUrl}
                 alt={entry.name}
                 fill
                 priority
-                className="object-cover object-top"
+                className="object-contain"
                 sizes="(max-width: 768px) 100vw, 240px"
               />
             ) : (
