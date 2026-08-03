@@ -80,54 +80,61 @@ export default async function AnnouncementDetailPage({ params }: Props) {
         ← Back to Call for Participants
       </Link>
 
-      {coverUrl && (
-        <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/7' }}>
-          <Image
-            src={coverUrl}
-            alt={post.title}
-            fill
-            priority
-            className="object-contain"
-            sizes="(max-width: 1024px) 100vw, 896px"
+      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-10 items-start">
+        {/* Photo column */}
+        <div className="space-y-4">
+          {coverUrl && (
+            <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '1/1' }}>
+              <Image
+                src={coverUrl}
+                alt={post.title}
+                fill
+                priority
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 240px"
+              />
+            </div>
+          )}
+
+          {docUrl && (
+            <a
+              href={docUrl}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white text-sm font-medium transition-colors"
+            >
+              <FileDown className="h-4 w-4" />
+              Download Document
+            </a>
+          )}
+
+          {post.email && (
+            <a
+              href={`mailto:${post.email}`}
+              className="flex items-center justify-center gap-2 w-full min-w-0 px-4 py-2.5 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+            >
+              <Mail className="w-4 h-4 shrink-0" />
+              <span className="break-all">{post.email}</span>
+            </a>
+          )}
+        </div>
+
+        {/* Content column */}
+        <div className="space-y-4">
+          {post.published_at && (
+            <p className="text-sm text-[var(--color-text-muted)]">{formatDate(post.published_at)}</p>
+          )}
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
+            {post.title}
+          </h1>
+
+          <div
+            className="tiptap-content pt-4"
+            dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </div>
-      )}
-
-      <header className="space-y-4">
-        {post.published_at && (
-          <p className="text-sm text-[var(--color-text-muted)]">{formatDate(post.published_at)}</p>
-        )}
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
-          {post.title}
-        </h1>
-        {post.email && (
-          <a
-            href={`mailto:${post.email}`}
-            className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
-          >
-            <Mail className="w-4 h-4" />
-            {post.email}
-          </a>
-        )}
-      </header>
-
-      <div
-        className="tiptap-content prose max-w-prose mx-auto"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
-
-      {docUrl && (
-        <a
-          href={docUrl}
-          download
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal)] hover:text-white transition-colors text-sm font-medium"
-        >
-          <FileDown className="h-4 w-4" />
-          Download Document
-        </a>
-      )}
+      </div>
 
       {morePosts.length > 0 && (
         <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">

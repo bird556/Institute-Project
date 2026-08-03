@@ -8,11 +8,9 @@ const TYPE_LABELS: Record<string, string> = {
   book:      'Book',
   thesis_ma: 'Thesis (M.A.)',
   thesis_phd: 'Thesis (Ph.D.)',
-  bookstore: 'Bookstore',
 }
 
 const EXTERNAL_LINK_LABELS: Record<string, string> = {
-  bookstore:  'Visit Website',
   thesis_ma:  'Read Thesis',
   thesis_phd: 'Read Thesis',
 }
@@ -27,7 +25,7 @@ export interface ReadingListRowProps {
   video_url?: string | null
   email?: string | null
   author_region?: 'canadian' | 'world' | null
-  item_type?: 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null
+  item_type?: 'book' | 'thesis_ma' | 'thesis_phd' | null
 }
 
 export default function ReadingListRow({
@@ -52,7 +50,7 @@ export default function ReadingListRow({
               src={cover_url}
               alt={title}
               fill
-              className="object-contain"
+              className="object-cover"
               sizes="64px"
             />
           ) : (

@@ -77,45 +77,51 @@ export default async function ResearchInstituteDetailPage({ params }: Props) {
         ← Back to Research Institutes
       </Link>
 
-      {coverUrl && (
-        <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/7' }}>
-          <Image src={coverUrl} alt={post.title} fill priority className="object-contain" sizes="(max-width: 1024px) 100vw, 896px" />
-        </div>
-      )}
-
-      <header className="space-y-4">
-        <div className="flex flex-wrap items-center gap-3">
-          {post.published_at && (
-            <p className="text-sm text-[var(--color-text-muted)]">{formatDate(post.published_at)}</p>
+      <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-10 items-start">
+        {/* Photo column */}
+        <div className="space-y-4">
+          {coverUrl && (
+            <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '1/1' }}>
+              <Image src={coverUrl} alt={post.title} fill priority className="object-contain" sizes="(max-width: 768px) 100vw, 240px" />
+            </div>
           )}
-          {post.region && (
-            <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
-              post.region === 'canadian'
-                ? 'border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] dark:text-white dark:border-white/30'
-                : 'border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-muted)]'
-            }`}>
-              {post.region === 'canadian' ? 'Canadian' : 'International'}
-            </span>
+
+          {post.external_url && (
+            <a
+              href={post.external_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full px-4 py-2.5 rounded-xl bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white text-sm font-medium transition-colors"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Visit Institute
+            </a>
           )}
         </div>
-        <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
-          {post.title}
-        </h1>
-      </header>
 
-      <div className="tiptap-content prose max-w-prose mx-auto" dangerouslySetInnerHTML={{ __html: post.content }} />
+        {/* Content column */}
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center gap-3">
+            {post.published_at && (
+              <p className="text-sm text-[var(--color-text-muted)]">{formatDate(post.published_at)}</p>
+            )}
+            {post.region && (
+              <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
+                post.region === 'canadian'
+                  ? 'border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] dark:text-white dark:border-white/30'
+                  : 'border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-muted)]'
+              }`}>
+                {post.region === 'canadian' ? 'Canadian' : 'International'}
+              </span>
+            )}
+          </div>
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
+            {post.title}
+          </h1>
 
-      {post.external_url && (
-        <a
-          href={post.external_url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white text-sm font-medium transition-colors"
-        >
-          <ExternalLink className="h-4 w-4" />
-          Visit Institute
-        </a>
-      )}
+          <div className="tiptap-content pt-4" dangerouslySetInnerHTML={{ __html: post.content }} />
+        </div>
+      </div>
 
       {morePosts.length > 0 && (
         <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">

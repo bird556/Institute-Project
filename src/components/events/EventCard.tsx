@@ -46,7 +46,7 @@ export default function EventCard({
               src={cover_url}
               alt={title}
               fill
-              className={`object-contain transition-transform duration-500 group-hover:scale-105${isPast ? ' grayscale-[40%]' : ''}`}
+              className={`object-cover transition-transform duration-500 group-hover:scale-105${isPast ? ' grayscale-[40%]' : ''}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (

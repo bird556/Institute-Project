@@ -25,7 +25,6 @@ import type { ReadingListItem } from '@/types'
 const AUTOSAVE_MS = 2000
 
 const EXTERNAL_URL_LABELS: Record<string, string> = {
-  bookstore:  'Website URL',
   thesis_ma:  'Thesis URL',
   thesis_phd: 'Thesis URL',
 }
@@ -58,10 +57,9 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   const [videoUrlError, setVideoUrlError] = useState('')
   const [email, setEmail] = useState(item.email ?? '')
   const [authorRegion, setAuthorRegion] = useState<'canadian' | 'world' | ''>(item.author_region ?? '')
-  const [itemType, setItemType] = useState<'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | ''>(item.item_type ?? '')
+  const [itemType, setItemType] = useState<'book' | 'thesis_ma' | 'thesis_phd' | ''>(item.item_type ?? '')
   const [published, setPublished] = useState(item.published)
 
-  const isBookstore = itemType === 'bookstore'
   const section = (itemType === 'thesis_ma' || itemType === 'thesis_phd') ? 'theses' : 'bibliography'
 
   function handleSectionChange(next: 'bibliography' | 'theses') {
@@ -88,7 +86,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
       video_url: videoUrl || null,
       email: email || null,
       author_region: (authorRegion || null) as 'canadian' | 'world' | null,
-      item_type: (itemType || null) as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | null,
+      item_type: (itemType || null) as 'book' | 'thesis_ma' | 'thesis_phd' | null,
     }
   }
 
@@ -241,13 +239,13 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
             {/* Title */}
             <div className="space-y-1.5">
               <Label htmlFor="title" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                {isBookstore ? 'Bookstore Name' : 'Title'}
+                Title
               </Label>
               <Input
                 id="title"
                 value={title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder={isBookstore ? 'e.g. Knowledge Bookstore' : 'Book or article title'}
+                placeholder="Book or article title"
                 className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
             </div>
@@ -261,7 +259,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
                 content={description}
                 onChange={handleDescriptionChange}
                 folder="reading-list/inline"
-                placeholder={isBookstore ? 'What does this bookstore offer?' : 'Why is this worth reading? Add annotations, notes, or a summary…'}
+                placeholder="Why is this worth reading? Add annotations, notes, or a summary…"
               />
             </div>
           </div>
@@ -286,40 +284,36 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               />
             </div>
 
-            {/* Author — not applicable to bookstores */}
-            {!isBookstore && (
-              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-                <Label htmlFor="author" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                  Author
-                </Label>
-                <Input
-                  id="author"
-                  value={author}
-                  onChange={(e) => handleAuthorChange(e.target.value)}
-                  placeholder="e.g. Paulo Freire"
-                  className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
-                />
-              </div>
-            )}
+            {/* Author */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="author" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Author
+              </Label>
+              <Input
+                id="author"
+                value={author}
+                onChange={(e) => handleAuthorChange(e.target.value)}
+                placeholder="e.g. Paulo Freire"
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+              />
+            </div>
 
-            {/* Author Region — not applicable to bookstores */}
-            {!isBookstore && (
-              <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-                <Label htmlFor="author-region" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
-                  Author Region
-                </Label>
-                <select
-                  id="author-region"
-                  value={authorRegion}
-                  onChange={(e) => { setAuthorRegion(e.target.value as 'canadian' | 'world' | ''); scheduleAutosave() }}
-                  className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
-                >
-                  <option value="">— Not set —</option>
-                  <option value="canadian">Canadian</option>
-                  <option value="world">International</option>
-                </select>
-              </div>
-            )}
+            {/* Author Region */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label htmlFor="author-region" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Author Region
+              </Label>
+              <select
+                id="author-region"
+                value={authorRegion}
+                onChange={(e) => { setAuthorRegion(e.target.value as 'canadian' | 'world' | ''); scheduleAutosave() }}
+                className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
+              >
+                <option value="">— Not set —</option>
+                <option value="canadian">Canadian</option>
+                <option value="world">International</option>
+              </select>
+            </div>
 
             {/* Section — quick toggle between Bibliography and Theses */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
@@ -354,14 +348,13 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               <select
                 id="item-type"
                 value={itemType}
-                onChange={(e) => { setItemType(e.target.value as 'book' | 'thesis_ma' | 'thesis_phd' | 'bookstore' | ''); scheduleAutosave() }}
+                onChange={(e) => { setItemType(e.target.value as 'book' | 'thesis_ma' | 'thesis_phd' | ''); scheduleAutosave() }}
                 className="w-full h-9 px-3 text-sm rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] cursor-pointer"
               >
                 <option value="">— Not set —</option>
                 <option value="book">Book</option>
                 <option value="thesis_ma">Thesis (M.A.)</option>
                 <option value="thesis_phd">Thesis (Ph.D.)</option>
-                <option value="bookstore">Bookstore</option>
               </select>
             </div>
 
@@ -400,8 +393,8 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
               )}
             </div>
 
-            {/* Video URL — optional, independent of Item Type. A book, thesis,
-                or bookstore entry can also have a video attached. */}
+            {/* Video URL — optional, independent of Item Type. A book or
+                thesis entry can also have a video attached. */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
               <Label htmlFor="video-url" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
                 Video URL (optional)

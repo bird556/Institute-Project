@@ -107,10 +107,10 @@ export default async function CallForPaperDetailPage({ params }: Props) {
         {post.email && (
           <a
             href={`mailto:${post.email}`}
-            className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
+            className="inline-flex items-center gap-1.5 max-w-full min-w-0 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
           >
-            <Mail className="w-4 h-4" />
-            {post.email}
+            <Mail className="w-4 h-4 shrink-0" />
+            <span className="break-all">{post.email}</span>
           </a>
         )}
       </header>

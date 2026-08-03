@@ -14,7 +14,6 @@ interface Props {
 }
 
 const EXTERNAL_LINK_LABELS: Record<string, string> = {
-  bookstore:  'Visit Website',
   thesis_ma:  'Read Thesis',
   thesis_phd: 'Read Thesis',
   book:       'Find this book',
@@ -119,10 +118,10 @@ export default async function ReadingListDetailPage({ params }: Props) {
           {item.email && (
             <a
               href={`mailto:${item.email}`}
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+              className="flex items-center justify-center gap-2 w-full min-w-0 px-4 py-3 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-medium hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
             >
-              <Mail className="w-4 h-4" />
-              {item.email}
+              <Mail className="w-4 h-4 shrink-0" />
+              <span className="break-all">{item.email}</span>
             </a>
           )}
         </aside>
