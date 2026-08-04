@@ -55,12 +55,6 @@ export default function BookstoreRow({
             <span>{address}</span>
           </p>
         )}
-        {province && (
-          <p className="hidden sm:block text-sm text-[var(--color-text-muted)] pl-5">
-            {province}
-          </p>
-        )}
-
         {description && (
           <p className="text-sm text-[var(--color-text-muted)] leading-relaxed line-clamp-2">
             {description}
