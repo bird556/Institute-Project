@@ -31,6 +31,8 @@ export default function BookstoreEditor({ bookstore, initialPhotoUrl }: Props) {
   const router = useRouter()
 
   const [name, setName]               = useState(bookstore.name)
+  const [description, setDescription] = useState(bookstore.description ?? '')
+  const [email, setEmail]             = useState(bookstore.email ?? '')
   const [province, setProvince]       = useState(bookstore.province ?? '')
   const [address, setAddress]         = useState(bookstore.address ?? '')
   const [phoneNumber, setPhoneNumber] = useState(bookstore.phone_number ?? '')
@@ -50,6 +52,8 @@ export default function BookstoreEditor({ bookstore, initialPhotoUrl }: Props) {
   function buildFields() {
     return {
       name,
+      description: description || null,
+      email: email || null,
       province: province || null,
       address: address || null,
       phone_number: phoneNumber || null,
@@ -149,6 +153,17 @@ export default function BookstoreEditor({ bookstore, initialPhotoUrl }: Props) {
                 className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
               />
             </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Description</Label>
+              <Textarea
+                rows={5}
+                value={description}
+                onChange={(e) => { setDescription(e.target.value); scheduleAutosave() }}
+                placeholder="A short description of the bookstore..."
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)] resize-y"
+              />
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -177,6 +192,18 @@ export default function BookstoreEditor({ bookstore, initialPhotoUrl }: Props) {
                   <option key={p} value={p}>{p}</option>
                 ))}
               </select>
+            </div>
+
+            {/* Email */}
+            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Email</Label>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }}
+                placeholder="store@example.com"
+                className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+              />
             </div>
 
             {/* Phone Number */}

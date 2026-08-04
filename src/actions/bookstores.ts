@@ -36,7 +36,7 @@ export async function createBookstore(): Promise<ActionResult<{ id: string }>> {
   return { success: true, data: { id: data.id } }
 }
 
-const TEXT_FIELDS = ['name', 'province', 'address', 'phone_number', 'website_url'] as const
+const TEXT_FIELDS = ['name', 'description', 'email', 'province', 'address', 'phone_number', 'website_url'] as const
 
 export async function updateBookstore(
   id: string,

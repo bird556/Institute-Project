@@ -39,7 +39,7 @@ const SERVICES_ITEMS: { key: VisibilityKey; label: string; description: string }
 ]
 
 const RESEARCH_CATEGORY_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
-  { key: 'research_institutes_enabled', label: 'Research Institutes', description: 'When hidden, the Research Institutes category is removed from the nav and research landing page' },
+  { key: 'research_institutes_enabled', label: 'Research Institutes and Initiatives', description: 'When hidden, the Research Institutes and Initiatives category is removed from the nav and research landing page' },
   { key: 'call_for_papers_enabled',   label: 'Call for Papers',   description: 'When hidden, the Call for Papers category is removed from the nav and research landing page' },
   { key: 'sexual_abuse_boys_men_enabled', label: 'Sexual Abuse of Boys and Men', description: 'When hidden, this category is removed from the nav and research landing page' },
 ]

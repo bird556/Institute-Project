@@ -93,10 +93,10 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                     onMouseEnter={() => setServicesDropdownOpen(true)}
                     onMouseLeave={() => setServicesDropdownOpen(false)}
                   >
-                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                    <Link href="/access-to-services" className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
                       {label}
                       <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                    </button>
+                    </Link>
                     <AnimatePresence>
                       {servicesDropdownOpen && (
                         <motion.div
@@ -171,10 +171,10 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                     onMouseEnter={() => setEventsDropdownOpen(true)}
                     onMouseLeave={() => setEventsDropdownOpen(false)}
                   >
-                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                    <Link href="/events" className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
                       {label}
                       <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                    </button>
+                    </Link>
                     <AnimatePresence>
                       {eventsDropdownOpen && (
                         <motion.div
@@ -185,14 +185,14 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                           className="absolute top-full left-0 mt-2 w-52 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
                         >
                           <Link
-                            href="/events?filter=kustawi"
+                            href="/events/kustawi"
                             className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
                             onClick={() => setEventsDropdownOpen(false)}
                           >
                             Kustawi Events
                           </Link>
                           <Link
-                            href="/events?filter=other"
+                            href="/events/other"
                             className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                             onClick={() => setEventsDropdownOpen(false)}
                           >
@@ -213,10 +213,10 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                     onMouseEnter={() => setResearchDropdownOpen(true)}
                     onMouseLeave={() => setResearchDropdownOpen(false)}
                   >
-                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                    <Link href="/research" className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
                       {label}
                       <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                    </button>
+                    </Link>
                     <AnimatePresence>
                       {researchDropdownOpen && (
                         <motion.div
@@ -251,10 +251,10 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                     onMouseEnter={() => setReadingListDropdownOpen(true)}
                     onMouseLeave={() => setReadingListDropdownOpen(false)}
                   >
-                    <button className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
+                    <Link href="/reading-list" className={cn(linkClass, 'flex items-center gap-1 cursor-pointer')}>
                       {label}
                       <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                    </button>
+                    </Link>
                     <AnimatePresence>
                       {readingListDropdownOpen && (
                         <motion.div
@@ -265,21 +265,28 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                           className="absolute top-full left-0 mt-2 w-56 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
                         >
                           <Link
-                            href="/reading-list?section=bibliography"
+                            href="/reading-list/book-of-the-month"
                             className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                            onClick={() => setReadingListDropdownOpen(false)}
+                          >
+                            Book of the Month
+                          </Link>
+                          <Link
+                            href="/reading-list/bibliography"
+                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                             onClick={() => setReadingListDropdownOpen(false)}
                           >
                             Bibliography
                           </Link>
                           <Link
-                            href="/reading-list?section=theses"
+                            href="/reading-list/theses"
                             className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                             onClick={() => setReadingListDropdownOpen(false)}
                           >
                             MA and PhD Theses
                           </Link>
                           <Link
-                            href="/reading-list?section=bookstores"
+                            href="/reading-list/bookstores"
                             className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                             onClick={() => setReadingListDropdownOpen(false)}
                           >
@@ -421,6 +428,9 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             transition={{ duration: 0.15, ease: 'easeOut' }}
                             className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
                           >
+                            <Link href="/access-to-services" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm font-semibold text-brand-teal dark:text-white border-b border-border dark:border-dark-border mb-0.5 pb-2">
+                              All Services
+                            </Link>
                             <Link href="/advocates" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
                               Advocates
                             </Link>
@@ -481,6 +491,9 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             transition={{ duration: 0.15, ease: 'easeOut' }}
                             className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
                           >
+                            <Link href="/research" onClick={() => { setMobileOpen(false); setResearchAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm font-semibold text-brand-teal dark:text-white border-b border-border dark:border-dark-border mb-0.5 pb-2">
+                              All Research
+                            </Link>
                             {visibleResearchCategories.map((cat) => (
                               <Link
                                 key={cat}
@@ -526,14 +539,21 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
                           >
                             <Link
-                              href="/events?filter=kustawi"
+                              href="/events"
+                              onClick={() => { setMobileOpen(false); setEventsAccordionOpen(false) }}
+                              className="px-3 py-2 rounded-md text-sm font-semibold text-brand-teal dark:text-white border-b border-border dark:border-dark-border mb-0.5 pb-2"
+                            >
+                              All Events
+                            </Link>
+                            <Link
+                              href="/events/kustawi"
                               onClick={() => { setMobileOpen(false); setEventsAccordionOpen(false) }}
                               className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
                             >
                               Kustawi Events
                             </Link>
                             <Link
-                              href="/events?filter=other"
+                              href="/events/other"
                               onClick={() => { setMobileOpen(false); setEventsAccordionOpen(false) }}
                               className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
                             >
@@ -574,21 +594,35 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             className="overflow-hidden pl-4 flex flex-col gap-0.5 mt-0.5"
                           >
                             <Link
-                              href="/reading-list?section=bibliography"
+                              href="/reading-list"
+                              onClick={() => { setMobileOpen(false); setReadingListAccordionOpen(false) }}
+                              className="px-3 py-2 rounded-md text-sm font-semibold text-brand-teal dark:text-white border-b border-border dark:border-dark-border mb-0.5 pb-2"
+                            >
+                              All Reading List
+                            </Link>
+                            <Link
+                              href="/reading-list/book-of-the-month"
+                              onClick={() => { setMobileOpen(false); setReadingListAccordionOpen(false) }}
+                              className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
+                            >
+                              Book of the Month
+                            </Link>
+                            <Link
+                              href="/reading-list/bibliography"
                               onClick={() => { setMobileOpen(false); setReadingListAccordionOpen(false) }}
                               className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
                             >
                               Bibliography
                             </Link>
                             <Link
-                              href="/reading-list?section=theses"
+                              href="/reading-list/theses"
                               onClick={() => { setMobileOpen(false); setReadingListAccordionOpen(false) }}
                               className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
                             >
                               MA and PhD Theses
                             </Link>
                             <Link
-                              href="/reading-list?section=bookstores"
+                              href="/reading-list/bookstores"
                               onClick={() => { setMobileOpen(false); setReadingListAccordionOpen(false) }}
                               className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors"
                             >
