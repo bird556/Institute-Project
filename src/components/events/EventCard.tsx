@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, Calendar, User } from 'lucide-react'
+import { MapPin, Calendar, CalendarDays, User } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { formatDate, formatTime } from '@/lib/utils'
 
@@ -50,7 +50,9 @@ export default function EventCard({
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--color-brand-teal)] to-[var(--color-brand-teal-light)]" />
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[var(--color-brand-teal)] to-[var(--color-brand-teal-light)]">
+              <CalendarDays className="w-12 h-12 text-white/70" strokeWidth={1} />
+            </div>
           )}
         </div>
 

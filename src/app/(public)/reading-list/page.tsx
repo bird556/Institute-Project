@@ -92,13 +92,15 @@ export default async function ReadingListPage({ searchParams }: Props) {
   // Fetch published bookstores
   const { data: bookstoreData } = await supabase
     .from('bookstores')
-    .select('id, name, province, address, phone_number, website_url, photo_path')
+    .select('id, name, description, email, province, address, phone_number, website_url, photo_path')
     .eq('published', true)
     .order('name', { ascending: true })
 
   const bookstores = (bookstoreData ?? []).map((b) => ({
     id: b.id,
     name: b.name,
+    description: b.description,
+    email: b.email,
     province: b.province,
     address: b.address,
     phone_number: b.phone_number,

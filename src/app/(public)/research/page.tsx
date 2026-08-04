@@ -84,7 +84,7 @@ export default async function ResearchPage() {
                 <h2 className="font-display text-2xl font-bold text-[var(--color-brand-teal)] dark:text-white group-hover:text-[var(--color-brand-teal)] transition-colors">
                   {RESEARCH_CATEGORY_LABELS[cat]}
                 </h2>
-                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed line-clamp-4">
                   {description}
                 </p>
               </div>

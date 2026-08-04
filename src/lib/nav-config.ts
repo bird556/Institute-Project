@@ -8,7 +8,7 @@ export interface NavItem {
 export const ALL_NAV_DEFINITIONS: Omit<NavItem, 'visible'>[] = [
   { slug: 'home',            label: 'Home',             href: '/'               },
   { slug: 'events',          label: 'Events',           href: '/events'         },
-  { slug: 'services',        label: 'Access to Services', href: '/advocates'     },
+  { slug: 'services',        label: 'Access to Services', href: '/access-to-services' },
   { slug: 'health-wellness', label: 'Healing & Wellness', href: '/health-wellness' },
   { slug: 'reading-list',   label: 'Reading List',     href: '/reading-list'   },
   { slug: 'research',        label: 'Research',         href: '/research'       },

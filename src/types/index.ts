@@ -288,7 +288,7 @@ export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
   'call-for-papers':       'Call for Papers',
   'recent-publications':   'Recent Publications',
   'reports':               'Reports',
-  'research-institutes':   'Research Institutes',
+  'research-institutes':   'Research Institutes and Initiatives',
   'sexual-abuse-boys-men': 'Sexual Abuse of Boys and Men',
   'current-issues':        'Current Issues',
   'disabilities':          'Disabilities',
@@ -388,6 +388,8 @@ export const CANADIAN_PROVINCES = [
 export interface Bookstore {
   id: string
   name: string
+  description: string | null
+  email: string | null
   province: string | null
   address: string | null
   phone_number: string | null

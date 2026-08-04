@@ -1,11 +1,13 @@
 'use client'
 
 import Image from 'next/image'
-import { MapPin, Phone, Globe, Store } from 'lucide-react'
+import { MapPin, Phone, Globe, Mail, Store } from 'lucide-react'
 
 export interface BookstoreRowProps {
   id: string
   name: string
+  description: string | null
+  email: string | null
   province: string | null
   address: string | null
   phone_number: string | null
@@ -15,6 +17,8 @@ export interface BookstoreRowProps {
 
 export default function BookstoreRow({
   name,
+  description,
+  email,
   province,
   address,
   phone_number,
@@ -57,6 +61,12 @@ export default function BookstoreRow({
           </p>
         )}
 
+        {description && (
+          <p className="text-sm text-[var(--color-text-muted)] leading-relaxed line-clamp-2">
+            {description}
+          </p>
+        )}
+
         <div className="flex items-center gap-3 flex-wrap pt-1">
           {phone_number && (
             <a
@@ -65,6 +75,15 @@ export default function BookstoreRow({
             >
               <Phone className="w-3.5 h-3.5" />
               {phone_number}
+            </a>
+          )}
+          {email && (
+            <a
+              href={`mailto:${email}`}
+              className="inline-flex items-center gap-1 min-w-0 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
+            >
+              <Mail className="w-3.5 h-3.5 shrink-0" />
+              <span className="break-all">{email}</span>
             </a>
           )}
           {website_url && (

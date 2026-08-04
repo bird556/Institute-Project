@@ -74,7 +74,7 @@ export default async function ResearchInstituteDetailPage({ params }: Props) {
         href="/research/research-institutes"
         className="inline-flex items-center gap-1.5 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
       >
-        ← Back to Research Institutes
+        ← Back to Research Institutes and Initiatives
       </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-[240px_1fr] gap-10 items-start">
@@ -126,7 +126,7 @@ export default async function ResearchInstituteDetailPage({ params }: Props) {
       {morePosts.length > 0 && (
         <section className="pt-10 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] space-y-6">
           <h2 className="font-display text-2xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-            More Research Institutes
+            More Research Institutes and Initiatives
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {morePosts.map((p) => <ResearchCard key={p.id} {...p} />)}

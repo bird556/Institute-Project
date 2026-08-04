@@ -6,7 +6,7 @@ export default async function ResearchInstitutesPageEditor() {
   const descriptions = [
     {
       section:   'research_institutes_description',
-      label:     'Research Institutes — Description',
+      label:     'Research Institutes and Initiatives — Description',
       value:     sections?.find((s) => s.section === 'research_institutes_description')?.content ?? '',
       updatedAt: sections?.find((s) => s.section === 'research_institutes_description')?.updated_at,
     },
@@ -14,8 +14,8 @@ export default async function ResearchInstitutesPageEditor() {
   return (
     <div className="max-w-2xl mx-auto space-y-6 p-6">
       <div>
-        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] dark:text-white">Research Institutes Page</h1>
-        <p className="text-sm text-[var(--color-text-muted)] mt-1">Edit the description shown on the Research Institutes card and listing page.</p>
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] dark:text-white">Research Institutes and Initiatives Page</h1>
+        <p className="text-sm text-[var(--color-text-muted)] mt-1">Edit the description shown on the Research Institutes and Initiatives card and listing page.</p>
       </div>
       <ResearchDescriptionsEditor initialDescriptions={descriptions} />
     </div>
