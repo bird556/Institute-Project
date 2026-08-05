@@ -7,8 +7,10 @@ import { Globe, Mail, UserRound, Building2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
 
-// Below this natural size (px), a `contain`-fit image would show visible
+// Below this natural size (px), a `contain`-fit headshot would show visible
 // background padding — crop to fill instead so small uploads still look intentional.
+// Only applies to psychotherapists (photos of people); other categories are
+// mostly logos, which should always stay fully visible via `contain`.
 const SMALL_IMAGE_THRESHOLD = 400
 
 export interface DirectoryCardProps {
@@ -48,6 +50,7 @@ export default function DirectoryCard({
   photo_url, website_url, email, mode, province, category,
 }: DirectoryCardProps) {
   const href = `${CATEGORY_HREFS[category]}/${id}`
+  const allowCoverFallback = category === 'psychotherapist'
   const [isSmallImage, setIsSmallImage] = useState(false)
 
   return (
@@ -65,12 +68,13 @@ export default function DirectoryCard({
               alt={name}
               fill
               onLoad={(e) => {
+                if (!allowCoverFallback) return
                 const img = e.currentTarget
                 if (img.naturalWidth < SMALL_IMAGE_THRESHOLD || img.naturalHeight < SMALL_IMAGE_THRESHOLD) {
                   setIsSmallImage(true)
                 }
               }}
-              className={`transition-transform duration-500 group-hover:scale-105 ${isSmallImage ? 'object-cover object-top' : 'object-contain'}`}
+              className={`transition-transform duration-500 group-hover:scale-105 ${allowCoverFallback && isSmallImage ? 'object-cover object-top' : 'object-contain'}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
             />
           ) : (
