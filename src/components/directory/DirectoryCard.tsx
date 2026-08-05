@@ -1,10 +1,15 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { Globe, Mail, UserRound, Building2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
+
+// Below this natural size (px), a `contain`-fit image would show visible
+// background padding — crop to fill instead so small uploads still look intentional.
+const SMALL_IMAGE_THRESHOLD = 400
 
 export interface DirectoryCardProps {
   id: string
@@ -43,6 +48,7 @@ export default function DirectoryCard({
   photo_url, website_url, email, mode, province, category,
 }: DirectoryCardProps) {
   const href = `${CATEGORY_HREFS[category]}/${id}`
+  const [isSmallImage, setIsSmallImage] = useState(false)
 
   return (
     <motion.div
@@ -58,7 +64,13 @@ export default function DirectoryCard({
               src={photo_url}
               alt={name}
               fill
-              className="object-contain transition-transform duration-500 group-hover:scale-105"
+              onLoad={(e) => {
+                const img = e.currentTarget
+                if (img.naturalWidth < SMALL_IMAGE_THRESHOLD || img.naturalHeight < SMALL_IMAGE_THRESHOLD) {
+                  setIsSmallImage(true)
+                }
+              }}
+              className={`transition-transform duration-500 group-hover:scale-105 ${isSmallImage ? 'object-cover object-top' : 'object-contain'}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
             />
           ) : (
