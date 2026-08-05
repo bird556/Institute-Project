@@ -1,5 +1,6 @@
 'use client'
 
+import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
@@ -21,6 +22,12 @@ interface ResearchCardProps {
 
 // Categories whose covers are organization logos, not photos — fit without cropping.
 const CONTAIN_CATEGORIES: ResearchCategory[] = ['research-institutes']
+
+// The card's cover box is 16:9. A source image whose aspect ratio deviates too
+// far from that (e.g. a wide logo banner) gets badly cropped by `cover` —
+// detect that on load and fall back to `contain` for just that image.
+const CARD_ASPECT_RATIO = 16 / 9
+const ASPECT_MISMATCH_TOLERANCE = 1.35
 
 const CATEGORY_ICONS: Record<ResearchCategory, LucideIcon> = {
   'announcements':         Megaphone,
@@ -45,6 +52,9 @@ export default function ResearchCard({
   external_url,
 }: ResearchCardProps) {
   const PlaceholderIcon = CATEGORY_ICONS[category] ?? Megaphone
+  const forceContain = CONTAIN_CATEGORIES.includes(category)
+  const [aspectMismatch, setAspectMismatch] = useState(false)
+  const useContain = forceContain || aspectMismatch
 
   return (
     <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
@@ -58,7 +68,15 @@ export default function ResearchCard({
               src={cover_url}
               alt={title}
               fill
-              className={`transition-transform duration-300 group-hover:scale-[1.02] ${CONTAIN_CATEGORIES.includes(category) ? 'object-contain' : 'object-cover'}`}
+              onLoad={(e) => {
+                if (forceContain) return
+                const img = e.currentTarget
+                const imgAspect = img.naturalWidth / img.naturalHeight
+                if (imgAspect > CARD_ASPECT_RATIO * ASPECT_MISMATCH_TOLERANCE || imgAspect < CARD_ASPECT_RATIO / ASPECT_MISMATCH_TOLERANCE) {
+                  setAspectMismatch(true)
+                }
+              }}
+              className={`transition-transform duration-300 group-hover:scale-[1.02] ${useContain ? 'object-contain' : 'object-cover'}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>

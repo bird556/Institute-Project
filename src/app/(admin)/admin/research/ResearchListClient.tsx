@@ -252,7 +252,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
               >
                 {post.cover_url ? (
                   <div className="h-10 w-10 rounded-md overflow-hidden relative shrink-0">
-                    <Image src={post.cover_url} alt={post.title} fill className="object-cover" sizes="40px" />
+                    <Image src={post.cover_url} alt={post.title} fill className="object-contain" sizes="40px" />
                   </div>
                 ) : (
                   <div className="h-10 w-10 rounded-md bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] flex items-center justify-center shrink-0">
