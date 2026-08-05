@@ -42,7 +42,7 @@ export default function ReadingListClient({
       <ReadingListSection
         title="Bibliography"
         items={bibliographyItems}
-        defaultOpen={initialSection !== 'theses' && initialSection !== 'bookstores'}
+        defaultOpen={initialSection === 'bibliography'}
         typeOptions={[
           { value: 'book', label: 'Books' },
         ]}
@@ -51,7 +51,7 @@ export default function ReadingListClient({
         <ReadingListSection
           title="MA and PhD Theses"
           items={thesisItems}
-          defaultOpen={initialSection === 'theses' || (initialSection === null && thesisItems.length > 0)}
+          defaultOpen={initialSection === 'theses'}
           typeOptions={[
             { value: 'thesis_ma', label: 'M.A.' },
             { value: 'thesis_phd', label: 'Ph.D.' },
@@ -61,7 +61,7 @@ export default function ReadingListClient({
       <div ref={bookstoresRef}>
         <BookstoreSection
           items={bookstores}
-          defaultOpen={initialSection === 'bookstores' || (initialSection === null && bookstores.length > 0)}
+          defaultOpen={initialSection === 'bookstores'}
         />
       </div>
     </div>
