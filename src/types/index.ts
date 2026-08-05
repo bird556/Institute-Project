@@ -295,12 +295,13 @@ export const RESEARCH_CATEGORY_LABELS: Record<ResearchCategory, string> = {
   'sexualities':           'Sexualities',
 }
 
-export type ResearchItemType = 'article' | 'book' | 'video'
+export type ResearchItemType = 'article' | 'book' | 'video' | 'dissertation'
 
 export const ITEM_TYPE_LABELS: Record<ResearchItemType, string> = {
-  article: 'Article',
-  book:    'Book',
-  video:   'Video',
+  article:      'Article',
+  book:         'Book',
+  video:        'Video',
+  dissertation: 'Dissertation',
 }
 
 export interface ResearchPost {

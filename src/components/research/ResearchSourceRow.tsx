@@ -37,7 +37,7 @@ export default function ResearchSourceRow({
               src={cover_url}
               alt={title}
               fill
-              className="object-cover"
+              className="object-contain"
               sizes="64px"
             />
           ) : (

@@ -27,9 +27,9 @@ export default function BookstoreRow({
 }: BookstoreRowProps) {
   return (
     <div className="flex items-start gap-4 px-4 py-4 bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
-      <div className="relative rounded-lg overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] shrink-0" style={{ width: 64, height: 64 }}>
+      <div className="relative rounded-lg overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)] shrink-0" style={{ width: 96, height: 96 }}>
         {photo_url ? (
-          <Image src={photo_url} alt={name} fill className="object-cover" sizes="64px" />
+          <Image src={photo_url} alt={name} fill className="object-contain" sizes="96px" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center">
             <Store className="w-6 h-6 text-[var(--color-text-muted)] opacity-40" />

@@ -82,7 +82,7 @@ export default async function AccessToServicesPage() {
               title={DIRECTORY_CATEGORY_LABELS[cat]}
               viewAllHref={CATEGORY_HREFS[cat]}
               entries={entries}
-              defaultOpen={i === 0}
+              defaultOpen={false}
             />
           )
         })}
