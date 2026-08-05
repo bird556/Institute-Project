@@ -4,6 +4,7 @@ import { ChevronLeft } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { getPageContent } from '@/actions/page-content'
 import SexualAbuseBoysMenClient from './SexualAbuseBoysMenClient'
+import ExpandableText from '@/components/shared/ExpandableText'
 import { buildMetadata } from '@/lib/metadata'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -51,7 +52,7 @@ export default async function SexualAbuseBoysMenPage() {
           Sexual Abuse of Boys and Men
         </h1>
         {subtitle && (
-          <p className="text-lg text-text-muted max-w-2xl">{subtitle}</p>
+          <ExpandableText text={subtitle} maxLength={400} className="text-lg text-text-muted max-w-2xl" />
         )}
       </header>
 
