@@ -19,6 +19,9 @@ interface ResearchCardProps {
   external_url?: string | null
 }
 
+// Categories whose covers are organization logos, not photos — fit without cropping.
+const CONTAIN_CATEGORIES: ResearchCategory[] = ['research-institutes']
+
 const CATEGORY_ICONS: Record<ResearchCategory, LucideIcon> = {
   'announcements':         Megaphone,
   'call-for-papers':       Send,
@@ -55,7 +58,7 @@ export default function ResearchCard({
               src={cover_url}
               alt={title}
               fill
-              className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+              className={`transition-transform duration-300 group-hover:scale-[1.02] ${CONTAIN_CATEGORIES.includes(category) ? 'object-contain' : 'object-cover'}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           </div>
