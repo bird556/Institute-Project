@@ -8,6 +8,7 @@ import { formatDate, formatTime } from '@/lib/utils'
 
 export interface EventCardProps {
   id: string
+  slug: string
   title: string
   description_excerpt: string
   cover_url: string
@@ -16,10 +17,12 @@ export interface EventCardProps {
   isPast: boolean
   event_type?: 'kustawi' | 'other'
   organizer?: string | null
+  image_fit?: 'cover' | 'contain'
 }
 
 export default function EventCard({
   id,
+  slug,
   title,
   description_excerpt,
   cover_url,
@@ -28,6 +31,7 @@ export default function EventCard({
   isPast,
   event_type,
   organizer,
+  image_fit,
 }: EventCardProps) {
   return (
     <motion.div
@@ -36,7 +40,7 @@ export default function EventCard({
       transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
     >
       <Link
-        href={`/events/${id}`}
+        href={`/events/${slug}`}
         className="flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg hover:border-[var(--color-brand-teal-light)] dark:hover:border-[var(--color-brand-teal)] transition-all duration-300"
       >
         {/* Cover image */}
@@ -46,7 +50,7 @@ export default function EventCard({
               src={cover_url}
               alt={title}
               fill
-              className={`object-cover transition-transform duration-500 group-hover:scale-105${isPast ? ' grayscale-[40%]' : ''}`}
+              className={`${image_fit === 'contain' ? 'object-contain' : 'object-cover'} transition-transform duration-500 group-hover:scale-105${isPast ? ' grayscale-[40%]' : ''}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (

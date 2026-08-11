@@ -1,11 +1,11 @@
 import { cache } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { MapPin, Calendar, ExternalLink, User, FileDown } from 'lucide-react'
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import EventCard from '@/components/events/EventCard'
+import EventCoverImage from '@/components/events/EventCoverImage'
 import { formatDate, formatTime, truncate, stripHtml } from '@/lib/utils'
 import { buildMetadata } from '@/lib/metadata'
 import { DetailPageShell } from '@/components/shared/DetailPageShell'
@@ -14,15 +14,26 @@ interface Props {
   params: Promise<{ id: string }>
 }
 
-const getEvent = cache(async (id: string) => {
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+
+const getEvent = cache(async (idOrSlug: string) => {
   const supabase = await createClient()
   const { data } = await supabase
     .from('events')
     .select('*')
-    .eq('id', id)
+    .eq('slug', idOrSlug)
     .eq('published', true)
-    .single()
-  return data ?? null
+    .maybeSingle()
+  if (data) return data
+
+  if (!UUID_RE.test(idOrSlug)) return null
+  const { data: byId } = await supabase
+    .from('events')
+    .select('*')
+    .eq('id', idOrSlug)
+    .eq('published', true)
+    .maybeSingle()
+  return byId ?? null
 })
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -59,7 +70,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   const { data: moreData } = await supabase
     .from('events')
-    .select('id, title, description, cover_path, location, event_date, event_type, organizer')
+    .select('id, slug, title, description, cover_path, location, event_date, event_type, organizer, image_fit')
     .eq('published', true)
     .neq('id', event.id)
     .order('event_date', { ascending: true })
@@ -67,6 +78,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   const otherEvents = (moreData ?? []).map((e) => ({
     id: e.id,
+    slug: e.slug,
     title: e.title,
     description_excerpt: truncate(stripHtml(e.description), 150),
     cover_url: e.cover_path
@@ -77,6 +89,7 @@ export default async function EventDetailPage({ params }: Props) {
     isPast: new Date(e.event_date) < now,
     event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
     organizer: e.organizer ?? null,
+    image_fit: (e.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   const moreEvents = [
@@ -94,16 +107,7 @@ export default async function EventDetailPage({ params }: Props) {
       </Link>
 
       {coverUrl && (
-        <div className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/7' }}>
-          <Image
-            src={coverUrl}
-            alt={event.title}
-            fill
-            priority
-            className={`object-contain${isPast ? ' grayscale-[30%]' : ''}`}
-            sizes="(max-width: 1024px) 100vw, 896px"
-          />
-        </div>
+        <EventCoverImage src={coverUrl} alt={event.title} isPast={isPast} />
       )}
 
       <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-text-muted)]">

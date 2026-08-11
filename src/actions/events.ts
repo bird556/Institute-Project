@@ -53,11 +53,29 @@ export async function updateEvent(
     updatedFields.slug = slugify(fields.title)
   }
   const supabase = await createClient()
+
+  if (updatedFields.slug) {
+    const { data: conflict } = await supabase
+      .from('events')
+      .select('id')
+      .eq('slug', updatedFields.slug)
+      .neq('id', id)
+      .maybeSingle()
+    if (conflict) {
+      return { success: false, error: 'That slug is already used by another event. Choose a different one.' }
+    }
+  }
+
   const { error } = await supabase
     .from('events')
     .update({ ...updatedFields, updated_at: new Date().toISOString() })
     .eq('id', id)
-  if (error) return { success: false, error: 'Failed to save event.' }
+  if (error) {
+    if (error.code === '23505') {
+      return { success: false, error: 'That slug is already used by another event. Choose a different one.' }
+    }
+    return { success: false, error: 'Failed to save event.' }
+  }
   revalidatePath('/events', 'layout')
   return { success: true }
 }

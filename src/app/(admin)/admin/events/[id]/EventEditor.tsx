@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import PublishToggle from '@/components/shared/PublishToggle'
 import ImageUpload from '@/components/shared/ImageUpload'
+import ImageFitToggle from '@/components/shared/ImageFitToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateEvent, toggleEventPublished, deleteEvent } from '@/actions/events'
@@ -62,6 +63,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [organizer, setOrganizer] = useState(event.organizer ?? '')
   const [externalUrl, setExternalUrl] = useState(event.external_url ?? '')
   const [eventType, setEventType] = useState<'kustawi' | 'other'>(event.event_type ?? 'kustawi')
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>(event.image_fit ?? 'cover')
   const [published, setPublished] = useState(event.published)
   const [slugManual, setSlugManual] = useState(false)
 
@@ -91,6 +93,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       event_date: isValidDateStr(eventDate) ? combineDateTime(eventDate, eventTime) : event.event_date,
       external_url: externalUrl.trim() || null,
       event_type: eventType,
+      image_fit: imageFit,
     }
   }
 
@@ -358,6 +361,13 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                 onRemove={() => {
                   setCoverUrl(undefined)
                   setCoverPath(null)
+                  scheduleAutosave()
+                }}
+              />
+              <ImageFitToggle
+                value={imageFit}
+                onChange={(val) => {
+                  setImageFit(val)
                   scheduleAutosave()
                 }}
               />
