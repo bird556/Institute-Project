@@ -22,7 +22,7 @@ export default async function KustawiEventsPage() {
 
   const { data } = await supabase
     .from('events')
-    .select('id, title, description, cover_path, location, event_date, event_type, organizer')
+    .select('id, slug, title, description, cover_path, location, event_date, event_type, organizer, image_fit')
     .eq('published', true)
     .eq('event_type', 'kustawi')
     .order('event_date', { ascending: true })
@@ -30,6 +30,7 @@ export default async function KustawiEventsPage() {
   const now = new Date()
   const events = (data ?? []).map((e) => ({
     id: e.id,
+    slug: e.slug,
     title: e.title,
     description_excerpt: truncate(stripHtml(e.description), 150),
     cover_url: e.cover_path
@@ -40,6 +41,7 @@ export default async function KustawiEventsPage() {
     isPast: new Date(e.event_date) < now,
     event_type: 'kustawi' as const,
     organizer: e.organizer ?? null,
+    image_fit: (e.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   const upcoming = events.filter((e) => !e.isPast)

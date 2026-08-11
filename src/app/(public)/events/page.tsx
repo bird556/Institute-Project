@@ -31,13 +31,14 @@ export default async function EventsPage({ searchParams }: Props) {
 
   const { data } = await supabase
     .from('events')
-    .select('id, title, description, cover_path, location, event_date, event_type, organizer')
+    .select('id, slug, title, description, cover_path, location, event_date, event_type, organizer, image_fit')
     .eq('published', true)
     .order('event_date', { ascending: true })
 
   const now = new Date()
   const events = (data ?? []).map((e) => ({
     id: e.id,
+    slug: e.slug,
     title: e.title,
     description_excerpt: truncate(stripHtml(e.description), 150),
     cover_url: e.cover_path
@@ -48,6 +49,7 @@ export default async function EventsPage({ searchParams }: Props) {
     isPast: new Date(e.event_date) < now,
     event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
     organizer: e.organizer ?? null,
+    image_fit: (e.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   return (
