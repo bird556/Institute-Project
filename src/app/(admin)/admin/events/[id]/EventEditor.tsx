@@ -52,6 +52,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [title, setTitle] = useState(event.title)
   const [slug, setSlug] = useState(event.slug)
   const [description, setDescription] = useState(event.description)
+  const [embedHtml, setEmbedHtml] = useState(event.embed_html ?? '')
   const [coverPath, setCoverPath] = useState<string | null>(event.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [docPath, setDocPath] = useState<string | null>(event.doc_path)
@@ -82,6 +83,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       title,
       slug,
       description,
+      embed_html: embedHtml.trim() || null,
       cover_path: coverPath,
       doc_path: docPath,
       location: location || null,
@@ -316,6 +318,27 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                 onChange={handleDescriptionChange}
                 folder="events/inline"
                 placeholder="Describe this event…"
+              />
+            </div>
+
+            {/* Embed Code */}
+            <div className="space-y-1.5">
+              <Label htmlFor="embed-html" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Embed Code
+              </Label>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Optional — paste a Klaviyo (or other) embed snippet, e.g. <code className="text-[10px]">{'<div class="klaviyo-form-XXXXXX"></div>'}</code>. It renders as-is below the description on the public event page. Note: <code className="text-[10px]">{'<script>'}</code> tags pasted here won&apos;t run — div-based embeds only (Klaviyo&apos;s current form format works this way).
+              </p>
+              <textarea
+                id="embed-html"
+                value={embedHtml}
+                onChange={(e) => {
+                  setEmbedHtml(e.target.value)
+                  scheduleAutosave()
+                }}
+                placeholder='<div class="klaviyo-form-XXXXXX"></div>'
+                rows={3}
+                className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-mono px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
               />
             </div>
           </div>

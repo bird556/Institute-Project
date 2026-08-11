@@ -165,6 +165,10 @@ export default async function EventDetailPage({ params }: Props) {
         dangerouslySetInnerHTML={{ __html: event.description }}
       />
 
+      {event.embed_html && (
+        <div dangerouslySetInnerHTML={{ __html: event.embed_html }} />
+      )}
+
       {docUrl && (
         <a
           href={docUrl}

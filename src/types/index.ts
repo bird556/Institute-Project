@@ -16,6 +16,7 @@ export interface Event {
   title: string
   slug: string
   description: string
+  embed_html: string | null   // Raw embed snippet (e.g. Klaviyo signup form div) rendered as-is below the description
   cover_path: string | null
   doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   location: string | null
