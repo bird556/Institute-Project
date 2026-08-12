@@ -30,6 +30,7 @@ export default async function PartnersPage() {
       : '',
     description: p.description ?? '',
     website_url: p.website_url,
+    image_fit: (p.image_fit ?? 'contain') as 'cover' | 'contain',
   }))
 
   return (

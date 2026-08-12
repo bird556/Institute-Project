@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import PublishToggle from '@/components/shared/PublishToggle'
 import ImageUpload from '@/components/shared/ImageUpload'
+import ImageFitToggle from '@/components/shared/ImageFitToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateDirectoryEntry, toggleDirectoryEntryPublished, deleteDirectoryEntry } from '@/actions/directory'
@@ -39,6 +40,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const [province, setProvince]       = useState(entry.province ?? '')
   const [photoPath, setPhotoPath]     = useState<string | null>(entry.photo_path)
   const [photoUrl, setPhotoUrl]       = useState<string | undefined>(initialPhotoUrl)
+  const [imageFit, setImageFit]       = useState<'cover' | 'contain'>(entry.image_fit ?? 'contain')
   const [published, setPublished]     = useState(entry.published)
 
   const [saving, setSaving]       = useState(false)
@@ -64,6 +66,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
       mode: (mode || null) as DirectoryMode | null,
       province: province || null,
       photo_path: photoPath,
+      image_fit: imageFit,
     }
   }
 
@@ -168,9 +171,17 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">Photo</p>
               <ImageUpload
                 currentUrl={photoUrl}
+                fit={imageFit}
                 folder={`directory/${entry.category}`}
                 onUpload={(url, path) => { setPhotoUrl(url); setPhotoPath(path); scheduleAutosave() }}
                 onRemove={() => { setPhotoUrl(undefined); setPhotoPath(null); scheduleAutosave() }}
+              />
+              <ImageFitToggle
+                value={imageFit}
+                onChange={(val) => {
+                  setImageFit(val)
+                  scheduleAutosave()
+                }}
               />
             </div>
 

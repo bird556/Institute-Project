@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import PublishToggle from '@/components/shared/PublishToggle'
 import ImageUpload from '@/components/shared/ImageUpload'
+import ImageFitToggle from '@/components/shared/ImageFitToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateResearchPost, toggleResearchPublished, deleteResearchPost } from '@/actions/research'
@@ -47,6 +48,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
   const [email, setEmail]             = useState(post.email ?? '')
   const [coverPath, setCoverPath]     = useState<string | null>(post.cover_path)
   const [coverUrl, setCoverUrl]       = useState<string | undefined>(initialCoverUrl)
+  const [imageFit, setImageFit]       = useState<'cover' | 'contain'>(post.image_fit ?? 'cover')
   const [docPath, setDocPath]         = useState<string | null>(post.doc_path)
   const [docName, setDocName]         = useState<string>('')
   const [docUploading, setDocUploading] = useState(false)
@@ -110,7 +112,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, doc_path: docPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null, email: email.trim() || null })
+      await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, image_fit: imageFit, doc_path: docPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null, email: email.trim() || null })
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
@@ -150,7 +152,7 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
 
   async function handleSave() {
     setSaving(true)
-    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, doc_path: docPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null, email: email.trim() || null })
+    const result = await updateResearchPost(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, image_fit: imageFit, doc_path: docPath, category, external_url: externalUrl.trim() || null, region: region || null, author: author.trim() || null, item_type: itemType || null, email: email.trim() || null })
     setSaving(false)
     if (!result.success) { toast.error(result.error ?? 'Save failed.'); return }
     isDirty.current = false
@@ -267,10 +269,20 @@ export default function ResearchEditor({ post, initialCoverUrl }: ResearchEditor
               </p>
               <ImageUpload
                 currentUrl={coverUrl}
+                fit={imageFit}
                 folder="research/covers"
                 onUpload={handleCoverUpload}
                 onRemove={() => { setCoverUrl(undefined); setCoverPath(null); updateResearchPost(post.id, { cover_path: null }) }}
                 accept="image/jpeg,image/png,image/webp,image/svg+xml,image/avif"
+              />
+              <ImageFitToggle
+                value={imageFit}
+                onChange={(val) => {
+                  setImageFit(val)
+                  updateResearchPost(post.id, { image_fit: val }).then((r) => {
+                    if (!r.success) toast.error(r.error ?? 'Failed to save image fit.')
+                  })
+                }}
               />
             </div>
 

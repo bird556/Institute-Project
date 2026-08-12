@@ -13,6 +13,7 @@ interface ImageUploadProps {
   onRemove: () => void
   label?: string
   accept?: string
+  fit?: 'cover' | 'contain'
 }
 
 export default function ImageUpload({
@@ -22,6 +23,7 @@ export default function ImageUpload({
   onRemove,
   label = 'Cover Image',
   accept = 'image/jpeg,image/png,image/webp,image/svg+xml,image/avif',
+  fit = 'contain',
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
@@ -78,7 +80,7 @@ export default function ImageUpload({
               src={currentUrl}
               alt="Cover preview"
               fill
-              className="object-contain"
+              className={fit === 'cover' ? 'object-cover' : 'object-contain'}
               sizes="(max-width: 768px) 100vw, 400px"
             />
           </div>

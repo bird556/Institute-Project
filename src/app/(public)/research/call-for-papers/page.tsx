@@ -19,7 +19,7 @@ export default async function CallForPapersPage() {
 
   const { data } = await supabase
     .from('research_posts')
-    .select('id, title, excerpt, cover_path, category, published_at, external_url, region')
+    .select('id, title, excerpt, cover_path, category, published_at, external_url, region, image_fit')
     .eq('published', true)
     .eq('category', 'call-for-papers')
     .order('published_at', { ascending: false })
@@ -35,6 +35,7 @@ export default async function CallForPapersPage() {
     published_at: p.published_at,
     region:       (p.region ?? null) as 'canadian' | 'world' | null,
     external_url: p.external_url ?? null,
+    image_fit:    (p.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   return (

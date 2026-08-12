@@ -12,6 +12,7 @@ export interface BlogCardProps {
   excerpt: string
   cover_url: string
   published_at: string
+  image_fit?: 'cover' | 'contain'
 }
 
 export default function BlogCard({
@@ -20,6 +21,7 @@ export default function BlogCard({
   excerpt,
   cover_url,
   published_at,
+  image_fit,
 }: BlogCardProps) {
   return (
     <motion.div
@@ -38,7 +40,7 @@ export default function BlogCard({
               src={cover_url}
               alt={title}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              className={`${image_fit === 'contain' ? 'object-contain' : 'object-cover'} transition-transform duration-500 group-hover:scale-105`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (

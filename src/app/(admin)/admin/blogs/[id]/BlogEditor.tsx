@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import PublishToggle from '@/components/shared/PublishToggle'
 import ImageUpload from '@/components/shared/ImageUpload'
+import ImageFitToggle from '@/components/shared/ImageFitToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateBlog, toggleBlogPublished, deleteBlog } from '@/actions/blogs'
@@ -40,6 +41,7 @@ export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
   const [content, setContent] = useState(post.content)
   const [coverPath, setCoverPath] = useState<string | null>(post.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>(post.image_fit ?? 'cover')
   const [published, setPublished] = useState(post.published)
 
   const [saving, setSaving] = useState(false)
@@ -57,7 +59,7 @@ export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateBlog(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath })
+      await updateBlog(post.id, { title, slug, excerpt: excerpt || null, content, cover_path: coverPath, image_fit: imageFit })
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
@@ -91,6 +93,7 @@ export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
       excerpt: excerpt || null,
       content,
       cover_path: coverPath,
+      image_fit: imageFit,
     })
     setSaving(false)
     isDirty.current = false
@@ -221,6 +224,7 @@ export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
               <ImageUpload
                 currentUrl={coverUrl}
+                fit={imageFit}
                 folder="blog/covers"
                 onUpload={(url, path) => {
                   setCoverUrl(url)
@@ -230,6 +234,13 @@ export default function BlogEditor({ post, initialCoverUrl }: BlogEditorProps) {
                 onRemove={() => {
                   setCoverUrl(undefined)
                   setCoverPath(null)
+                  scheduleAutosave()
+                }}
+              />
+              <ImageFitToggle
+                value={imageFit}
+                onChange={(val) => {
+                  setImageFit(val)
                   scheduleAutosave()
                 }}
               />

@@ -19,7 +19,7 @@ export default async function DisabilitiesPage() {
 
   const { data } = await supabase
     .from('research_posts')
-    .select('id, title, excerpt, cover_path, category, published_at')
+    .select('id, title, excerpt, cover_path, category, published_at, image_fit')
     .eq('published', true)
     .eq('category', 'disabilities')
     .order('published_at', { ascending: false })
@@ -33,6 +33,7 @@ export default async function DisabilitiesPage() {
       : '',
     category:     p.category as 'disabilities',
     published_at: p.published_at,
+    image_fit:    (p.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   return (

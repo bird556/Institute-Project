@@ -15,6 +15,7 @@ export interface ResearchSourceRowProps {
   cover_url: string
   external_url?: string | null
   item_type?: ResearchItemType | null
+  image_fit?: 'cover' | 'contain'
 }
 
 export default function ResearchSourceRow({
@@ -26,6 +27,7 @@ export default function ResearchSourceRow({
   external_url,
   item_type,
   href,
+  image_fit,
 }: ResearchSourceRowProps) {
   return (
     <div className="flex items-start gap-4 px-4 py-4 bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
@@ -37,7 +39,7 @@ export default function ResearchSourceRow({
               src={cover_url}
               alt={title}
               fill
-              className="object-contain"
+              className={image_fit === 'cover' ? 'object-cover' : 'object-contain'}
               sizes="64px"
             />
           ) : (

@@ -20,7 +20,7 @@ export default async function SexualAbuseBoysMenPage() {
 
   const { data } = await supabase
     .from('research_posts')
-    .select('id, title, excerpt, cover_path, external_url, author, item_type, created_at')
+    .select('id, title, excerpt, cover_path, external_url, author, item_type, created_at, image_fit')
     .eq('published', true)
     .eq('category', 'sexual-abuse-boys-men')
     .order('created_at', { ascending: false })
@@ -37,6 +37,7 @@ export default async function SexualAbuseBoysMenPage() {
     external_url:        p.external_url ?? null,
     item_type:            p.item_type ?? null,
     created_at:           p.created_at,
+    image_fit:            (p.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   return (

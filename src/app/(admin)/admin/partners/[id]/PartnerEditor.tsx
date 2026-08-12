@@ -15,6 +15,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import ImageUpload from '@/components/shared/ImageUpload'
+import ImageFitToggle from '@/components/shared/ImageFitToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updatePartner, deletePartner, togglePartnerPublished } from '@/actions/partners'
@@ -44,6 +45,7 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
   const [description, setDescription] = useState(partner.description ?? '')
   const [logoPath, setLogoPath] = useState<string | null>(partner.logo_path)
   const [logoUrl, setLogoUrl] = useState<string | undefined>(initialLogoUrl)
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>(partner.image_fit ?? 'contain')
   const [websiteUrl, setWebsiteUrl] = useState(partner.website_url ?? '')
   const [urlError, setUrlError] = useState('')
 
@@ -75,6 +77,7 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
       name,
       description: description || null,
       logo_path: logoPath,
+      image_fit: imageFit,
       website_url: websiteUrl || null,
     }
   }
@@ -226,6 +229,7 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
               </p>
               <ImageUpload
                 currentUrl={logoUrl}
+                fit={imageFit}
                 folder="partners"
                 onUpload={(url, path) => {
                   setLogoUrl(url)
@@ -235,6 +239,13 @@ export default function PartnerEditor({ partner, initialLogoUrl }: PartnerEditor
                 onRemove={() => {
                   setLogoUrl(undefined)
                   setLogoPath(null)
+                  scheduleAutosave()
+                }}
+              />
+              <ImageFitToggle
+                value={imageFit}
+                onChange={(val) => {
+                  setImageFit(val)
                   scheduleAutosave()
                 }}
               />

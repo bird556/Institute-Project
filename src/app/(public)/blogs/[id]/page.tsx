@@ -51,7 +51,7 @@ export default async function BlogDetailPage({ params }: Props) {
 
   const { data: moreData } = await supabase
     .from('blog_posts')
-    .select('id, title, slug, excerpt, cover_path, published_at')
+    .select('id, title, slug, excerpt, cover_path, published_at, image_fit')
     .eq('published', true)
     .neq('id', post.id)
     .order('published_at', { ascending: false })
