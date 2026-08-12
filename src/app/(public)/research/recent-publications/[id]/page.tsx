@@ -49,7 +49,7 @@ export default async function RecentPublicationDetailPage({ params }: Props) {
 
   const { data: moreData } = await supabase
     .from('research_posts')
-    .select('id, title, excerpt, cover_path, category, published_at')
+    .select('id, title, excerpt, cover_path, category, published_at, image_fit')
     .eq('published', true)
     .eq('category', 'recent-publications')
     .neq('id', post.id)
@@ -65,6 +65,7 @@ export default async function RecentPublicationDetailPage({ params }: Props) {
       : '',
     category:     p.category as 'recent-publications',
     published_at: p.published_at,
+    image_fit:    (p.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   return (

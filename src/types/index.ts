@@ -5,6 +5,7 @@ export interface BlogPost {
   excerpt: string | null
   content: string
   cover_path: string | null
+  image_fit: 'cover' | 'contain'
   published: boolean
   published_at: string | null
   created_at: string
@@ -36,6 +37,7 @@ export interface ReadingListItem {
   author: string | null
   description: string | null
   cover_path: string | null
+  image_fit: 'cover' | 'contain'
   external_url: string | null
   email: string | null
   author_region: 'canadian' | 'world' | null
@@ -50,6 +52,7 @@ export interface Partner {
   id: string
   name: string
   logo_path: string | null
+  image_fit: 'cover' | 'contain'
   description: string | null
   website_url: string | null
   sort_order: number
@@ -313,6 +316,7 @@ export interface ResearchPost {
   excerpt: string | null
   content: string
   cover_path: string | null
+  image_fit: 'cover' | 'contain'
   doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   category: ResearchCategory
   external_url: string | null
@@ -432,6 +436,7 @@ export interface DirectoryEntry {
   website_url: string | null
   email: string | null
   photo_path: string | null
+  image_fit: 'cover' | 'contain'
   category: DirectoryCategory
   mode: DirectoryMode | null
   province: string | null

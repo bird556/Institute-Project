@@ -35,12 +35,13 @@ export default async function BibliographyPage() {
     author: string | null
     description_excerpt: string | null
     cover_url: string | null
+    image_fit?: 'cover' | 'contain'
   } | null = null
 
   if (botmId) {
     const { data: botmData } = await supabase
       .from('reading_list')
-      .select('id, title, author, description, cover_path')
+      .select('id, title, author, description, cover_path, image_fit')
       .eq('id', botmId)
       .eq('published', true)
       .single()
@@ -54,13 +55,14 @@ export default async function BibliographyPage() {
         cover_url: botmData.cover_path
           ? supabase.storage.from('institute-media').getPublicUrl(botmData.cover_path).data.publicUrl
           : null,
+        image_fit: (botmData.image_fit ?? 'cover') as 'cover' | 'contain',
       }
     }
   }
 
   const { data } = await supabase
     .from('reading_list')
-    .select('id, title, author, description, cover_path, external_url, video_url, email, author_region, item_type, created_at')
+    .select('id, title, author, description, cover_path, external_url, video_url, email, author_region, item_type, created_at, image_fit')
     .eq('published', true)
     .order('created_at', { ascending: false })
 
@@ -80,6 +82,7 @@ export default async function BibliographyPage() {
       author_region: (r.author_region ?? null) as 'canadian' | 'world' | null,
       item_type: (r.item_type ?? null) as 'book' | 'thesis_ma' | 'thesis_phd' | null,
       created_at: r.created_at,
+      image_fit: (r.image_fit ?? 'cover') as 'cover' | 'contain',
     }))
 
   return (

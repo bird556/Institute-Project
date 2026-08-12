@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 import PublishToggle from '@/components/shared/PublishToggle'
 import ImageUpload from '@/components/shared/ImageUpload'
+import ImageFitToggle from '@/components/shared/ImageFitToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateReadingListItem, toggleReadingListPublished, deleteReadingListItem } from '@/actions/reading-list'
@@ -51,6 +52,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
   const [description, setDescription] = useState(item.description ?? '')
   const [coverPath, setCoverPath] = useState<string | null>(item.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
+  const [imageFit, setImageFit] = useState<'cover' | 'contain'>(item.image_fit ?? 'cover')
   const [externalUrl, setExternalUrl] = useState(item.external_url ?? '')
   const [urlError, setUrlError] = useState('')
   const [videoUrl, setVideoUrl] = useState(item.video_url ?? '')
@@ -82,6 +84,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
       author: author || null,
       description: description || null,
       cover_path: coverPath,
+      image_fit: imageFit,
       external_url: externalUrl || null,
       video_url: videoUrl || null,
       email: email || null,
@@ -270,6 +273,7 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
               <ImageUpload
                 currentUrl={coverUrl}
+                fit={imageFit}
                 folder="reading-list/covers"
                 onUpload={(url, path) => {
                   setCoverUrl(url)
@@ -279,6 +283,13 @@ export default function ReadingListEditor({ item, initialCoverUrl }: ReadingList
                 onRemove={() => {
                   setCoverUrl(undefined)
                   setCoverPath(null)
+                  scheduleAutosave()
+                }}
+              />
+              <ImageFitToggle
+                value={imageFit}
+                onChange={(val) => {
+                  setImageFit(val)
                   scheduleAutosave()
                 }}
               />

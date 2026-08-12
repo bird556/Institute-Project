@@ -352,6 +352,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
               <ImageUpload
                 currentUrl={coverUrl}
+                fit={imageFit}
                 folder="events/covers"
                 onUpload={(url, path) => {
                   setCoverUrl(url)

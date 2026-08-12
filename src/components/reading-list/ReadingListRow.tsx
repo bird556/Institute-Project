@@ -26,6 +26,7 @@ export interface ReadingListRowProps {
   email?: string | null
   author_region?: 'canadian' | 'world' | null
   item_type?: 'book' | 'thesis_ma' | 'thesis_phd' | null
+  image_fit?: 'cover' | 'contain'
 }
 
 export default function ReadingListRow({
@@ -39,6 +40,7 @@ export default function ReadingListRow({
   email,
   author_region,
   item_type,
+  image_fit,
 }: ReadingListRowProps) {
   return (
     <div className="flex items-start gap-4 px-4 py-4 bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors">
@@ -50,7 +52,7 @@ export default function ReadingListRow({
               src={cover_url}
               alt={title}
               fill
-              className="object-cover"
+              className={image_fit === 'contain' ? 'object-contain' : 'object-cover'}
               sizes="64px"
             />
           ) : (

@@ -40,6 +40,7 @@ export default async function DirectoryListPage({ category, pageSlug }: Props) {
     province: e.province,
     category: e.category,
     created_at: e.created_at,
+    image_fit: (e.image_fit ?? 'contain') as 'cover' | 'contain',
   }))
 
   return (

@@ -25,6 +25,7 @@ export interface DirectoryCardProps {
   province: string | null
   category: DirectoryCategory
   created_at: string
+  image_fit?: 'cover' | 'contain'
 }
 
 function PlaceholderIcon({ category }: { category: DirectoryCategory }) {
@@ -47,11 +48,12 @@ const CATEGORY_HREFS: Record<DirectoryCategory, string> = {
 
 export default function DirectoryCard({
   id, name, organization, description_excerpt,
-  photo_url, website_url, email, mode, province, category,
+  photo_url, website_url, email, mode, province, category, image_fit,
 }: DirectoryCardProps) {
   const href = `${CATEGORY_HREFS[category]}/${id}`
   const allowCoverFallback = category === 'psychotherapist'
   const [isSmallImage, setIsSmallImage] = useState(false)
+  const useCover = image_fit === 'cover' || (allowCoverFallback && isSmallImage)
 
   return (
     <motion.div
@@ -74,7 +76,7 @@ export default function DirectoryCard({
                   setIsSmallImage(true)
                 }
               }}
-              className={`transition-transform duration-500 group-hover:scale-105 ${allowCoverFallback && isSmallImage ? 'object-cover object-top' : 'object-contain'}`}
+              className={`transition-transform duration-500 group-hover:scale-105 ${useCover ? (allowCoverFallback && isSmallImage ? 'object-cover object-top' : 'object-cover') : 'object-contain'}`}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 33vw, 25vw"
             />
           ) : (

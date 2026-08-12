@@ -30,6 +30,7 @@ interface ResearchGridPost {
   published_at: string | null
   region?: 'canadian' | 'world' | null
   external_url?: string | null
+  image_fit?: 'cover' | 'contain'
 }
 
 interface ResearchGridProps {

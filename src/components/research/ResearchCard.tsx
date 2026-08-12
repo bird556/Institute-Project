@@ -18,10 +18,8 @@ interface ResearchCardProps {
   published_at: string | null
   region?: 'canadian' | 'world' | null
   external_url?: string | null
+  image_fit?: 'cover' | 'contain'
 }
-
-// Categories whose covers are organization logos, not photos — fit without cropping.
-const CONTAIN_CATEGORIES: ResearchCategory[] = ['research-institutes']
 
 // The card's cover box is 16:9. A source image whose aspect ratio deviates too
 // far from that (e.g. a wide logo banner) gets badly cropped by `cover` —
@@ -50,9 +48,10 @@ export default function ResearchCard({
   published_at,
   region,
   external_url,
+  image_fit,
 }: ResearchCardProps) {
   const PlaceholderIcon = CATEGORY_ICONS[category] ?? Megaphone
-  const forceContain = CONTAIN_CATEGORIES.includes(category)
+  const forceContain = image_fit === 'contain'
   const [aspectMismatch, setAspectMismatch] = useState(false)
   const useContain = forceContain || aspectMismatch
 

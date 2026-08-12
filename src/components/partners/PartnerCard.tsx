@@ -11,6 +11,7 @@ export interface PartnerCardProps {
   logo_url: string
   description: string
   website_url?: string | null
+  image_fit?: 'cover' | 'contain'
 }
 
 function getInitials(name: string): string {
@@ -22,7 +23,7 @@ function getInitials(name: string): string {
     .join('')
 }
 
-export default function PartnerCard({ id, name, logo_url, description }: PartnerCardProps) {
+export default function PartnerCard({ id, name, logo_url, description, image_fit }: PartnerCardProps) {
   return (
     <Link href={`/partners/${id}`} className="block h-full">
       <motion.div
@@ -39,7 +40,7 @@ export default function PartnerCard({ id, name, logo_url, description }: Partner
                 alt={`${name} logo`}
                 fill
                 unoptimized
-                className="object-contain"
+                className={image_fit === 'cover' ? 'object-cover' : 'object-contain'}
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
             </div>

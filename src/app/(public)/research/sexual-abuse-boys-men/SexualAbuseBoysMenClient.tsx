@@ -11,6 +11,7 @@ const PAGE_SIZE = 16
 
 export interface SexualAbuseBoysMenItem extends ResearchSourceRowProps {
   created_at: string
+  image_fit?: 'cover' | 'contain'
 }
 
 type SortOption = 'author_az' | 'author_za' | 'newest' | 'oldest' | 'az' | 'za'

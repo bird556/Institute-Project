@@ -67,7 +67,7 @@ export async function createResearchPost(category: ResearchCategory = 'announcem
 
 export async function updateResearchPost(
   id: string,
-  fields: Partial<Pick<ResearchPost, 'title' | 'slug' | 'excerpt' | 'content' | 'cover_path' | 'doc_path' | 'category' | 'external_url' | 'region' | 'author' | 'item_type' | 'email'>>,
+  fields: Partial<Pick<ResearchPost, 'title' | 'slug' | 'excerpt' | 'content' | 'cover_path' | 'image_fit' | 'doc_path' | 'category' | 'external_url' | 'region' | 'author' | 'item_type' | 'email'>>,
 ): Promise<ActionResult<ResearchPost>> {
   const supabase = await createClient()
   const { data, error } = await supabase

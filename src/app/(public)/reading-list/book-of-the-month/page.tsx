@@ -27,12 +27,13 @@ export default async function BookOfTheMonthPage() {
     author: string | null
     description_excerpt: string | null
     cover_url: string | null
+    image_fit?: 'cover' | 'contain'
   } | null = null
 
   if (botmId) {
     const { data: botmData } = await supabase
       .from('reading_list')
-      .select('id, title, author, description, cover_path')
+      .select('id, title, author, description, cover_path, image_fit')
       .eq('id', botmId)
       .eq('published', true)
       .single()
@@ -46,6 +47,7 @@ export default async function BookOfTheMonthPage() {
         cover_url: botmData.cover_path
           ? supabase.storage.from('institute-media').getPublicUrl(botmData.cover_path).data.publicUrl
           : null,
+        image_fit: (botmData.image_fit ?? 'cover') as 'cover' | 'contain',
       }
     }
   }

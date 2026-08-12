@@ -51,7 +51,7 @@ export default async function CallForPaperDetailPage({ params }: Props) {
 
   const { data: moreData } = await supabase
     .from('research_posts')
-    .select('id, title, excerpt, cover_path, category, published_at, region, external_url')
+    .select('id, title, excerpt, cover_path, category, published_at, region, external_url, image_fit')
     .eq('published', true)
     .eq('category', 'call-for-papers')
     .neq('id', post.id)
@@ -69,6 +69,7 @@ export default async function CallForPaperDetailPage({ params }: Props) {
     published_at: p.published_at,
     region:       (p.region ?? null) as 'canadian' | 'world' | null,
     external_url: p.external_url ?? null,
+    image_fit:    (p.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   return (

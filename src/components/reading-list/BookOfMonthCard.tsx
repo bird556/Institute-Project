@@ -8,9 +8,10 @@ interface BookOfMonthCardProps {
   author: string | null
   description_excerpt: string | null
   cover_url: string | null
+  image_fit?: 'cover' | 'contain'
 }
 
-export default function BookOfMonthCard({ id, title, author, description_excerpt, cover_url }: BookOfMonthCardProps) {
+export default function BookOfMonthCard({ id, title, author, description_excerpt, cover_url, image_fit }: BookOfMonthCardProps) {
   return (
     <div className="rounded-2xl border border-[hsl(35_60%_50%/0.35)] bg-[hsl(35_60%_50%/0.05)] dark:bg-[var(--color-dark-surface)] overflow-hidden">
       <div className="flex flex-col sm:flex-row gap-6 p-6">
@@ -24,7 +25,7 @@ export default function BookOfMonthCard({ id, title, author, description_excerpt
               src={cover_url}
               alt={title}
               fill
-              className="object-cover"
+              className={image_fit === 'contain' ? 'object-contain' : 'object-cover'}
               sizes="(max-width: 640px) 90vw, 144px"
             />
           ) : (
