@@ -18,6 +18,7 @@ export interface Event {
   slug: string
   description: string
   embed_html: string | null   // Raw embed snippet (e.g. Klaviyo signup form div) rendered as-is below the description
+  embed_transparent_bg: boolean   // Strips the embed's own white panel background so it blends into the page
   cover_path: string | null
   doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   location: string | null
@@ -26,6 +27,8 @@ export interface Event {
   organizer: string | null
   event_type: 'kustawi' | 'other'
   image_fit: 'cover' | 'contain'
+  image_border: boolean   // Whether the contain-mode letterbox background shows around the cover image
+  layout_order: string[]   // Admin-defined block order — see src/lib/event-layout.ts
   published: boolean
   created_at: string
   updated_at: string
