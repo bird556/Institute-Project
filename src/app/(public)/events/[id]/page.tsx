@@ -1,4 +1,4 @@
-import { cache } from 'react'
+import { cache, Fragment, type ReactNode } from 'react'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { MapPin, Calendar, ExternalLink, User, FileDown } from 'lucide-react'
@@ -9,6 +9,7 @@ import EventCoverImage from '@/components/events/EventCoverImage'
 import { formatDate, formatTime, truncate, stripHtml } from '@/lib/utils'
 import { buildMetadata } from '@/lib/metadata'
 import { DetailPageShell } from '@/components/shared/DetailPageShell'
+import { parseEventLayout, type EventBlockKey } from '@/lib/event-layout'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -97,6 +98,83 @@ export default async function EventDetailPage({ params }: Props) {
     ...otherEvents.filter((e) => e.isPast).sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime()),
   ].slice(0, 3)
 
+  const blocks: Record<EventBlockKey, ReactNode> = {
+    cover_image: coverUrl && (
+      <EventCoverImage src={coverUrl} alt={event.title} isPast={isPast} imageBorder={event.image_border} />
+    ),
+    title: (
+      <div className="space-y-6">
+        <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
+          {event.title}
+        </h1>
+
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-text-muted)]">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="w-4 h-4 shrink-0" />
+            {formatDate(event.event_date)} · {formatTime(event.event_date)}
+          </span>
+          {event.location && (
+            <span className="flex items-center gap-1.5">
+              <MapPin className="w-4 h-4 shrink-0" />
+              {event.location}
+            </span>
+          )}
+          {event.organizer && (
+            <span className="flex items-center gap-1.5">
+              <User className="w-4 h-4 shrink-0" />
+              {event.organizer}
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          {event.event_type === 'other' ? (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
+              Other Event
+            </span>
+          ) : (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[var(--color-brand-teal)] text-white">
+              Kustawi Event
+            </span>
+          )}
+          {isPast && (
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
+              This event has passed.
+            </span>
+          )}
+        </div>
+
+        {event.external_url && !isPast && (
+          <div>
+            <a
+              href={event.external_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white font-medium text-sm transition-colors duration-200"
+            >
+              Register / Attend
+              <ExternalLink className="w-4 h-4" />
+            </a>
+          </div>
+        )}
+      </div>
+    ),
+    description: (
+      <div
+        className="tiptap-content"
+        dangerouslySetInnerHTML={{ __html: event.description }}
+      />
+    ),
+    embed_html: event.embed_html && (
+      <div
+        className={event.embed_transparent_bg ? 'embed-transparent-bg' : undefined}
+        dangerouslySetInnerHTML={{ __html: event.embed_html }}
+      />
+    ),
+  }
+
+  const orderedBlocks = parseEventLayout(event.layout_order)
+
   return (
     <DetailPageShell className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
       <Link
@@ -106,72 +184,9 @@ export default async function EventDetailPage({ params }: Props) {
         ← Back to Events
       </Link>
 
-      {coverUrl && (
-        <EventCoverImage src={coverUrl} alt={event.title} isPast={isPast} />
-      )}
-
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-text-muted)]">
-        <span className="flex items-center gap-1.5">
-          <Calendar className="w-4 h-4 shrink-0" />
-          {formatDate(event.event_date)} · {formatTime(event.event_date)}
-        </span>
-        {event.location && (
-          <span className="flex items-center gap-1.5">
-            <MapPin className="w-4 h-4 shrink-0" />
-            {event.location}
-          </span>
-        )}
-        {event.organizer && (
-          <span className="flex items-center gap-1.5">
-            <User className="w-4 h-4 shrink-0" />
-            {event.organizer}
-          </span>
-        )}
-      </div>
-
-      <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
-        {event.title}
-      </h1>
-
-      <div className="flex flex-wrap items-center gap-3">
-        {event.event_type === 'other' ? (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400">
-            Other Event
-          </span>
-        ) : (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-[var(--color-brand-teal)] text-white">
-            Kustawi Event
-          </span>
-        )}
-        {isPast && (
-          <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-muted)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)]">
-            This event has passed.
-          </span>
-        )}
-      </div>
-
-      {event.external_url && !isPast && (
-        <div>
-          <a
-            href={event.external_url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white font-medium text-sm transition-colors duration-200"
-          >
-            Register / Attend
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
-      )}
-
-      <div
-        className="tiptap-content"
-        dangerouslySetInnerHTML={{ __html: event.description }}
-      />
-
-      {event.embed_html && (
-        <div dangerouslySetInnerHTML={{ __html: event.embed_html }} />
-      )}
+      {orderedBlocks.map((key) => (
+        <Fragment key={key}>{blocks[key]}</Fragment>
+      ))}
 
       {docUrl && (
         <a

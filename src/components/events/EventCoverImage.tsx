@@ -7,17 +7,18 @@ interface EventCoverImageProps {
   src: string
   alt: string
   isPast: boolean
+  imageBorder: boolean
 }
 
 const DEFAULT_ASPECT = 16 / 7
 const MAX_HEIGHT_PX = 560
 
-export default function EventCoverImage({ src, alt, isPast }: EventCoverImageProps) {
+export default function EventCoverImage({ src, alt, isPast, imageBorder }: EventCoverImageProps) {
   const [aspect, setAspect] = useState(DEFAULT_ASPECT)
 
   return (
     <div
-      className="relative w-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]"
+      className={`relative w-full rounded-2xl overflow-hidden${imageBorder ? ' bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]' : ''}`}
       style={{ aspectRatio: aspect, maxHeight: MAX_HEIGHT_PX }}
     >
       <Image

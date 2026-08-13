@@ -4,7 +4,22 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
-import { ArrowLeft, MoreVertical, Trash2, FileText, X } from 'lucide-react'
+import { ArrowLeft, MoreVertical, Trash2, FileText, X, GripVertical } from 'lucide-react'
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core'
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+  useSortable,
+  arrayMove,
+} from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -17,10 +32,12 @@ import {
 import PublishToggle from '@/components/shared/PublishToggle'
 import ImageUpload from '@/components/shared/ImageUpload'
 import ImageFitToggle from '@/components/shared/ImageFitToggle'
+import ImageBorderToggle from '@/components/shared/ImageBorderToggle'
 import RichTextEditor from '@/components/shared/RichTextEditor'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateEvent, toggleEventPublished, deleteEvent } from '@/actions/events'
 import { slugify, formatDate } from '@/lib/utils'
+import { parseEventLayout, EVENT_BLOCK_LABELS, type EventBlockKey } from '@/lib/event-layout'
 import type { Event } from '@/types'
 
 const AUTOSAVE_MS = 2000
@@ -47,6 +64,37 @@ function isValidDateStr(date: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(new Date(`${date}T00:00:00.000Z`).getTime())
 }
 
+function SortableLayoutRow({ blockKey }: { blockKey: EventBlockKey }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: blockKey })
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  }
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-3 rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] px-3 py-2 bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)]"
+    >
+      <button
+        {...attributes}
+        {...listeners}
+        className="cursor-grab active:cursor-grabbing text-[var(--color-text-muted)] hover:text-[var(--color-text-primary)] shrink-0"
+        aria-label="Drag to reorder"
+      >
+        <GripVertical size={16} />
+      </button>
+      <span className="text-sm font-medium text-[var(--color-text-primary)] dark:text-white">
+        {EVENT_BLOCK_LABELS[blockKey]}
+      </span>
+    </div>
+  )
+}
+
 export default function EventEditor({ event, initialCoverUrl }: EventEditorProps) {
   const router = useRouter()
 
@@ -54,6 +102,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [slug, setSlug] = useState(event.slug)
   const [description, setDescription] = useState(event.description)
   const [embedHtml, setEmbedHtml] = useState(event.embed_html ?? '')
+  const [embedTransparentBg, setEmbedTransparentBg] = useState(event.embed_transparent_bg ?? false)
   const [coverPath, setCoverPath] = useState<string | null>(event.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [docPath, setDocPath] = useState<string | null>(event.doc_path)
@@ -64,8 +113,14 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [externalUrl, setExternalUrl] = useState(event.external_url ?? '')
   const [eventType, setEventType] = useState<'kustawi' | 'other'>(event.event_type ?? 'kustawi')
   const [imageFit, setImageFit] = useState<'cover' | 'contain'>(event.image_fit ?? 'cover')
+  const [imageBorder, setImageBorder] = useState<boolean>(event.image_border ?? true)
+  const [layoutOrder, setLayoutOrder] = useState<EventBlockKey[]>(() => parseEventLayout(event.layout_order))
   const [published, setPublished] = useState(event.published)
   const [slugManual, setSlugManual] = useState(false)
+
+  const layoutSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+  )
 
   const { date: initDate, time: initTime } = splitDateTime(event.event_date)
   const [eventDate, setEventDate] = useState(initDate)
@@ -86,6 +141,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       slug,
       description,
       embed_html: embedHtml.trim() || null,
+      embed_transparent_bg: embedTransparentBg,
       cover_path: coverPath,
       doc_path: docPath,
       location: location || null,
@@ -94,7 +150,20 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       external_url: externalUrl.trim() || null,
       event_type: eventType,
       image_fit: imageFit,
+      image_border: imageBorder,
+      layout_order: layoutOrder,
     }
+  }
+
+  function handleLayoutDragEnd(dragEvent: DragEndEvent) {
+    const { active, over } = dragEvent
+    if (!over || active.id === over.id) return
+    setLayoutOrder((prev) => {
+      const oldIdx = prev.indexOf(active.id as EventBlockKey)
+      const newIdx = prev.indexOf(over.id as EventBlockKey)
+      return arrayMove(prev, oldIdx, newIdx)
+    })
+    scheduleAutosave()
   }
 
   function scheduleAutosave() {
@@ -279,6 +348,32 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
           </div>
         </div>
 
+        {/* Page layout order */}
+        <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
+              Page Layout
+            </p>
+            <p className="text-xs text-[var(--color-text-muted)] mt-1">
+              Drag to change the order these sections appear in on the public event page. &quot;Title &amp; Event Info&quot; includes the date, location, badges, and Register button.
+            </p>
+          </div>
+          <DndContext
+            id="event-layout-order"
+            sensors={layoutSensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleLayoutDragEnd}
+          >
+            <SortableContext items={layoutOrder} strategy={verticalListSortingStrategy}>
+              <div className="space-y-2">
+                {layoutOrder.map((key) => (
+                  <SortableLayoutRow key={key} blockKey={key} />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
+        </div>
+
         {/* Two-column layout */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-6 items-start">
           {/* Main column */}
@@ -343,6 +438,18 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                 rows={3}
                 className="w-full rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm font-mono px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)]"
               />
+              <label className="flex items-center gap-2 text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={embedTransparentBg}
+                  onChange={(e) => {
+                    setEmbedTransparentBg(e.target.checked)
+                    scheduleAutosave()
+                  }}
+                  className="cursor-pointer accent-[var(--color-brand-teal)]"
+                />
+                Remove the embed&apos;s own background (blend into the page)
+              </label>
             </div>
           </div>
 
@@ -369,6 +476,13 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                 value={imageFit}
                 onChange={(val) => {
                   setImageFit(val)
+                  scheduleAutosave()
+                }}
+              />
+              <ImageBorderToggle
+                value={imageBorder}
+                onChange={(val) => {
+                  setImageBorder(val)
                   scheduleAutosave()
                 }}
               />

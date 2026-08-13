@@ -67,11 +67,11 @@ body {
 /* ─── Dark Mode Token Overrides ─────────────────────── */
 /* brand-teal is near-black in light mode; lift it to a visible mid-green for dark */
 .dark {
-  --color-text-muted:      hsl(160, 8%,  62%);
-  --color-brand-teal:      hsl(160, 28%, 55%);
+  --color-text-muted: hsl(160, 8%, 62%);
+  --color-brand-teal: hsl(160, 28%, 55%);
   --color-brand-teal-dark: hsl(160, 28%, 48%);
-  --color-brand-teal-light:hsl(160, 30%, 70%);
-  --color-brand-primary:   hsl(160, 28%, 55%);
+  --color-brand-teal-light: hsl(160, 30%, 70%);
+  --color-brand-primary: hsl(160, 28%, 55%);
 }
 
 /* ─── Tiptap Editor Canvas ───────────────────────── */
@@ -199,6 +199,16 @@ body {
 .dark .tiptap-editor hr,
 .dark .tiptap-content hr {
   border-top-color: var(--color-dark-border);
+}
+
+/* Strips the white panel background Klaviyo bakes into its embedded signup
+   forms, so the form blends into the page instead of sitting in a white
+   box. Klaviyo replaces the contents of the div we render this class on, so
+   targeting the wrapper itself (rather than the injected .klaviyo-form
+   element) is what actually reaches the live-rendered form. */
+.embed-transparent-bg,
+.klaviyo-form {
+  background: none !important;
 }
 
 @theme inline {
