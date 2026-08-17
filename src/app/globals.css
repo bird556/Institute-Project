@@ -204,10 +204,12 @@ body {
 /* Strips the white panel background Klaviyo bakes into its embedded signup
    forms, so the form blends into the page instead of sitting in a white
    box. Klaviyo replaces the contents of the div we render this class on, so
-   targeting the wrapper itself (rather than the injected .klaviyo-form
-   element) is what actually reaches the live-rendered form. */
+   targeting .klaviyo-form as a descendant (rather than just the wrapper) is
+   what actually reaches the live-rendered form. Scoped to .embed-transparent-bg
+   only — Klaviyo reuses the .klaviyo-form class on its sitewide popup too,
+   and an unscoped rule here strips that popup's background everywhere. */
 .embed-transparent-bg,
-.klaviyo-form {
+.embed-transparent-bg .klaviyo-form {
   background: none !important;
 }
 

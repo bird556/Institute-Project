@@ -9,7 +9,9 @@ import EventCoverImage from '@/components/events/EventCoverImage'
 import { formatDate, formatTime, truncate, stripHtml } from '@/lib/utils'
 import { buildMetadata } from '@/lib/metadata'
 import { DetailPageShell } from '@/components/shared/DetailPageShell'
+import { EmbedWithFallback } from '@/components/shared/EmbedWithFallback'
 import { parseEventLayout, type EventBlockKey } from '@/lib/event-layout'
+import { getSiteSettings } from '@/actions/settings'
 
 interface Props {
   params: Promise<{ id: string }>
@@ -58,6 +60,7 @@ export default async function EventDetailPage({ params }: Props) {
   if (!event) notFound()
 
   const supabase = await createClient()
+  const { data: settings } = await getSiteSettings()
   const coverUrl = event.cover_path
     ? supabase.storage.from('institute-media').getPublicUrl(event.cover_path).data.publicUrl
     : null
@@ -166,9 +169,13 @@ export default async function EventDetailPage({ params }: Props) {
       />
     ),
     embed_html: event.embed_html && (
-      <div
-        className={event.embed_transparent_bg ? 'embed-transparent-bg' : undefined}
-        dangerouslySetInnerHTML={{ __html: event.embed_html }}
+      <EmbedWithFallback
+        html={event.embed_html}
+        transparentBg={event.embed_transparent_bg}
+        listId={event.klaviyo_list_id}
+        heading="Register for This Event"
+        successMessage="You're registered! We'll be in touch with more details."
+        consentText={settings?.newsletter_consent_text || 'By registering you agree to receive event-related communications from the Kustawi Institute.'}
       />
     ),
   }

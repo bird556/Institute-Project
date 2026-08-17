@@ -19,6 +19,7 @@ export interface Event {
   description: string
   embed_html: string | null   // Raw embed snippet (e.g. Klaviyo signup form div) rendered as-is below the description
   embed_transparent_bg: boolean   // Strips the embed's own white panel background so it blends into the page
+  klaviyo_list_id: string | null   // Klaviyo list this event's registration form feeds into — used by the fallback form when embed_html fails to load
   cover_path: string | null
   doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   location: string | null

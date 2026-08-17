@@ -103,6 +103,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
   const [description, setDescription] = useState(event.description)
   const [embedHtml, setEmbedHtml] = useState(event.embed_html ?? '')
   const [embedTransparentBg, setEmbedTransparentBg] = useState(event.embed_transparent_bg ?? false)
+  const [klaviyoListId, setKlaviyoListId] = useState(event.klaviyo_list_id ?? '')
   const [coverPath, setCoverPath] = useState<string | null>(event.cover_path)
   const [coverUrl, setCoverUrl] = useState<string | undefined>(initialCoverUrl)
   const [docPath, setDocPath] = useState<string | null>(event.doc_path)
@@ -142,6 +143,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       description,
       embed_html: embedHtml.trim() || null,
       embed_transparent_bg: embedTransparentBg,
+      klaviyo_list_id: klaviyoListId.trim() || null,
       cover_path: coverPath,
       doc_path: docPath,
       location: location || null,
@@ -450,6 +452,26 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
                 />
                 Remove the embed&apos;s own background (blend into the page)
               </label>
+            </div>
+
+            {/* Klaviyo List ID (fallback registration) */}
+            <div className="space-y-1.5">
+              <Label htmlFor="klaviyo-list-id" className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">
+                Klaviyo List ID (Fallback Registration)
+              </Label>
+              <p className="text-xs text-[var(--color-text-muted)]">
+                Some browsers (e.g. Brave, or ad blockers) block the embed above from loading at all. When that happens, visitors see a simple built-in form instead — set this so it registers them into the same Klaviyo list as the real form. Find it under Klaviyo → Lists &amp; Segments → open the list → Settings → List ID.
+              </p>
+              <Input
+                id="klaviyo-list-id"
+                value={klaviyoListId}
+                onChange={(e) => {
+                  setKlaviyoListId(e.target.value)
+                  scheduleAutosave()
+                }}
+                placeholder="e.g. XyZ123"
+                className="font-mono text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+              />
             </div>
           </div>
 

@@ -3,6 +3,7 @@
 interface SignupPayload {
   email: string
   fullName?: string
+  listId?: string   // Overrides KLAVIYO_LIST_ID — e.g. an event-specific registration list
 }
 
 function toTitleCase(str: string): string {
@@ -61,7 +62,7 @@ export async function subscribeToKlaviyo(
   payload: SignupPayload,
 ): Promise<{ success: boolean; error?: string }> {
   const apiKey = process.env.KLAVIYO_PRIVATE_API_KEY
-  const listId = process.env.KLAVIYO_LIST_ID
+  const listId = payload.listId?.trim() || process.env.KLAVIYO_LIST_ID
 
   if (!apiKey || !listId) {
     return { success: false, error: 'Newsletter service is not configured.' }
