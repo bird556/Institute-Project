@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
-import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, Users2, Scale, Accessibility, Users, type LucideIcon } from 'lucide-react'
+import { Megaphone, ScrollText, BarChart2, Building2, Send, ShieldAlert, Users2, Scale, Accessibility, Users, ExternalLink, type LucideIcon } from 'lucide-react'
 import { formatDate } from '@/lib/utils'
 import { RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchCategory } from '@/types'
@@ -57,11 +57,12 @@ export default function ResearchCard({
   const useContain = forceContain || aspectMismatch
 
   return (
-    <motion.div whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
-      <Link
-        href={`/research/${category}/${id}`}
-        className="group flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg transition-shadow"
-      >
+    <motion.div
+      whileHover={{ y: -2 }}
+      transition={{ duration: 0.2 }}
+      className="group flex flex-col h-full rounded-2xl overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] border border-[var(--color-border)] dark:border-[var(--color-dark-border)] hover:shadow-lg transition-shadow"
+    >
+      <Link href={`/research/${category}/${id}`} className="flex flex-col flex-1">
         {cover_url ? (
           <div className="relative w-full overflow-hidden bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface-hover)]" style={{ aspectRatio: '16/9' }}>
             <Image
@@ -124,6 +125,20 @@ export default function ResearchCard({
           )}
         </div>
       </Link>
+
+      {external_url && (
+        <div className="px-5 pb-5 -mt-1">
+          <a
+            href={external_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-sm text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white transition-colors"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            External Link
+          </a>
+        </div>
+      )}
     </motion.div>
   )
 }
