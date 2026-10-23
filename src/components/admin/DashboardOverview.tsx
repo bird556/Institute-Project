@@ -157,6 +157,7 @@ export default function DashboardOverview({ data }: { data: DashboardData }) {
             { label: 'New Advocate',           action: () => createDirectoryEntry('advocate'),        path: '/admin/directory' },
             { label: 'New Psychotherapist',    action: () => createDirectoryEntry('psychotherapist'), path: '/admin/directory' },
             { label: 'New Referral Agency',    action: () => createDirectoryEntry('referral_agency'), path: '/admin/directory' },
+            { label: 'New Litigator',          action: () => createDirectoryEntry('racial_profiling_litigator'), path: '/admin/directory' },
             { label: 'New Partner',            action: createPartner,                            path: '/admin/partners' },
           ].map(({ label, action, path }) => (
             <button

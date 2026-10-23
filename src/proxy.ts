@@ -16,6 +16,7 @@ const SECTION_ROUTES: Record<string, keyof SiteVisibility> = {
   '/advocates':         'advocates_enabled',
   '/psychotherapists':  'psychotherapists_enabled',
   '/referral-agencies': 'referral_agencies_enabled',
+  '/racial-profiling-litigators': 'racial_profiling_litigators_enabled',
   '/blogs':             'blogs_enabled',
   '/events':            'events_enabled',
   '/reading-list':      'reading_list_enabled',

@@ -15,7 +15,8 @@ import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createDirectoryEntry, deleteDirectoryEntry, toggleDirectoryEntryPublished } from '@/actions/directory'
 import Pagination from '@/components/shared/Pagination'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryEntry } from '@/types'
+import { CountBadge } from '@/components/admin/CountBadge'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_HIDE_MODE, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryEntry } from '@/types'
 
 interface DirectoryListItem extends DirectoryEntry {
   photo_url: string | null
@@ -25,13 +26,15 @@ interface Props {
   entries: DirectoryListItem[]
 }
 
-const TABS: { category: DirectoryCategory; label: string }[] = [
-  { category: 'advocate',                    label: 'Advocates' },
-  { category: 'psychotherapist',             label: 'Psychotherapists' },
-  { category: 'referral_agency',             label: 'Referral Agencies' },
-  { category: 'black_mens_group',            label: "Black Men's Groups" },
-  { category: 'youth_service_organization',  label: 'Youth Service Organizations' },
-  { category: 'community_organization',      label: 'Community and Professional Organizations' },
+// `label` is a short tab name (full name shows on hover); `singular` drives the "New …" button
+const TABS: { category: DirectoryCategory; label: string; singular: string }[] = [
+  { category: 'advocate',                    label: 'Advocates',          singular: 'Advocate' },
+  { category: 'psychotherapist',             label: 'Psychotherapists',   singular: 'Psychotherapist' },
+  { category: 'referral_agency',             label: 'Referral Agencies',  singular: 'Referral Agency' },
+  { category: 'black_mens_group',            label: "Black Men's Groups", singular: "Black Men's Group" },
+  { category: 'youth_service_organization',  label: 'Youth Services',     singular: 'Youth Service Organization' },
+  { category: 'community_organization',      label: 'Community & Professional', singular: 'Organization' },
+  { category: 'racial_profiling_litigator',  label: 'Litigators',         singular: 'Litigator' },
 ]
 
 type DirSortOption = 'name_az' | 'name_za' | 'newest' | 'oldest' | 'org_az' | 'org_za' | 'mode'
@@ -66,10 +69,27 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
   const [togglingId, setTogglingId] = useState<string | null>(null)
   const [page, setPage] = useState(1)
 
+  // Follow ?tab= when it changes from outside this page (e.g. a sidebar category link)
+  const [syncedTabParam, setSyncedTabParam] = useState(tabParam)
+  if (tabParam !== syncedTabParam) {
+    setSyncedTabParam(tabParam)
+    if (TAB_CATEGORIES.includes(tabParam as DirectoryCategory) && tabParam !== activeTab) {
+      setActiveTab(tabParam as DirectoryCategory)
+      setQuery('')
+      setSort('name_az')
+      setPage(1)
+    }
+  }
+
   const PAGE_SIZE = 20
   function resetPage() { setPage(1) }
 
   const tabEntries = entries.filter((e) => e.category === activeTab)
+  const activeSingular = TABS.find((t) => t.category === activeTab)?.singular ?? 'Entry'
+  const countByCategory = entries.reduce<Partial<Record<DirectoryCategory, number>>>((acc, e) => {
+    acc[e.category] = (acc[e.category] ?? 0) + 1
+    return acc
+  }, {})
   const filtered = tabEntries.filter((e) => {
     const q = query.toLowerCase()
     return !q || e.name.toLowerCase().includes(q) || (e.organization ?? '').toLowerCase().includes(q)
@@ -133,7 +153,7 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
   }
 
   const tabClass = (active: boolean) =>
-    `px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${
+    `shrink-0 whitespace-nowrap inline-flex items-center px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -152,18 +172,32 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
             className="cursor-pointer bg-[var(--color-brand-teal)] hover:bg-[var(--color-brand-teal-dark)] text-white gap-1.5"
           >
             <Plus className="h-4 w-4" />
-            New {DIRECTORY_CATEGORY_LABELS[activeTab].slice(0, -1)}
+            New {activeSingular}
           </Button>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs — one scrollable row, short names, full name on hover */}
         <div className="flex gap-1 p-1 rounded-xl bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] overflow-x-auto">
-          {TABS.map(({ category, label }) => (
-            <button key={category} onClick={() => handleTabChange(category)} className={tabClass(activeTab === category)}>
-              {label}
-            </button>
-          ))}
+          {TABS.map(({ category, label }) => {
+            const active = activeTab === category
+            return (
+              <button
+                key={category}
+                onClick={() => handleTabChange(category)}
+                title={DIRECTORY_CATEGORY_LABELS[category]}
+                aria-pressed={active}
+                className={tabClass(active)}
+              >
+                {label}
+                <CountBadge count={countByCategory[category] ?? 0} active={active} />
+              </button>
+            )
+          })}
         </div>
+
+        <p className="text-sm text-[var(--color-text-muted)] -mt-3">
+          {DIRECTORY_CATEGORY_LABELS[activeTab]}
+        </p>
 
         {/* Search + sort */}
         <div className="flex flex-col sm:flex-row gap-3">
@@ -188,7 +222,7 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
           onChange={(e) => { setSort(e.target.value as DirSortOption); resetPage() }}
           className={selectClass}
         >
-          {(Object.keys(DIR_SORT_LABELS) as DirSortOption[]).map((key) => (
+          {(Object.keys(DIR_SORT_LABELS) as DirSortOption[]).filter((key) => key !== 'mode' || !DIRECTORY_HIDE_MODE.includes(activeTab)).map((key) => (
             <option key={key} value={key}>{DIR_SORT_LABELS[key]}</option>
           ))}
         </select>
@@ -207,7 +241,7 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
             </div>
             <div className="text-center">
               <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec]">
-                {query ? `No results for "${query}"` : `No ${DIRECTORY_CATEGORY_LABELS[activeTab].toLowerCase()} yet`}
+                {query ? `No results for "${query}"` : `No ${activeSingular.toLowerCase()} entries yet`}
               </p>
               {!query && (
                 <p className="text-sm text-[var(--color-text-muted)] mt-1">Add your first entry to get started.</p>
@@ -249,8 +283,11 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
                     {entry.organization && !DIRECTORY_HIDE_NAME.includes(entry.category) && (
                       <span className="text-sm text-[var(--color-text-muted)] truncate">{entry.organization}</span>
                     )}
-                    {entry.mode && (
+                    {entry.mode && !DIRECTORY_HIDE_MODE.includes(entry.category) && (
                       <span className="hidden sm:inline text-xs text-[var(--color-text-muted)]">· {DIRECTORY_MODE_LABELS[entry.mode]}</span>
+                    )}
+                    {(entry.city || entry.province) && (
+                      <span className="hidden sm:inline text-xs text-[var(--color-text-muted)] truncate">· {[entry.city, entry.province].filter(Boolean).join(', ')}</span>
                     )}
                   </div>
                 </div>

@@ -18,6 +18,7 @@ import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createWellnessPost, deleteWellnessPost, toggleWellnessPublished } from '@/actions/wellness'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countStatus } from '@/components/admin/CountBadge'
 import { formatDate } from '@/lib/utils'
 import { WELLNESS_TAGS } from '@/types'
 import type { WellnessPost, WellnessTag } from '@/types'
@@ -47,6 +48,10 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
 
   const PAGE_SIZE = 20
   function resetPage() { setPage(1) }
+
+  const matchesTagFilter = (p: (typeof posts)[number]) => tagFilter === 'all' || p.tags.includes(tagFilter)
+  const statusCounts = countStatus(posts.filter(matchesTagFilter))
+  const tagCount = (tag: WellnessTag) => posts.filter((p) => p.tags.includes(tag)).length
 
   const filtered = posts.filter((p) => {
     const q = query.toLowerCase()
@@ -111,7 +116,7 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
   }
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -155,6 +160,7 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
               <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={statusCounts[f]} active={statusFilter === f} />
               </button>
             ))}
           </div>
@@ -164,9 +170,9 @@ export default function WellnessListClient({ posts: initial }: WellnessListClien
             onChange={(e) => { setTagFilter(e.target.value as TagFilter); resetPage() }}
             className="h-9 px-3 text-sm rounded-lg border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] text-[var(--color-text-primary)] dark:text-[#e8ecec] focus:outline-none focus:border-[var(--color-brand-teal)] transition-colors cursor-pointer"
           >
-            <option value="all">All Tags</option>
+            <option value="all">All Tags ({posts.length})</option>
             {WELLNESS_TAGS.map((tag) => (
-              <option key={tag} value={tag}>{tag}</option>
+              <option key={tag} value={tag}>{tag} ({tagCount(tag)})</option>
             ))}
           </select>
         </div>

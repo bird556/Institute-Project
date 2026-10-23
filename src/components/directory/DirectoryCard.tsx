@@ -3,9 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { Globe, Mail, UserRound, Building2 } from 'lucide-react'
+import { Globe, Mail, UserRound, Building2, MapPin, Languages, Check } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { DIRECTORY_HIDE_NAME, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
+import { DIRECTORY_FEE_OPTIONS, DIRECTORY_LANGUAGE_OPTIONS, DIRECTORY_HIDE_NAME, DIRECTORY_HIDE_MODE, DIRECTORY_MODE_LABELS, type DirectoryCategory, type DirectoryMode } from '@/types'
 
 // Below this natural size (px), a `contain`-fit headshot would show visible
 // background padding — crop to fill instead so small uploads still look intentional.
@@ -23,6 +23,9 @@ export interface DirectoryCardProps {
   email: string | null
   mode: DirectoryMode | null
   province: string | null
+  city?: string | null
+  languages?: string[]
+  fee_options?: string[]
   category: DirectoryCategory
   created_at: string
   image_fit?: 'cover' | 'contain'
@@ -44,12 +47,17 @@ const CATEGORY_HREFS: Record<DirectoryCategory, string> = {
   black_mens_group:            '/black-mens-groups',
   youth_service_organization:  '/youth-service-organizations',
   community_organization:      '/community-organizations',
+  racial_profiling_litigator:  '/racial-profiling-litigators',
 }
 
 export default function DirectoryCard({
   id, name, organization, description_excerpt,
-  photo_url, website_url, email, mode, province, category, image_fit,
+  photo_url, website_url, email, mode, province, city, languages = [], fee_options = [], category, image_fit,
 }: DirectoryCardProps) {
+  // Only show options currently offered in the editor
+  const shownLanguages = languages.filter((l) => (DIRECTORY_LANGUAGE_OPTIONS as readonly string[]).includes(l))
+  const freeConsultation = fee_options.includes('Free Consultation') && (DIRECTORY_FEE_OPTIONS as readonly string[]).includes('Free Consultation')
+  const location = [city, province].filter(Boolean).join(', ')
   const href = `${CATEGORY_HREFS[category]}/${id}`
   const allowCoverFallback = category === 'psychotherapist'
   const [isSmallImage, setIsSmallImage] = useState(false)
@@ -86,9 +94,16 @@ export default function DirectoryCard({
 
         {/* Body */}
         <div className="flex flex-col flex-1 p-4 space-y-2">
-          {mode && (
+          {mode && !DIRECTORY_HIDE_MODE.includes(category) && (
             <span className="self-start text-xs font-medium px-2 py-0.5 rounded-full border border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] dark:text-white dark:border-white/30">
               {DIRECTORY_MODE_LABELS[mode]}
+            </span>
+          )}
+
+          {freeConsultation && (
+            <span className="self-start inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border border-[var(--color-brand-teal)] text-[var(--color-brand-teal)] dark:text-white dark:border-white/30">
+              <Check className="w-3 h-3" strokeWidth={2.5} />
+              Free Consultation
             </span>
           )}
 
@@ -100,8 +115,21 @@ export default function DirectoryCard({
             <p className="text-sm text-[var(--color-text-muted)] line-clamp-1">{organization}</p>
           )}
 
-          {province && (
-            <p className="text-xs text-[var(--color-text-muted)]">{province}</p>
+          {(location || shownLanguages.length > 0) && (
+            <div className="space-y-1">
+              {location && (
+                <p className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{location}</span>
+                </p>
+              )}
+              {shownLanguages.length > 0 && (
+                <p className="flex items-center gap-1.5 text-xs text-[var(--color-text-muted)]">
+                  <Languages className="w-3.5 h-3.5 shrink-0" />
+                  <span className="truncate">{shownLanguages.join(' · ')}</span>
+                </p>
+              )}
+            </div>
           )}
 
           {description_excerpt && (

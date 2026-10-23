@@ -114,6 +114,7 @@ export interface SiteSettings {
   black_mens_groups_enabled: string
   youth_service_organizations_enabled: string
   community_organizations_enabled: string
+  racial_profiling_litigators_enabled: string
   // Home section visibility
   intro_section_enabled:   string
   cta_section_enabled:     string
@@ -346,11 +347,12 @@ export type DirectoryCategory =
   | 'black_mens_group'
   | 'youth_service_organization'
   | 'community_organization'
+  | 'racial_profiling_litigator'
 export type DirectoryMode     = 'online' | 'in-person' | 'both'
 
 export const DIRECTORY_CATEGORIES: DirectoryCategory[] = [
   'advocate', 'psychotherapist', 'referral_agency', 'black_mens_group',
-  'youth_service_organization', 'community_organization',
+  'youth_service_organization', 'community_organization', 'racial_profiling_litigator',
 ]
 
 export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
@@ -360,6 +362,7 @@ export const DIRECTORY_CATEGORY_LABELS: Record<DirectoryCategory, string> = {
   black_mens_group:            "Black Men's Groups",
   youth_service_organization:  'Youth Service Organizations',
   community_organization:      'Community and Professional Organizations',
+  racial_profiling_litigator:  'National Racial Profiling Litigator Database',
 }
 
 // Categories where the admin-facing "Name" field is hidden — Organization is
@@ -370,9 +373,15 @@ export const DIRECTORY_HIDE_NAME: DirectoryCategory[] = [
   'advocate', 'youth_service_organization', 'community_organization', 'referral_agency',
 ]
 
+// Categories with no Online / In-Person "Mode" — field hidden in the editor and never shown publicly
+export const DIRECTORY_HIDE_MODE: DirectoryCategory[] = [
+  'black_mens_group', 'racial_profiling_litigator',
+]
+
 // Categories where a Province field is collected
 export const DIRECTORY_SHOW_PROVINCE: DirectoryCategory[] = [
   'community_organization', 'advocate', 'black_mens_group', 'referral_agency', 'youth_service_organization',
+  'racial_profiling_litigator',
 ]
 
 export const DIRECTORY_ORG_PLACEHOLDER: Record<DirectoryCategory, string> = {
@@ -382,6 +391,7 @@ export const DIRECTORY_ORG_PLACEHOLDER: Record<DirectoryCategory, string> = {
   black_mens_group:            "e.g. Black Men's Group",
   youth_service_organization:  'e.g. Youth Service Organization',
   community_organization:      'e.g. Community or Professional Organization',
+  racial_profiling_litigator:  'e.g. Smith & Associates LLP',
 }
 
 export const DIRECTORY_MODE_LABELS: Record<DirectoryMode, string> = {
@@ -397,6 +407,18 @@ export const CANADIAN_PROVINCES = [
   'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec',
   'Saskatchewan', 'Yukon',
 ] as const
+
+export type CanadianProvince = (typeof CANADIAN_PROVINCES)[number]
+
+// Categories that collect the litigator-only fields: phone, city, fee options, languages
+export const DIRECTORY_LITIGATOR_FIELDS: DirectoryCategory[] = ['racial_profiling_litigator']
+
+// TODO: client to confirm adding 'Legal Aid Accepted', 'Pro Bono', 'Contingency Fee'
+export const DIRECTORY_FEE_OPTIONS = ['Free Consultation'] as const
+
+// TODO: client to confirm more languages (shortlist: Spanish, Portuguese, Arabic, Somali,
+// Amharic, Tigrinya, Swahili, Yoruba, Twi, Haitian Creole, Jamaican Patois, Mandarin, Punjabi…)
+export const DIRECTORY_LANGUAGE_OPTIONS = ['English', 'French'] as const
 
 // Bookstores — third section on the public Reading List page, alongside
 // Bibliography and MA/PhD Theses. Physical/online bookstore locations, not
@@ -449,6 +471,10 @@ export interface DirectoryEntry {
   category: DirectoryCategory
   mode: DirectoryMode | null
   province: string | null
+  phone: string | null
+  city: string | null
+  fee_options: string[]
+  languages: string[]
   published: boolean
   sort_order: number
   created_at: string

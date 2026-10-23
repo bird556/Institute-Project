@@ -21,6 +21,7 @@ interface HeaderProps {
   showBlackMensGroups?: boolean
   showYouthServiceOrganizations?: boolean
   showCommunityOrganizations?: boolean
+  showRacialProfilingLitigators?: boolean
   showResearchInstitutes?: boolean
   showCallForPapers?: boolean
   showSexualAbuseBoysMen?: boolean
@@ -38,7 +39,7 @@ function renderSiteName(name: string) {
   )
 }
 
-export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true, showYouthServiceOrganizations = true, showCommunityOrganizations = true, showResearchInstitutes = true, showCallForPapers = true, showSexualAbuseBoysMen = true }: HeaderProps) {
+export function Header({ navItems, logoUrl, siteName = 'Institute', showReferralAgencies = true, showBlackMensGroups = true, showYouthServiceOrganizations = true, showCommunityOrganizations = true, showRacialProfilingLitigators = true, showResearchInstitutes = true, showCallForPapers = true, showSexualAbuseBoysMen = true }: HeaderProps) {
   const researchGates: Partial<Record<ResearchCategory, boolean>> = {
     'research-institutes':   showResearchInstitutes,
     'call-for-papers':       showCallForPapers,
@@ -156,6 +157,15 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                               onClick={() => setServicesDropdownOpen(false)}
                             >
                               Community and Professional Organizations
+                            </Link>
+                          )}
+                          {showRacialProfilingLitigators && (
+                            <Link
+                              href="/racial-profiling-litigators"
+                              className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
+                              onClick={() => setServicesDropdownOpen(false)}
+                            >
+                              National Racial Profiling Litigator Database
                             </Link>
                           )}
                         </motion.div>
@@ -509,6 +519,11 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                             {showCommunityOrganizations && (
                               <Link href="/community-organizations" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
                                 Community and Professional Organizations
+                              </Link>
+                            )}
+                            {showRacialProfilingLitigators && (
+                              <Link href="/racial-profiling-litigators" onClick={() => { setMobileOpen(false); setServicesAccordionOpen(false) }} className="px-3 py-2 rounded-md text-sm text-text-muted hover:text-brand-teal dark:hover:text-white transition-colors">
+                                National Racial Profiling Litigator Database
                               </Link>
                             )}
                           </motion.div>

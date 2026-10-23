@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
@@ -19,7 +19,8 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateDirectoryEntry, toggleDirectoryEntryPublished, deleteDirectoryEntry } from '@/actions/directory'
 import { formatDate } from '@/lib/utils'
 import type { DirectoryEntry, DirectoryMode } from '@/types'
-import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_SHOW_PROVINCE, DIRECTORY_ORG_PLACEHOLDER, CANADIAN_PROVINCES } from '@/types'
+import { DIRECTORY_CATEGORY_LABELS, DIRECTORY_MODE_LABELS, DIRECTORY_HIDE_NAME, DIRECTORY_HIDE_MODE, DIRECTORY_LITIGATOR_FIELDS, DIRECTORY_SHOW_PROVINCE, DIRECTORY_ORG_PLACEHOLDER, CANADIAN_PROVINCES } from '@/types'
+import { PhoneField, CityField, FeeOptionsField, LanguagesField } from './LitigatorFields'
 
 const AUTOSAVE_MS = 2000
 
@@ -38,6 +39,10 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const [email, setEmail]             = useState(entry.email ?? '')
   const [mode, setMode]               = useState<DirectoryMode | ''>(entry.mode ?? '')
   const [province, setProvince]       = useState(entry.province ?? '')
+  const [phone, setPhone]             = useState(entry.phone ?? '')
+  const [city, setCity]               = useState(entry.city ?? '')
+  const [feeOptions, setFeeOptions]   = useState<string[]>(entry.fee_options ?? [])
+  const [languages, setLanguages]     = useState<string[]>(entry.languages ?? [])
   const [photoPath, setPhotoPath]     = useState<string | null>(entry.photo_path)
   const [photoUrl, setPhotoUrl]       = useState<string | undefined>(initialPhotoUrl)
   const [imageFit, setImageFit]       = useState<'cover' | 'contain'>(entry.image_fit ?? 'contain')
@@ -55,6 +60,8 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   const adminHref = `/admin/directory?tab=${entry.category}`
   const hideName = DIRECTORY_HIDE_NAME.includes(entry.category)
   const showProvince = DIRECTORY_SHOW_PROVINCE.includes(entry.category)
+  const hideMode = DIRECTORY_HIDE_MODE.includes(entry.category)
+  const isLitigator = DIRECTORY_LITIGATOR_FIELDS.includes(entry.category)
 
   function buildFields() {
     return {
@@ -63,19 +70,27 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
       description,
       website_url: website_url.trim() || null,
       email: email.trim() || null,
-      mode: (mode || null) as DirectoryMode | null,
+      mode: hideMode ? null : ((mode || null) as DirectoryMode | null),
       province: province || null,
+      phone: phone.trim() || null,
+      city: city.trim() || null,
+      fee_options: feeOptions,
+      languages,
       photo_path: photoPath,
       image_fit: imageFit,
     }
   }
+
+  // Autosave fires after a re-render, so read the latest field values through a ref
+  const buildFieldsRef = useRef(buildFields)
+  useEffect(() => { buildFieldsRef.current = buildFields })
 
   function scheduleAutosave() {
     isDirty.current = true
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateDirectoryEntry(entry.id, buildFields())
+      await updateDirectoryEntry(entry.id, buildFieldsRef.current())
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
@@ -150,12 +165,12 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
           <div className="space-y-4">
             {!hideName && (
               <div className="space-y-1.5">
-                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Name</Label>
-                <Input value={name} onChange={(e) => { setName(e.target.value); scheduleAutosave() }} placeholder="Full name" className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
+                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">{isLitigator ? 'Lawyer Name' : 'Name'}</Label>
+                <Input value={name} onChange={(e) => { setName(e.target.value); scheduleAutosave() }} placeholder={isLitigator ? 'e.g. Jane Smith' : 'Full name'} className="font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
               </div>
             )}
             <div className="space-y-1.5">
-              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Organization</Label>
+              <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">{isLitigator ? 'Law Firm' : 'Organization'}</Label>
               <Input value={organization} onChange={(e) => { setOrg(e.target.value); scheduleAutosave() }} placeholder={DIRECTORY_ORG_PLACEHOLDER[entry.category]} className={hideName ? 'font-display text-lg border-[var(--color-border)] dark:border-[var(--color-dark-border)]' : 'text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]'} />
             </div>
             <div className="space-y-1.5">
@@ -191,8 +206,8 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               <p className="text-sm text-[var(--color-text-primary)] dark:text-[#e8ecec] font-medium">{categoryLabel}</p>
             </div>
 
-            {/* Mode — hidden for Black Men's Groups (always Canadian, no mode concept) */}
-            {entry.category !== 'black_mens_group' && (
+            {/* Mode — hidden for categories in DIRECTORY_HIDE_MODE */}
+            {!hideMode && (
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
                 <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Mode</Label>
                 <select
@@ -208,10 +223,17 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               </div>
             )}
 
+            {isLitigator && (
+              <>
+                <PhoneField value={phone} onChange={(v) => { setPhone(v); scheduleAutosave() }} />
+                <CityField value={city} onChange={(c, p) => { setCity(c); if (p) setProvince(p); scheduleAutosave() }} />
+              </>
+            )}
+
             {/* Province */}
             {showProvince && (
               <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">
-                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Province</Label>
+                <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">{isLitigator ? 'Jurisdiction / Province' : 'Province'}</Label>
                 <select
                   value={province}
                   onChange={(e) => { setProvince(e.target.value); scheduleAutosave() }}
@@ -236,6 +258,13 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
               <Label className="text-[var(--color-text-muted)] text-xs uppercase tracking-wide">Email</Label>
               <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); scheduleAutosave() }} placeholder="contact@example.com" className="text-sm border-[var(--color-border)] dark:border-[var(--color-dark-border)]" />
             </div>
+
+            {isLitigator && (
+              <>
+                <FeeOptionsField value={feeOptions} onChange={(v) => { setFeeOptions(v); scheduleAutosave() }} />
+                <LanguagesField value={languages} onChange={(v) => { setLanguages(v); scheduleAutosave() }} />
+              </>
+            )}
 
             {/* Meta */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">

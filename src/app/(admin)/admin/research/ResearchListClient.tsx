@@ -18,6 +18,7 @@ import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createResearchPost, deleteResearchPost, toggleResearchPublished } from '@/actions/research'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countBy, countStatus } from '@/components/admin/CountBadge'
 import { formatDate } from '@/lib/utils'
 import { RESEARCH_CATEGORIES, RESEARCH_CATEGORY_LABELS } from '@/types'
 import type { ResearchPost, ResearchCategory } from '@/types'
@@ -56,6 +57,8 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
   function resetPage() { setPage(1) }
 
   const tabPosts = posts.filter((p) => p.category === activeTab)
+  const tabCounts = countBy(posts, RESEARCH_CATEGORIES, (p, c) => p.category === c)
+  const statusCounts = countStatus(tabPosts)
   const filtered = tabPosts.filter((p) => {
     const q = query.toLowerCase()
     const matchesQuery =
@@ -135,14 +138,14 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
   }
 
   const tabClass = (active: boolean) =>
-    `px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors whitespace-nowrap ${
+    `inline-flex items-center shrink-0 px-4 py-2 text-sm font-medium rounded-lg cursor-pointer transition-colors whitespace-nowrap ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
     }`
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -165,6 +168,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
           {TABS.map(({ category, label }) => (
             <button key={category} onClick={() => handleTabChange(category)} className={tabClass(activeTab === category)}>
               {label}
+              <CountBadge count={tabCounts[category]} active={activeTab === category} />
             </button>
           ))}
         </div>
@@ -193,6 +197,7 @@ export default function ResearchListClient({ posts: initial }: { posts: Research
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
               <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={statusCounts[f]} active={statusFilter === f} />
               </button>
             ))}
           </div>

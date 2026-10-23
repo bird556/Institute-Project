@@ -18,6 +18,7 @@ import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createEvent, deleteEvent, toggleEventPublished } from '@/actions/events'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countBy, countStatus } from '@/components/admin/CountBadge'
 import type { Event } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
@@ -63,6 +64,16 @@ export default function EventListClient({ events: initial }: EventListClientProp
   function resetPage() { setPage(1) }
 
   const now = new Date()
+
+  type Ev = (typeof events)[number]
+  const statusOk = (e: Ev) => statusFilter === 'all' || (statusFilter === 'published' ? e.published : !e.published)
+  const dateOk   = (e: Ev) => dateFilter === 'all' || (dateFilter === 'upcoming' ? new Date(e.event_date) > now : new Date(e.event_date) <= now)
+  const typeOk   = (e: Ev) => typeFilter === 'all' || e.event_type === typeFilter
+  // Each filter group counts within the other active filters
+  const statusCounts = countStatus(events.filter((e) => dateOk(e) && typeOk(e)))
+  const dateCounts = countBy(events.filter((e) => statusOk(e) && typeOk(e)), ['all', 'upcoming', 'past'] as const,
+    (e, k) => (k === 'upcoming' ? new Date(e.event_date) > now : new Date(e.event_date) <= now))
+  const typeCounts = countBy(events.filter((e) => statusOk(e) && dateOk(e)), ['all', 'kustawi', 'other'] as const, (e, k) => e.event_type === k)
 
   const filtered = events.filter((e) => {
     const q = query.toLowerCase()
@@ -125,7 +136,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
   }
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -174,6 +185,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
               <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={statusCounts[f]} active={statusFilter === f} />
               </button>
             ))}
           </div>
@@ -182,6 +194,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
             {(['all', 'upcoming', 'past'] as DateFilter[]).map((f) => (
               <button key={f} onClick={() => { setDateFilter(f); resetPage() }} className={filterBtnClass(dateFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={dateCounts[f]} active={dateFilter === f} />
               </button>
             ))}
           </div>
@@ -190,6 +203,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
             {([['all', 'All'], ['kustawi', 'Kustawi'], ['other', 'Other Events']] as [TypeFilter, string][]).map(([f, label]) => (
               <button key={f} onClick={() => { setTypeFilter(f); resetPage() }} className={filterBtnClass(typeFilter === f)}>
                 {label}
+                <CountBadge count={typeCounts[f]} active={typeFilter === f} />
               </button>
             ))}
           </div>

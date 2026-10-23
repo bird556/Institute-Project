@@ -55,6 +55,7 @@ export async function updateDirectoryEntry(
   revalidatePath('/black-mens-groups', 'layout')
   revalidatePath('/youth-service-organizations', 'layout')
   revalidatePath('/community-organizations', 'layout')
+  revalidatePath('/racial-profiling-litigators', 'layout')
   revalidatePath('/about', 'layout')
   return { success: true }
 }
@@ -75,6 +76,7 @@ export async function toggleDirectoryEntryPublished(
   revalidatePath('/black-mens-groups', 'layout')
   revalidatePath('/youth-service-organizations', 'layout')
   revalidatePath('/community-organizations', 'layout')
+  revalidatePath('/racial-profiling-litigators', 'layout')
   return { success: true }
 }
 
@@ -88,6 +90,7 @@ export async function deleteDirectoryEntry(id: string): Promise<ActionResult> {
   revalidatePath('/black-mens-groups', 'layout')
   revalidatePath('/youth-service-organizations', 'layout')
   revalidatePath('/community-organizations', 'layout')
+  revalidatePath('/racial-profiling-litigators', 'layout')
   return { success: true }
 }
 

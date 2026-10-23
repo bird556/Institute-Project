@@ -20,6 +20,7 @@ export async function HeaderServer() {
   const showBlackMensGroups           = settings?.black_mens_groups_enabled          !== 'false'
   const showYouthServiceOrganizations = settings?.youth_service_organizations_enabled !== 'false'
   const showCommunityOrganizations    = settings?.community_organizations_enabled    !== 'false'
+  const showRacialProfilingLitigators = settings?.racial_profiling_litigators_enabled !== 'false'
   const showResearchInstitutes        = settings?.research_institutes_enabled        !== 'false'
   const showCallForPapers             = settings?.call_for_papers_enabled            !== 'false'
   const showSexualAbuseBoysMen        = settings?.sexual_abuse_boys_men_enabled      !== 'false'
@@ -33,6 +34,7 @@ export async function HeaderServer() {
       showBlackMensGroups={showBlackMensGroups}
       showYouthServiceOrganizations={showYouthServiceOrganizations}
       showCommunityOrganizations={showCommunityOrganizations}
+      showRacialProfilingLitigators={showRacialProfilingLitigators}
       showResearchInstitutes={showResearchInstitutes}
       showCallForPapers={showCallForPapers}
       showSexualAbuseBoysMen={showSexualAbuseBoysMen}
