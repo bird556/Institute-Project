@@ -1,41 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  FileText,
-  CalendarDays,
-  BookOpen,
-  Handshake,
-  Home,
-  Info,
-  Target,
-  Settings,
-  Newspaper,
-  Calendar,
-  List,
-  Mail,
-  Heart,
-  Star,
-  Microscope,
-  Building2,
-  Send,
-  ShieldAlert,
-  Users,
-  Navigation2,
-  Eye,
-  PanelBottom,
-  Download,
-  Lock,
-  Compass,
-  GraduationCap,
-  Store,
-  ChevronLeft,
-  ChevronRight,
-  LogOut,
-  type LucideIcon,
-} from 'lucide-react';
+import { usePathname, useSearchParams } from 'next/navigation';
+import { ChevronLeft, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { logoutAction } from '@/actions/auth';
 import { useSidebar } from './AdminShell';
@@ -44,105 +12,73 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import {
+  ADMIN_NAV_GROUPS,
+  NAV_LINK_BASE,
+  NAV_LINK_ACTIVE,
+  NAV_LINK_INACTIVE,
+  isNavActive,
+  type NavItem,
+  type NavSubgroup,
+} from './admin-nav';
+import { NavSubgroupSection } from './NavSubgroupSection';
 
-interface NavItem {
-  label: string;
-  href: string;
-  icon: LucideIcon;
-  exact?: boolean;
-}
-
-interface NavGroup {
-  label: string;
-  items: NavItem[];
-}
-
-const NAV_GROUPS: NavGroup[] = [
-  {
-    label: 'Overview',
-    items: [
-      {
-        label: 'Dashboard',
-        href: '/admin',
-        icon: LayoutDashboard,
-        exact: true,
-      },
-    ],
-  },
-  {
-    label: 'Content',
-    items: [
-      { label: 'Events',            href: '/admin/events',           icon: CalendarDays },
-      { label: 'Reading List',      href: '/admin/reading-list',                     icon: BookOpen },
-      { label: 'Book of the Month', href: '/admin/reading-list/book-of-the-month', icon: Star },
-      { label: 'Partners',          href: '/admin/partners',         icon: Handshake },
-      { label: 'Newsletter',        href: '/admin/newsletter',       icon: Newspaper },
-      { label: 'Healing & Wellness', href: '/admin/health-wellness',  icon: Heart },
-      { label: 'Research',          href: '/admin/research',         icon: Microscope },
-    ],
-  },
-  {
-    label: 'Directory',
-    items: [
-      { label: 'All Entries', href: '/admin/directory', icon: Users },
-    ],
-  },
-  {
-    label: 'Pages',
-    items: [
-      { label: 'Home',              href: '/admin/home',                icon: Home },
-      { label: 'About',             href: '/admin/about',               icon: Info },
-      { label: 'Events Page',             href: '/admin/pages/events',            icon: Calendar },
-      { label: 'Newsletter Page',         href: '/admin/pages/newsletter',        icon: Mail },
-      { label: 'Reading List Page',       href: '/admin/pages/reading-list',      icon: List },
-      { label: 'Bibliography Page',       href: '/admin/pages/bibliography',      icon: BookOpen },
-      { label: 'MA and PhD Theses Page',  href: '/admin/pages/theses',            icon: GraduationCap },
-      { label: 'Bookstores Page',         href: '/admin/pages/bookstores',        icon: Store },
-      { label: 'Access to Services Page', href: '/admin/pages/access-to-services', icon: Users },
-      { label: 'Partners Page',           href: '/admin/pages/partners',          icon: Handshake },
-      { label: 'Healing & Wellness Page',  href: '/admin/pages/health-wellness',   icon: Heart },
-      { label: 'Research Page',            href: '/admin/pages/research',          icon: Microscope },
-      { label: 'Values Page',              href: '/admin/pages/values',            icon: Compass },
-      { label: 'Research Institutes and Initiatives Page', href: '/admin/pages/research-institutes', icon: Building2 },
-      { label: 'Call for Papers Page',     href: '/admin/pages/call-for-papers',   icon: Send },
-      { label: 'Sexual Abuse of Boys and Men Page', href: '/admin/pages/sexual-abuse-boys-men', icon: ShieldAlert },
-      { label: 'Advocates Page',           href: '/admin/pages/advocates',         icon: Users },
-      { label: 'Psychotherapists Page',    href: '/admin/pages/psychotherapists',  icon: Users },
-      { label: 'Referral Agencies Page',   href: '/admin/pages/referral-agencies', icon: Users },
-      { label: "Black Men's Groups Page",  href: '/admin/pages/black-mens-groups', icon: Users },
-      { label: 'Youth Service Organizations Page', href: '/admin/pages/youth-service-organizations', icon: Users },
-      { label: 'Community and Professional Organizations Page',     href: '/admin/pages/community-organizations',     icon: Users },
-    ],
-  },
-  {
-    label: 'Settings',
-    items: [
-      { label: 'Settings',          href: '/admin/settings',            icon: Settings },
-      { label: 'Newsletter Signup', href: '/admin/newsletter-settings', icon: Mail },
-      { label: 'Navigation',        href: '/admin/navigation',          icon: Navigation2 },
-      { label: 'Visibility',        href: '/admin/visibility',          icon: Eye },
-      { label: 'Footer',            href: '/admin/footer',              icon: PanelBottom },
-      { label: 'Site Access',       href: '/admin/access',              icon: Lock },
-      { label: 'Export',            href: '/admin/export',              icon: Download },
-    ],
-  },
-];
-
-const NAV_LINK_BASE =
-  'flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors';
-const NAV_LINK_ACTIVE = 'bg-[var(--color-brand-teal)] text-white';
-const NAV_LINK_INACTIVE =
-  'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] dark:hover:bg-[var(--color-dark-surface-hover)] dark:hover:text-[#e8ecec]';
 const BTN_BASE =
   'flex w-full items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] hover:text-[var(--color-text-primary)] dark:hover:bg-[var(--color-dark-surface-hover)] dark:hover:text-[#e8ecec] transition-colors cursor-pointer';
+
+function WithTooltip({ show, label, children }: { show: boolean; label: string; children: React.ReactElement }) {
+  if (!show) return children;
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{children}</TooltipTrigger>
+      <TooltipContent side="right">{label}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+function SidebarLink({ item, active, collapsed }: { item: NavItem; active: boolean; collapsed: boolean }) {
+  const Icon = item.icon;
+  return (
+    <li>
+      <WithTooltip show={collapsed} label={item.label}>
+        <Link
+          href={item.href}
+          title={collapsed ? undefined : item.label}
+          className={cn(NAV_LINK_BASE, active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE)}
+        >
+          <Icon className="shrink-0" size={18} />
+          {!collapsed && <span className="truncate">{item.label}</span>}
+        </Link>
+      </WithTooltip>
+    </li>
+  );
+}
+
+// Collapsed sidebar: a subgroup is one icon — clicking it expands the sidebar with that section open
+function CollapsedSubgroup({ subgroup, active, onOpen }: { subgroup: NavSubgroup; active: boolean; onOpen: () => void }) {
+  const Icon = subgroup.icon;
+  return (
+    <li>
+      <WithTooltip show label={subgroup.label}>
+        <button type="button" onClick={onOpen} className={cn(NAV_LINK_BASE, 'w-full cursor-pointer', active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE)}>
+          <Icon className="shrink-0" size={18} />
+        </button>
+      </WithTooltip>
+    </li>
+  );
+}
 
 export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, toggleCollapsed } = useSidebar();
+  const [pendingOpen, setPendingOpen] = useState<string | null>(null);
 
-  function isActive(href: string, exact?: boolean) {
-    if (exact) return pathname === href;
-    return pathname === href || pathname.startsWith(href + '/');
+  const currentTab = useSearchParams().get('tab');
+  const isActive = (item: NavItem) => isNavActive(pathname, item, currentTab);
+
+  function openSubgroupFromCollapsed(label: string) {
+    setPendingOpen(label);
+    toggleCollapsed();
   }
 
   return (
@@ -163,7 +99,7 @@ export function Sidebar() {
 
       {/* Nav groups */}
       <nav className="flex-1 overflow-y-auto py-4 space-y-6 px-2">
-        {NAV_GROUPS.map((group) => (
+        {ADMIN_NAV_GROUPS.map((group) => (
           <div key={group.label}>
             {!collapsed && (
               <p className="px-2 mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
@@ -171,39 +107,21 @@ export function Sidebar() {
               </p>
             )}
             <ul className="space-y-0.5">
-              {group.items.map((item) => {
-                const active = isActive(item.href, item.exact);
-                const Icon = item.icon;
-                const link = (
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      NAV_LINK_BASE,
-                      active ? NAV_LINK_ACTIVE : NAV_LINK_INACTIVE,
-                    )}
-                  >
-                    <Icon className="shrink-0" size={18} />
-                    {!collapsed && (
-                      <span className="truncate">{item.label}</span>
-                    )}
-                  </Link>
-                );
-
-                return (
-                  <li key={item.href}>
-                    {collapsed ? (
-                      <Tooltip>
-                        <TooltipTrigger asChild>{link}</TooltipTrigger>
-                        <TooltipContent side="right">
-                          {item.label}
-                        </TooltipContent>
-                      </Tooltip>
-                    ) : (
-                      link
-                    )}
-                  </li>
-                );
-              })}
+              {group.items.map((item) => (
+                <SidebarLink key={item.href} item={item} active={isActive(item)} collapsed={collapsed} />
+              ))}
+              {group.subgroups?.map((sg) =>
+                collapsed ? (
+                  <CollapsedSubgroup
+                    key={sg.label}
+                    subgroup={sg}
+                    active={sg.items.some(isActive)}
+                    onOpen={() => openSubgroupFromCollapsed(sg.label)}
+                  />
+                ) : (
+                  <NavSubgroupSection key={sg.label} subgroup={sg} isActive={isActive} defaultOpen={pendingOpen === sg.label} />
+                ),
+              )}
             </ul>
           </div>
         ))}
@@ -211,24 +129,13 @@ export function Sidebar() {
 
       {/* Footer: logout + collapse toggle */}
       <div className="shrink-0 border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-2 space-y-0.5">
-        {/* Logout */}
-        {collapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button onClick={() => logoutAction()} className={BTN_BASE}>
-                <LogOut className="shrink-0" size={18} />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="right">Sign out</TooltipContent>
-          </Tooltip>
-        ) : (
+        <WithTooltip show={collapsed} label="Sign out">
           <button onClick={() => logoutAction()} className={BTN_BASE}>
             <LogOut className="shrink-0" size={18} />
-            <span>Sign out</span>
+            {!collapsed && <span>Sign out</span>}
           </button>
-        )}
+        </WithTooltip>
 
-        {/* Collapse toggle */}
         <button onClick={toggleCollapsed} className={BTN_BASE}>
           {collapsed ? (
             <ChevronRight className="shrink-0" size={18} />

@@ -32,6 +32,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import VisibilityPill from '@/components/admin/VisibilityPill'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countBy } from '@/components/admin/CountBadge'
 import {
   createPartner,
   deletePartner,
@@ -65,6 +66,8 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
   const isFiltering = query !== '' || visibilityFilter !== 'all'
 
   function resetPage() { setPage(1) }
+
+  const visibilityCounts = countBy(partners, ['all', 'visible', 'hidden'] as const, (p, k) => (k === 'visible' ? p.published : !p.published))
 
   const filtered = partners.filter((p) => {
     const q = query.toLowerCase()
@@ -138,7 +141,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
   }
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -191,6 +194,7 @@ export default function PartnersClient({ partners: initial, logoUrls }: Partners
             {(['all', 'visible', 'hidden'] as VisibilityFilter[]).map((f) => (
               <button key={f} onClick={() => { setVisibilityFilter(f); resetPage() }} className={filterBtnClass(visibilityFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={visibilityCounts[f]} active={visibilityFilter === f} />
               </button>
             ))}
           </div>

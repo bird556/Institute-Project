@@ -19,6 +19,7 @@ import Pagination from '@/components/shared/Pagination'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createReadingListItem, deleteReadingListItem, toggleReadingListPublished } from '@/actions/reading-list'
 import { createBookstore } from '@/actions/bookstores'
+import { CountBadge, countBy, countStatus } from '@/components/admin/CountBadge'
 import BookstoresClient, { type BookstoreListItem } from './BookstoresClient'
 import type { ReadingListItem } from '@/types'
 
@@ -79,6 +80,16 @@ export default function ReadingListClient({ items: initial, bookstores }: Readin
   const [togglingId, setTogglingId] = useState<string | null>(null)
 
   function resetPage() { setPage(1) }
+
+  const isThesisItem = (i: ReadingListListItem) => i.item_type === 'thesis_ma' || i.item_type === 'thesis_phd'
+  const groupItems  = items.filter((i) => (groupTab === 'theses' ? isThesisItem(i) : !isThesisItem(i)))
+  const groupCounts: Record<GroupTab, number> = {
+    bibliography: items.filter((i) => !isThesisItem(i)).length,
+    theses:       items.filter(isThesisItem).length,
+    bookstores:   bookstores.length,
+  }
+  const regionCounts = countBy(groupItems, ['all', 'canadian', 'world'] as const, (i, k) => i.author_region === k)
+  const statusCounts = countStatus(groupItems.filter((i) => regionTab === 'all' || i.author_region === regionTab))
 
   const filtered = items.filter((item) => {
     const q = query.toLowerCase()
@@ -164,7 +175,7 @@ export default function ReadingListClient({ items: initial, bookstores }: Readin
   }
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -201,13 +212,14 @@ export default function ReadingListClient({ items: initial, bookstores }: Readin
             <button
               key={value}
               onClick={() => { setGroupTab(value); resetPage() }}
-              className={`px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+              className={`inline-flex items-center px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
                 groupTab === value
                   ? 'bg-[var(--color-brand-teal)] text-white font-medium'
                   : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
               }`}
             >
               {label}
+              <CountBadge count={groupCounts[value]} active={groupTab === value} />
             </button>
           ))}
         </div>
@@ -223,13 +235,14 @@ export default function ReadingListClient({ items: initial, bookstores }: Readin
               <button
                 key={value}
                 onClick={() => { setRegionTab(value); resetPage() }}
-                className={`px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+                className={`inline-flex items-center px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
                   regionTab === value
                     ? 'bg-[var(--color-brand-teal)] text-white font-medium'
                     : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
                 }`}
               >
                 {label}
+                <CountBadge count={regionCounts[value]} active={regionTab === value} />
               </button>
             ))}
           </div>
@@ -277,6 +290,7 @@ export default function ReadingListClient({ items: initial, bookstores }: Readin
                 {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
                   <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                     {f.charAt(0).toUpperCase() + f.slice(1)}
+                    <CountBadge count={statusCounts[f]} active={statusFilter === f} />
                   </button>
                 ))}
               </div>
@@ -285,7 +299,7 @@ export default function ReadingListClient({ items: initial, bookstores }: Readin
             {/* Result count */}
             {isFiltering && (
               <p className="text-sm text-[var(--color-text-muted)] -mt-2">
-                Showing {filtered.length} of {items.length} {items.length === 1 ? 'item' : 'items'}
+                Showing {filtered.length} of {groupItems.length} {groupItems.length === 1 ? 'item' : 'items'}
               </p>
             )}
 

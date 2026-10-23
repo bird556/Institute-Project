@@ -18,6 +18,7 @@ import PublishPill from '@/components/admin/PublishPill'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { createBlog, deleteBlog, toggleBlogPublished } from '@/actions/blogs'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countStatus } from '@/components/admin/CountBadge'
 import { formatDate } from '@/lib/utils'
 import type { BlogPost } from '@/types'
 
@@ -44,6 +45,8 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
 
   const PAGE_SIZE = 20
   function resetPage() { setPage(1) }
+
+  const statusCounts = countStatus(blogs)
 
   const filtered = blogs.filter((b) => {
     const q = query.toLowerCase()
@@ -99,7 +102,7 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
   }
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -148,6 +151,7 @@ export default function BlogListClient({ blogs: initial }: BlogListClientProps) 
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
               <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={statusCounts[f]} active={statusFilter === f} />
               </button>
             ))}
           </div>

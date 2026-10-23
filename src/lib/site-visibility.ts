@@ -12,6 +12,7 @@ export interface SiteVisibility {
   advocates_enabled:         boolean
   psychotherapists_enabled:  boolean
   referral_agencies_enabled: boolean
+  racial_profiling_litigators_enabled: boolean
   intro_section_enabled:     boolean
   cta_section_enabled:       boolean
   goal_section_enabled:      boolean
@@ -27,6 +28,7 @@ const VISIBILITY_KEYS: (keyof SiteVisibility)[] = [
   'events_enabled', 'reading_list_enabled', 'partners_enabled',
   'newsletter_enabled', 'health_wellness_enabled', 'research_enabled', 'values_page_enabled',
   'advocates_enabled', 'psychotherapists_enabled', 'referral_agencies_enabled',
+  'racial_profiling_litigators_enabled',
   'intro_section_enabled', 'cta_section_enabled',
   'goal_section_enabled', 'impact_section_enabled', 'mission_section_enabled',
   'wellness_section_enabled', 'upcoming_events_section_enabled',
@@ -47,6 +49,7 @@ const ALL_ENABLED: SiteVisibility = {
   advocates_enabled:         true,
   psychotherapists_enabled:  true,
   referral_agencies_enabled: true,
+  racial_profiling_litigators_enabled: true,
   intro_section_enabled:     true,
   cta_section_enabled:       true,
   goal_section_enabled:      true,

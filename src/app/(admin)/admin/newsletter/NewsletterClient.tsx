@@ -20,6 +20,7 @@ import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
+import { CountBadge, countBy } from '@/components/admin/CountBadge'
 import { createEdition, deleteEdition } from '@/actions/newsletter'
 import { formatDate } from '@/lib/utils'
 import type { NewsletterEdition, NewsletterSubmission, SubmissionType, SubmissionStatus } from '@/types'
@@ -79,8 +80,12 @@ export default function NewsletterClient({ submissions: initial, editions: initi
   const [deletingEdition, setDeletingEdition] = useState(false)
 
   const pendingCount  = submissions.filter((s) => s.status === 'pending').length
-  const approvedCount = submissions.filter((s) => s.status === 'approved').length
-  const rejectedCount = submissions.filter((s) => s.status === 'rejected').length
+
+  // Status pills count within the type filter, type pills within the status filter
+  const statusCounts = countBy(submissions.filter((s) => typeFilter === 'all' || s.type === typeFilter),
+    ['all', 'pending', 'approved', 'rejected'] as const, (s, k) => s.status === k)
+  const typeCounts = countBy(submissions.filter((s) => statusFilter === 'all' || s.status === statusFilter),
+    ['all', 'research_call', 'research_note', 'commentary'] as const, (s, k) => s.type === k)
 
   const filteredSubmissions = submissions.filter((s) => {
     const q = submissionQuery.toLowerCase()
@@ -138,7 +143,7 @@ export default function NewsletterClient({ submissions: initial, editions: initi
     }`
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1 text-xs rounded-full cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -215,21 +220,19 @@ export default function NewsletterClient({ submissions: initial, editions: initi
             {/* Filter rows */}
             <div className="flex flex-wrap gap-3">
               <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
-                {(['all', 'pending', 'approved', 'rejected'] as StatusFilter[]).map((f) => {
-                  const count = f === 'pending' ? pendingCount : f === 'approved' ? approvedCount : f === 'rejected' ? rejectedCount : submissions.length
-                  return (
-                    <button key={f} onClick={() => setStatusFilter(f)} className={filterBtnClass(statusFilter === f)}>
-                      {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
-                      {f !== 'all' && <span className="ml-1 opacity-70">({count})</span>}
-                    </button>
-                  )
-                })}
+                {(['all', 'pending', 'approved', 'rejected'] as const).map((f) => (
+                  <button key={f} onClick={() => setStatusFilter(f)} className={filterBtnClass(statusFilter === f)}>
+                    {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
+                    <CountBadge count={statusCounts[f]} active={statusFilter === f} />
+                  </button>
+                ))}
               </div>
 
               <div className="flex gap-1 p-1 rounded-lg bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] w-fit">
                 {(['all', 'research_call', 'research_note', 'commentary'] as TypeFilter[]).map((f) => (
                   <button key={f} onClick={() => setTypeFilter(f)} className={filterBtnClass(typeFilter === f)}>
                     {f === 'all' ? 'All Types' : TYPE_FULL[f as SubmissionType]}
+                    <CountBadge count={typeCounts[f as keyof typeof typeCounts]} active={typeFilter === f} />
                   </button>
                 ))}
               </div>

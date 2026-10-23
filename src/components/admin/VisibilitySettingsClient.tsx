@@ -10,6 +10,7 @@ type VisibilityKey =
   | 'about_enabled' | 'advocates_enabled' | 'psychotherapists_enabled'
   | 'referral_agencies_enabled' | 'black_mens_groups_enabled'
   | 'youth_service_organizations_enabled' | 'community_organizations_enabled'
+  | 'racial_profiling_litigators_enabled'
   | 'blogs_enabled' | 'events_enabled'
   | 'reading_list_enabled' | 'partners_enabled' | 'newsletter_enabled'
   | 'health_wellness_enabled' | 'research_enabled' | 'values_page_enabled' | 'research_institutes_enabled' | 'call_for_papers_enabled' | 'sexual_abuse_boys_men_enabled'
@@ -36,6 +37,7 @@ const SERVICES_ITEMS: { key: VisibilityKey; label: string; description: string }
   { key: 'black_mens_groups_enabled', label: "Black Men's Groups", description: "When hidden, /black-mens-groups and all profile pages redirect to home" },
   { key: 'youth_service_organizations_enabled', label: 'Youth Service Organizations', description: 'When hidden, the category is removed from the Services nav dropdown' },
   { key: 'community_organizations_enabled',     label: 'Community and Professional Organizations',     description: 'When hidden, the category is removed from the Services nav dropdown' },
+  { key: 'racial_profiling_litigators_enabled', label: 'National Racial Profiling Litigator Database', description: 'When hidden, /racial-profiling-litigators and all profile pages redirect to home' },
 ]
 
 const RESEARCH_CATEGORY_ITEMS: { key: VisibilityKey; label: string; description: string }[] = [
@@ -64,6 +66,7 @@ export default function VisibilitySettingsClient({ initialSettings }: { initialS
     black_mens_groups_enabled: s?.black_mens_groups_enabled !== 'false',
     youth_service_organizations_enabled: s?.youth_service_organizations_enabled !== 'false',
     community_organizations_enabled:     s?.community_organizations_enabled     !== 'false',
+    racial_profiling_litigators_enabled: s?.racial_profiling_litigators_enabled !== 'false',
     blogs_enabled:             s?.blogs_enabled             !== 'false',
     events_enabled:            s?.events_enabled            !== 'false',
     reading_list_enabled:      s?.reading_list_enabled      !== 'false',

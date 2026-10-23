@@ -2,102 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  LayoutDashboard, FileText, CalendarDays, Handshake,
-  BookOpen, Home, Info, Target, Settings, Newspaper,
-  Calendar, List, Mail, Heart, Star, Microscope, Building2, Send, ShieldAlert, Users,
-  Navigation2, Eye, PanelBottom, Download, Lock, Compass, GraduationCap, Store,
-  Menu, X, LogOut,
-  type LucideIcon,
-} from 'lucide-react'
+import { LayoutDashboard, FileText, CalendarDays, Handshake, Menu, X, LogOut } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { logoutAction } from '@/actions/auth'
-
-interface NavItem {
-  label: string
-  href: string
-  icon: LucideIcon
-  exact?: boolean
-}
-
-interface NavGroup {
-  label: string
-  items: NavItem[]
-}
+import { ADMIN_NAV_GROUPS, isNavActive, type NavItem } from './admin-nav'
+import { NavSubgroupSection } from './NavSubgroupSection'
 
 const BOTTOM_TABS: NavItem[] = [
   { label: 'Dashboard', href: '/admin',          icon: LayoutDashboard, exact: true },
   { label: 'Blogs',     href: '/admin/blogs',    icon: FileText },
   { label: 'Events',    href: '/admin/events',   icon: CalendarDays },
   { label: 'Partners',  href: '/admin/partners', icon: Handshake },
-]
-
-const DRAWER_GROUPS: NavGroup[] = [
-  {
-    label: 'Overview',
-    items: [
-      { label: 'Dashboard',    href: '/admin',             icon: LayoutDashboard, exact: true },
-    ],
-  },
-  {
-    label: 'Content',
-    items: [
-      { label: 'Events',            href: '/admin/events',          icon: CalendarDays },
-      { label: 'Reading List',      href: '/admin/reading-list',                     icon: BookOpen },
-      { label: 'Book of the Month', href: '/admin/reading-list/book-of-the-month', icon: Star },
-      { label: 'Partners',          href: '/admin/partners',        icon: Handshake },
-      { label: 'Newsletter',        href: '/admin/newsletter',      icon: Newspaper },
-      { label: 'Healing & Wellness', href: '/admin/health-wellness', icon: Heart },
-      { label: 'Research',          href: '/admin/research',        icon: Microscope },
-    ],
-  },
-  {
-    label: 'Directory',
-    items: [
-      { label: 'All Entries', href: '/admin/directory', icon: Users },
-    ],
-  },
-  {
-    label: 'Pages',
-    items: [
-      { label: 'Home',              href: '/admin/home',               icon: Home },
-      { label: 'About',             href: '/admin/about',              icon: Info },
-      { label: 'Events Page',            href: '/admin/pages/events',           icon: Calendar },
-      { label: 'Newsletter Page',        href: '/admin/pages/newsletter',       icon: Mail },
-      { label: 'Reading List Page',      href: '/admin/pages/reading-list',     icon: List },
-      { label: 'Bibliography Page',      href: '/admin/pages/bibliography',     icon: BookOpen },
-      { label: 'MA and PhD Theses Page', href: '/admin/pages/theses',           icon: GraduationCap },
-      { label: 'Bookstores Page',        href: '/admin/pages/bookstores',       icon: Store },
-      { label: 'Access to Services Page', href: '/admin/pages/access-to-services', icon: Users },
-      { label: 'Partners Page',          href: '/admin/pages/partners',         icon: Handshake },
-      { label: 'Healing & Wellness Page', href: '/admin/pages/health-wellness',  icon: Heart },
-      { label: 'Research Page',          href: '/admin/pages/research',          icon: Microscope },
-      { label: 'Values Page',            href: '/admin/pages/values',            icon: Compass },
-      { label: 'Research Institutes and Initiatives Page', href: '/admin/pages/research-institutes', icon: Building2 },
-      { label: 'Call for Papers Page',   href: '/admin/pages/call-for-papers',   icon: Send },
-      { label: 'Sexual Abuse of Boys and Men Page', href: '/admin/pages/sexual-abuse-boys-men', icon: ShieldAlert },
-      { label: 'Advocates Page',          href: '/admin/pages/advocates',         icon: Users },
-      { label: 'Psychotherapists Page',   href: '/admin/pages/psychotherapists',  icon: Users },
-      { label: 'Referral Agencies Page',  href: '/admin/pages/referral-agencies', icon: Users },
-      { label: "Black Men's Groups Page", href: '/admin/pages/black-mens-groups', icon: Users },
-      { label: 'Youth Service Organizations Page', href: '/admin/pages/youth-service-organizations', icon: Users },
-      { label: 'Community and Professional Organizations Page',     href: '/admin/pages/community-organizations',     icon: Users },
-    ],
-  },
-  {
-    label: 'Settings',
-    items: [
-      { label: 'Settings',          href: '/admin/settings',            icon: Settings },
-      { label: 'Newsletter Signup', href: '/admin/newsletter-settings', icon: Mail },
-      { label: 'Navigation',        href: '/admin/navigation',          icon: Navigation2 },
-      { label: 'Visibility',        href: '/admin/visibility',          icon: Eye },
-      { label: 'Footer',            href: '/admin/footer',              icon: PanelBottom },
-      { label: 'Site Access',       href: '/admin/access',              icon: Lock },
-      { label: 'Export',            href: '/admin/export',              icon: Download },
-    ],
-  },
 ]
 
 export function MobileNav() {
@@ -111,10 +28,8 @@ export function MobileNav() {
     return () => window.removeEventListener('open-mobile-nav', handler)
   }, [])
 
-  function isActive(href: string, exact?: boolean) {
-    if (exact) return pathname === href
-    return pathname === href || pathname.startsWith(href + '/')
-  }
+  const currentTab = useSearchParams().get('tab')
+  const isActive = (item: NavItem) => isNavActive(pathname, item, currentTab)
 
   function closeDrawer() {
     setDrawerOpen(false)
@@ -126,7 +41,7 @@ export function MobileNav() {
       <nav className="flex lg:hidden fixed bottom-0 inset-x-0 z-30 h-16 bg-[var(--color-background)] dark:bg-[var(--color-dark-background)] border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)] pb-safe">
         <div className="flex w-full">
           {BOTTOM_TABS.map((tab) => {
-            const active = isActive(tab.href, tab.exact)
+            const active = isActive(tab)
             const Icon = tab.icon
             return (
               <Link
@@ -193,14 +108,14 @@ export function MobileNav() {
 
               {/* Drawer nav */}
               <nav className="flex-1 overflow-y-auto py-4 space-y-6 px-2">
-                {DRAWER_GROUPS.map((group) => (
+                {ADMIN_NAV_GROUPS.map((group) => (
                   <div key={group.label}>
                     <p className="px-2 mb-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-text-muted)]">
                       {group.label}
                     </p>
                     <ul className="space-y-0.5">
                       {group.items.map((item) => {
-                        const active = isActive(item.href, item.exact)
+                        const active = isActive(item)
                         const Icon = item.icon
                         return (
                           <li key={item.href}>
@@ -220,6 +135,9 @@ export function MobileNav() {
                           </li>
                         )
                       })}
+                      {group.subgroups?.map((sg) => (
+                        <NavSubgroupSection key={sg.label} subgroup={sg} isActive={isActive} onNavigate={closeDrawer} />
+                      ))}
                     </ul>
                   </div>
                 ))}

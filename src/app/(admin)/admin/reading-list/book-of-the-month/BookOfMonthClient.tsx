@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import { BookOpen, Star, X, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countBy } from '@/components/admin/CountBadge'
 import { setBookOfTheMonth } from '@/actions/reading-list'
 
 interface PickerItem {
@@ -111,8 +112,10 @@ export default function BookOfMonthClient({ items, currentId }: BookOfMonthClien
     toast.success('Book of the Month cleared.')
   }
 
+  const regionCounts = countBy(items, ['all', 'canadian', 'world'] as const, (i, k) => i.author_region === k)
+
   const tabClass = (active: boolean) =>
-    `px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-4 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white font-medium'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -187,6 +190,7 @@ export default function BookOfMonthClient({ items, currentId }: BookOfMonthClien
               ] as { value: RegionTab; label: string }[]).map(({ value, label }) => (
                 <button key={value} onClick={() => { setRegionTab(value); resetPage() }} className={tabClass(regionTab === value)}>
                   {label}
+                  <CountBadge count={regionCounts[value]} active={regionTab === value} />
                 </button>
               ))}
             </div>

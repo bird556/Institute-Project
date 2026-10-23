@@ -16,6 +16,7 @@ const DIRECTORY_PATH: Record<string, string> = {
   black_mens_group:            'black-mens-groups',
   youth_service_organization:  'youth-service-organizations',
   community_organization:      'community-organizations',
+  racial_profiling_litigator:  'racial-profiling-litigators',
 }
 
 export async function searchContent(query: string): Promise<ActionResult<SearchResult[]>> {

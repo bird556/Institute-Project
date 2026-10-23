@@ -16,6 +16,7 @@ import {
 import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import PublishPill from '@/components/admin/PublishPill'
 import Pagination from '@/components/shared/Pagination'
+import { CountBadge, countStatus } from '@/components/admin/CountBadge'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { deleteBookstore, toggleBookstorePublished } from '@/actions/bookstores'
 import type { Bookstore } from '@/types'
@@ -55,6 +56,8 @@ export default function BookstoresClient({ items: initial, onNew, creating }: Bo
   const [togglingId, setTogglingId] = useState<string | null>(null)
 
   function resetPage() { setPage(1) }
+
+  const statusCounts = countStatus(items)
 
   const filtered = items.filter((item) => {
     const q = query.toLowerCase()
@@ -111,7 +114,7 @@ export default function BookstoresClient({ items: initial, onNew, creating }: Bo
   }
 
   const filterBtnClass = (active: boolean) =>
-    `px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
+    `inline-flex items-center px-3 py-1.5 text-sm rounded-md cursor-pointer transition-colors ${
       active
         ? 'bg-[var(--color-brand-teal)] text-white'
         : 'text-[var(--color-text-muted)] hover:bg-[var(--color-surface-hover)] dark:hover:bg-[var(--color-dark-surface-hover)]'
@@ -158,6 +161,7 @@ export default function BookstoresClient({ items: initial, onNew, creating }: Bo
             {(['all', 'published', 'drafts'] as StatusFilter[]).map((f) => (
               <button key={f} onClick={() => { setStatusFilter(f); resetPage() }} className={filterBtnClass(statusFilter === f)}>
                 {f.charAt(0).toUpperCase() + f.slice(1)}
+                <CountBadge count={statusCounts[f]} active={statusFilter === f} />
               </button>
             ))}
           </div>

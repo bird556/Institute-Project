@@ -19,6 +19,7 @@ const CATEGORY_HREFS: Record<DirectoryCategory, string> = {
   black_mens_group:            '/black-mens-groups',
   youth_service_organization:  '/youth-service-organizations',
   community_organization:      '/community-organizations',
+  racial_profiling_litigator:  '/racial-profiling-litigators',
 }
 
 const CATEGORY_ENABLED_KEY: Partial<Record<DirectoryCategory, keyof SiteSettings>> = {
@@ -26,6 +27,7 @@ const CATEGORY_ENABLED_KEY: Partial<Record<DirectoryCategory, keyof SiteSettings
   black_mens_group:            'black_mens_groups_enabled',
   youth_service_organization:  'youth_service_organizations_enabled',
   community_organization:      'community_organizations_enabled',
+  racial_profiling_litigator:  'racial_profiling_litigators_enabled',
 }
 
 export default async function AccessToServicesPage() {
