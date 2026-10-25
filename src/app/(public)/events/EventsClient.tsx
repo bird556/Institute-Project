@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import EventGrid from './EventGrid'
 import PastEventsSection from './PastEventsSection'
 import type { EventCardProps } from '@/components/events/EventCard'
+import { compareUpcoming, comparePast } from '@/lib/event-dates'
 
 type TypeFilter = 'all' | 'kustawi' | 'other'
 
@@ -33,10 +34,8 @@ export default function EventsClient({ events, kustawiBlurb, otherEventsBlurb, i
     [events, typeFilter],
   )
 
-  const now = new Date()
-  const upcoming = filtered.filter((e) => !e.isPast)
-  const past     = filtered.filter((e) => e.isPast)
-    .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
+  const upcoming = filtered.filter((e) => !e.isPast).sort(compareUpcoming)
+  const past     = filtered.filter((e) => e.isPast).sort(comparePast)
 
   const pillBase = 'px-4 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer'
   const pillActive = 'bg-[var(--color-brand-teal)] text-white'

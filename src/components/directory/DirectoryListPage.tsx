@@ -30,8 +30,9 @@ export default async function DirectoryListPage({ category, pageSlug }: Props) {
 
   const cards = (entries ?? []).map((e) => ({
     id: e.id,
-    name: e.name,
-    organization: e.organization,
+    // Name is optional for litigators — show the firm/organization as the heading instead
+    name: e.name.trim() || e.organization || '',
+    organization: e.name.trim() ? e.organization : null,
     description_excerpt: e.description ? truncate(stripHtml(e.description), 150) : null,
     photo_url: e.photo_path
       ? supabase.storage.from('institute-media').getPublicUrl(e.photo_path).data.publicUrl

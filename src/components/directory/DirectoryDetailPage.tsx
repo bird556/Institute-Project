@@ -39,7 +39,7 @@ export async function generateDirectoryDetailMetadata(id: string): Promise<Metad
     ? supabase.storage.from('institute-media').getPublicUrl(entry.photo_path).data.publicUrl
     : null
   return buildMetadata({
-    title: entry.name,
+    title: entry.name.trim() || entry.organization || undefined,
     description: entry.description ? truncate(stripHtml(entry.description), 160) : undefined,
     imageUrl,
   })
@@ -73,6 +73,9 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
   const backHref  = BACK_HREFS[entry.category as DirectoryCategory]
   const backLabel = DIRECTORY_CATEGORY_LABELS[entry.category as DirectoryCategory]
   const location  = [entry.city, entry.province].filter(Boolean).join(', ')
+  // Name is optional for litigators — fall back to the firm/organization as the heading
+  const hasName     = entry.name.trim() !== ''
+  const displayName = hasName ? entry.name : (entry.organization ?? '')
   // Only show options currently offered in the editor (hidden ones may still be stored)
   const feeOptions = ((entry.fee_options ?? []) as string[]).filter((o) => (DIRECTORY_FEE_OPTIONS as readonly string[]).includes(o))
   const languages  = ((entry.languages ?? []) as string[]).filter((l) => (DIRECTORY_LANGUAGE_OPTIONS as readonly string[]).includes(l))
@@ -96,7 +99,7 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
               {photoUrl ? (
                 <Image
                   src={photoUrl}
-                  alt={entry.name}
+                  alt={displayName}
                   fill
                   priority
                   className={entry.image_fit === 'cover' ? 'object-cover' : 'object-contain'}
@@ -164,10 +167,10 @@ export default async function DirectoryDetailPage({ id }: { id: string }) {
             )}
 
             <h1 className="font-display text-3xl md:text-4xl font-bold text-[var(--color-text-primary)] dark:text-white leading-tight">
-              {entry.name}
+              {displayName}
             </h1>
 
-            {entry.organization && !DIRECTORY_HIDE_NAME.includes(entry.category as DirectoryCategory) && (
+            {hasName && entry.organization && !DIRECTORY_HIDE_NAME.includes(entry.category as DirectoryCategory) && (
               <p className="text-lg text-[var(--color-text-muted)]">{entry.organization}</p>
             )}
 

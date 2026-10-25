@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
+import { notFinishedFilter } from '@/lib/event-dates'
 import type { SubmissionType } from '@/types'
 
 export interface DashboardStats {
@@ -46,7 +47,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     { data: recentReadingList },
   ] = await Promise.all([
     supabase.from('blog_posts').select('*', { count: 'exact', head: true }).eq('published', true),
-    supabase.from('events').select('*', { count: 'exact', head: true }).gt('event_date', now),
+    supabase.from('events').select('*', { count: 'exact', head: true }).or(notFinishedFilter(now)),
     supabase.from('reading_list').select('*', { count: 'exact', head: true }).eq('published', true),
     supabase.from('partners').select('*', { count: 'exact', head: true }).eq('published', true),
     supabase.from('newsletter_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending'),

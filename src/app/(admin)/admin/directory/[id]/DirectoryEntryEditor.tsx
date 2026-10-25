@@ -103,7 +103,7 @@ export default function DirectoryEntryEditor({ entry, initialPhotoUrl }: Props) 
   async function handleSave() {
     if (hideName) {
       if (!organization.trim()) { toast.error('Organization is required.'); return }
-    } else if (!name.trim()) {
+    } else if (!isLitigator && !name.trim()) {
       toast.error('Name is required.')
       return
     }

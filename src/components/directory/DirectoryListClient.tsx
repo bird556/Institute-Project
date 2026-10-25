@@ -4,7 +4,7 @@ import { useState, useMemo } from 'react'
 import DirectoryGrid from './DirectoryGrid'
 import Pagination from '@/components/shared/Pagination'
 import type { DirectoryCardProps } from './DirectoryCard'
-import { DIRECTORY_HIDE_MODE, DIRECTORY_LANGUAGE_OPTIONS, DIRECTORY_MODE_LABELS, type DirectoryMode } from '@/types'
+import { DIRECTORY_HIDE_MODE, DIRECTORY_LITIGATOR_FIELDS, DIRECTORY_LANGUAGE_OPTIONS, DIRECTORY_MODE_LABELS, type DirectoryMode } from '@/types'
 
 const PAGE_SIZE = 16
 const FREE_CONSULTATION = 'Free Consultation'
@@ -45,10 +45,14 @@ function matches(e: DirectoryCardProps, f: Filters) {
     && (!f.freeConsultation || hasFreeConsultation(e))
 }
 
+// Litigators are listed by firm, falling back to the lawyer's name
+const sortName = (e: DirectoryCardProps) =>
+  DIRECTORY_LITIGATOR_FIELDS.includes(e.category) ? (e.organization || e.name) : e.name
+
 function compare(a: DirectoryCardProps, b: DirectoryCardProps, sort: DirSortOption) {
   switch (sort) {
-    case 'name_az':  return a.name.localeCompare(b.name)
-    case 'name_za':  return b.name.localeCompare(a.name)
+    case 'name_az':  return sortName(a).localeCompare(sortName(b), 'en', { sensitivity: 'base' })
+    case 'name_za':  return sortName(b).localeCompare(sortName(a), 'en', { sensitivity: 'base' })
     case 'newest':   return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     case 'oldest':   return new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
     case 'province': return (a.province ?? '￿').localeCompare(b.province ?? '￿')

@@ -4,6 +4,7 @@ import { truncate, stripHtml } from '@/lib/utils'
 import { getSiteSettings } from '@/actions/settings'
 import { getPageContent } from '@/actions/page-content'
 import { buildMetadata } from '@/lib/metadata'
+import { isEventPast } from '@/lib/event-dates'
 import EventsClient from './EventsClient'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,9 +32,9 @@ export default async function EventsPage({ searchParams }: Props) {
 
   const { data } = await supabase
     .from('events')
-    .select('id, slug, title, description, cover_path, location, event_date, event_type, organizer, image_fit')
+    .select('id, slug, title, description, cover_path, location, event_date, event_end_date, event_type, organizer, image_fit')
     .eq('published', true)
-    .order('event_date', { ascending: true })
+    .order('event_date', { ascending: true, nullsFirst: false })
 
   const now = new Date()
   const events = (data ?? []).map((e) => ({
@@ -46,7 +47,8 @@ export default async function EventsPage({ searchParams }: Props) {
       : '',
     location: e.location,
     event_date: e.event_date,
-    isPast: new Date(e.event_date) < now,
+    event_end_date: e.event_end_date,
+    isPast: isEventPast(e, now),
     event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
     organizer: e.organizer ?? null,
     image_fit: (e.image_fit ?? 'cover') as 'cover' | 'contain',

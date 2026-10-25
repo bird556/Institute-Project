@@ -23,7 +23,8 @@ export interface Event {
   cover_path: string | null
   doc_path: string | null   // Optional PDF/DOC/DOCX download; null = no download shown
   location: string | null
-  event_date: string
+  event_date: string | null       // Start date/time — null = date TBD
+  event_end_date: string | null   // Optional finish date/time
   external_url: string | null   // Optional link to external registration (e.g. Eventbrite)
   organizer: string | null
   event_type: 'kustawi' | 'other'

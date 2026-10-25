@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabase/server'
 import { truncate, stripHtml } from '@/lib/utils'
 import { getSiteSettings } from '@/actions/settings'
 import { buildMetadata } from '@/lib/metadata'
+import { isEventPast, compareUpcoming, comparePast } from '@/lib/event-dates'
 import EventGrid from '../EventGrid'
 import PastEventsSection from '../PastEventsSection'
 
@@ -22,10 +23,10 @@ export default async function OtherEventsPage() {
 
   const { data } = await supabase
     .from('events')
-    .select('id, slug, title, description, cover_path, location, event_date, event_type, organizer, image_fit')
+    .select('id, slug, title, description, cover_path, location, event_date, event_end_date, event_type, organizer, image_fit')
     .eq('published', true)
     .eq('event_type', 'other')
-    .order('event_date', { ascending: true })
+    .order('event_date', { ascending: true, nullsFirst: false })
 
   const now = new Date()
   const events = (data ?? []).map((e) => ({
@@ -38,15 +39,15 @@ export default async function OtherEventsPage() {
       : '',
     location: e.location,
     event_date: e.event_date,
-    isPast: new Date(e.event_date) < now,
+    event_end_date: e.event_end_date,
+    isPast: isEventPast(e, now),
     event_type: 'other' as const,
     organizer: e.organizer ?? null,
     image_fit: (e.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
-  const upcoming = events.filter((e) => !e.isPast)
-  const past = events.filter((e) => e.isPast)
-    .sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime())
+  const upcoming = events.filter((e) => !e.isPast).sort(compareUpcoming)
+  const past = events.filter((e) => e.isPast).sort(comparePast)
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">

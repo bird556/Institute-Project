@@ -6,7 +6,8 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import EventCard from '@/components/events/EventCard'
 import EventCoverImage from '@/components/events/EventCoverImage'
-import { formatDate, formatTime, truncate, stripHtml } from '@/lib/utils'
+import { truncate, stripHtml } from '@/lib/utils'
+import { isEventPast, formatEventWhen, compareUpcoming, comparePast } from '@/lib/event-dates'
 import { buildMetadata } from '@/lib/metadata'
 import { DetailPageShell } from '@/components/shared/DetailPageShell'
 import { EmbedWithFallback } from '@/components/shared/EmbedWithFallback'
@@ -70,14 +71,14 @@ export default async function EventDetailPage({ params }: Props) {
     : null
 
   const now = new Date()
-  const isPast = new Date(event.event_date) < now
+  const isPast = isEventPast(event, now)
 
   const { data: moreData } = await supabase
     .from('events')
-    .select('id, slug, title, description, cover_path, location, event_date, event_type, organizer, image_fit')
+    .select('id, slug, title, description, cover_path, location, event_date, event_end_date, event_type, organizer, image_fit')
     .eq('published', true)
     .neq('id', event.id)
-    .order('event_date', { ascending: true })
+    .order('event_date', { ascending: true, nullsFirst: false })
     .limit(6)
 
   const otherEvents = (moreData ?? []).map((e) => ({
@@ -90,15 +91,16 @@ export default async function EventDetailPage({ params }: Props) {
       : '',
     location: e.location,
     event_date: e.event_date,
-    isPast: new Date(e.event_date) < now,
+    event_end_date: e.event_end_date,
+    isPast: isEventPast(e, now),
     event_type: (e.event_type ?? 'kustawi') as 'kustawi' | 'other',
     organizer: e.organizer ?? null,
     image_fit: (e.image_fit ?? 'cover') as 'cover' | 'contain',
   }))
 
   const moreEvents = [
-    ...otherEvents.filter((e) => !e.isPast),
-    ...otherEvents.filter((e) => e.isPast).sort((a, b) => new Date(b.event_date).getTime() - new Date(a.event_date).getTime()),
+    ...otherEvents.filter((e) => !e.isPast).sort(compareUpcoming),
+    ...otherEvents.filter((e) => e.isPast).sort(comparePast),
   ].slice(0, 3)
 
   const blocks: Record<EventBlockKey, ReactNode> = {
@@ -114,7 +116,7 @@ export default async function EventDetailPage({ params }: Props) {
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-text-muted)]">
           <span className="flex items-center gap-1.5">
             <Calendar className="w-4 h-4 shrink-0" />
-            {formatDate(event.event_date)} · {formatTime(event.event_date)}
+            {formatEventWhen(event)}
           </span>
           {event.location && (
             <span className="flex items-center gap-1.5">

@@ -278,7 +278,9 @@ export default function AdminDirectoryClient({ entries: initial }: Props) {
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">{entry.name}</p>
+                  <p className="font-medium text-[var(--color-text-primary)] dark:text-[#e8ecec] truncate">
+                    {entry.name.trim() || <span className="italic text-[var(--color-text-muted)]">No name</span>}
+                  </p>
                   <div className="flex items-center gap-2 mt-0.5">
                     {entry.organization && !DIRECTORY_HIDE_NAME.includes(entry.category) && (
                       <span className="text-sm text-[var(--color-text-muted)] truncate">{entry.organization}</span>
