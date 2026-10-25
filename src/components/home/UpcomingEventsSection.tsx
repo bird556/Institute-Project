@@ -4,13 +4,14 @@ import { useRef } from 'react'
 import Link from 'next/link'
 import { motion, useInView } from 'framer-motion'
 import { FadeUp } from '@/components/shared/FadeUp'
-import { formatDate } from '@/lib/utils'
+import { formatEventDay } from '@/lib/event-dates'
 
 interface UpcomingEvent {
   id: string
   title: string
   location: string | null
-  event_date: string
+  event_date: string | null
+  event_end_date: string | null
 }
 
 interface Props {
@@ -56,7 +57,7 @@ export function UpcomingEventsSection({ events, heading = 'Upcoming Events' }: P
                 className="group block rounded-xl border border-white/20 bg-white/10 p-6 hover:bg-white/20 transition-colors"
               >
                 <p className="text-xs text-white/60 mb-2">
-                  {formatDate(event.event_date)} · {event.location}
+                  {formatEventDay(event)}{event.location && ` · ${event.location}`}
                 </p>
                 <h3 className="font-display text-lg font-bold text-white">
                   {event.title}

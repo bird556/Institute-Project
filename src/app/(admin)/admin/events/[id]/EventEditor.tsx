@@ -38,6 +38,12 @@ import ConfirmDialog from '@/components/admin/ConfirmDialog'
 import { updateEvent, toggleEventPublished, deleteEvent } from '@/actions/events'
 import { slugify, formatDate } from '@/lib/utils'
 import { parseEventLayout, EVENT_BLOCK_LABELS, type EventBlockKey } from '@/lib/event-layout'
+import EventDateFields, {
+  initialDateValues,
+  buildDateFields,
+  validateDates,
+  type EventDateValues,
+} from './EventDateFields'
 import type { Event } from '@/types'
 
 const AUTOSAVE_MS = 2000
@@ -45,23 +51,6 @@ const AUTOSAVE_MS = 2000
 interface EventEditorProps {
   event: Event
   initialCoverUrl?: string
-}
-
-/** Split an ISO timestamptz into separate date + time strings for the inputs */
-function splitDateTime(iso: string): { date: string; time: string } {
-  const d = new Date(iso)
-  const date = d.toISOString().slice(0, 10)           // YYYY-MM-DD
-  const time = d.toISOString().slice(11, 16)          // HH:MM
-  return { date, time }
-}
-
-/** Combine date (YYYY-MM-DD) + time (HH:MM) back into an ISO string (UTC) */
-function combineDateTime(date: string, time: string): string {
-  return `${date}T${time}:00.000Z`
-}
-
-function isValidDateStr(date: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}$/.test(date) && !Number.isNaN(new Date(`${date}T00:00:00.000Z`).getTime())
 }
 
 function SortableLayoutRow({ blockKey }: { blockKey: EventBlockKey }) {
@@ -123,9 +112,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
   )
 
-  const { date: initDate, time: initTime } = splitDateTime(event.event_date)
-  const [eventDate, setEventDate] = useState(initDate)
-  const [eventTime, setEventTime] = useState(initTime)
+  const [dates, setDates] = useState<EventDateValues>(() => initialDateValues(event.event_date, event.event_end_date))
   const [dateError, setDateError] = useState('')
 
   const [saving, setSaving] = useState(false)
@@ -148,7 +135,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       doc_path: docPath,
       location: location || null,
       organizer: organizer.trim() || null,
-      event_date: isValidDateStr(eventDate) ? combineDateTime(eventDate, eventTime) : event.event_date,
+      ...buildDateFields(dates),
       external_url: externalUrl.trim() || null,
       event_type: eventType,
       image_fit: imageFit,
@@ -173,10 +160,14 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current)
     autosaveTimer.current = setTimeout(async () => {
       if (!isDirty.current) return
-      await updateEvent(event.id, buildFields())
+      await updateEvent(event.id, latestFields.current())
       isDirty.current = false
     }, AUTOSAVE_MS)
   }
+
+  // The autosave timer must read the newest field values, not the ones from the render that scheduled it
+  const latestFields = useRef(buildFields)
+  useEffect(() => { latestFields.current = buildFields })
 
   useEffect(() => () => { if (autosaveTimer.current) clearTimeout(autosaveTimer.current) }, [])
 
@@ -232,14 +223,9 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
     scheduleAutosave()
   }
 
-  function handleDateChange(val: string) {
-    setEventDate(val)
+  function handleDatesChange(patch: Partial<EventDateValues>) {
+    setDates((prev) => ({ ...prev, ...patch }))
     setDateError('')
-    scheduleAutosave()
-  }
-
-  function handleTimeChange(val: string) {
-    setEventTime(val)
     scheduleAutosave()
   }
 
@@ -257,12 +243,10 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
       toast.error('Slug is required.')
       return false
     }
-    if (!eventDate) {
-      setDateError('Event date is required.')
-      return false
-    }
-    if (!isValidDateStr(eventDate)) {
-      setDateError('Event date is invalid.')
+    const dateMsg = validateDates(dates)
+    if (dateMsg) {
+      setDateError(dateMsg)
+      toast.error(dateMsg)
       return false
     }
     return true
@@ -559,38 +543,7 @@ export default function EventEditor({ event, initialCoverUrl }: EventEditorProps
             </div>
 
             {/* Date & time */}
-            <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-3">
-              <p className="text-xs uppercase tracking-wide text-[var(--color-text-muted)] font-medium">
-                Date &amp; Time
-              </p>
-              <div className="space-y-1.5">
-                <Label htmlFor="event-date" className="text-[var(--color-text-muted)] text-xs">
-                  Date
-                </Label>
-                <input
-                  id="event-date"
-                  type="date"
-                  value={eventDate}
-                  onChange={(e) => handleDateChange(e.target.value)}
-                  className="w-full h-9 rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
-                />
-                {dateError && (
-                  <p className="text-xs text-red-600">{dateError}</p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="event-time" className="text-[var(--color-text-muted)] text-xs">
-                  Time
-                </Label>
-                <input
-                  id="event-time"
-                  type="time"
-                  value={eventTime}
-                  onChange={(e) => handleTimeChange(e.target.value)}
-                  className="w-full h-9 rounded-md border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface-hover)] text-[var(--color-text-primary)] dark:text-[#e8ecec] text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-teal)] cursor-pointer"
-                />
-              </div>
-            </div>
+            <EventDateFields values={dates} error={dateError} onChange={handleDatesChange} />
 
             {/* Location */}
             <div className="rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] p-4 bg-[var(--color-surface)] dark:bg-[var(--color-dark-surface)] space-y-2">

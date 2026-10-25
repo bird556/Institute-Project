@@ -10,7 +10,7 @@ export async function getAdminEvents(): Promise<ActionResult<Event[]>> {
   const { data, error } = await supabase
     .from('events')
     .select('*')
-    .order('event_date', { ascending: true })
+    .order('event_date', { ascending: true, nullsFirst: false })
   if (error) return { success: false, error: 'Failed to load events.' }
   return { success: true, data }
 }
@@ -44,6 +44,20 @@ export async function createEvent(): Promise<ActionResult<{ id: string }>> {
   return { success: true, data: { id: data.id } }
 }
 
+function saveErrorMessage(code: string | undefined): string {
+  switch (code) {
+    case '23505':
+      return 'That slug is already used by another event. Choose a different one.'
+    case 'PGRST204': // column missing from the schema cache
+    case '42703':    // undefined column
+      return 'The database is missing a new event column — run the latest event migration in Supabase.'
+    case '23502':    // not-null violation
+      return 'The database still requires a start date — run the latest event migration in Supabase to allow TBD dates.'
+    default:
+      return 'Failed to save event.'
+  }
+}
+
 export async function updateEvent(
   id: string,
   fields: Partial<Omit<Event, 'id' | 'created_at'>>,
@@ -71,10 +85,8 @@ export async function updateEvent(
     .update({ ...updatedFields, updated_at: new Date().toISOString() })
     .eq('id', id)
   if (error) {
-    if (error.code === '23505') {
-      return { success: false, error: 'That slug is already used by another event. Choose a different one.' }
-    }
-    return { success: false, error: 'Failed to save event.' }
+    console.error('updateEvent failed:', error.code, error.message)
+    return { success: false, error: saveErrorMessage(error.code) }
   }
   revalidatePath('/events', 'layout')
   return { success: true }

@@ -197,8 +197,15 @@ export function Header({ navItems, logoUrl, siteName = 'Institute', showReferral
                           className="absolute top-full left-0 mt-2 w-52 rounded-xl border border-[var(--color-border)] dark:border-[var(--color-dark-border)] bg-[var(--color-background)] dark:bg-[var(--color-dark-surface)] shadow-lg overflow-hidden z-50"
                         >
                           <Link
+                            href="/events"
+                            className="block px-4 py-3 text-sm font-semibold text-[var(--color-brand-teal)] dark:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                            onClick={() => setEventsDropdownOpen(false)}
+                          >
+                            All Events
+                          </Link>
+                          <Link
                             href="/events/kustawi"
-                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors"
+                            className="block px-4 py-3 text-sm font-medium text-[var(--color-text-muted)] hover:text-[var(--color-brand-teal)] dark:hover:text-white hover:bg-[var(--color-surface)] dark:hover:bg-[var(--color-dark-surface-hover)] transition-colors border-t border-[var(--color-border)] dark:border-[var(--color-dark-border)]"
                             onClick={() => setEventsDropdownOpen(false)}
                           >
                             Kustawi Events

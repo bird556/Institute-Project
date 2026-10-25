@@ -3,6 +3,7 @@ import { getPageContent } from '@/actions/page-content';
 import { getSiteSettings } from '@/actions/settings';
 import { getSiteVisibility } from '@/lib/site-visibility';
 import { createClient } from '@/lib/supabase/server';
+import { notFinishedFilter } from '@/lib/event-dates';
 import NewsletterSignup from '@/components/home/NewsletterSignup'
 import GoalSection from '@/components/home/GoalSection';
 import ImpactSection from '@/components/home/ImpactSection';
@@ -208,10 +209,10 @@ export default async function HomePage() {
   const { data: eventsData } = upcomingEventsEnabled
     ? await supabase
         .from('events')
-        .select('id, title, location, event_date')
+        .select('id, title, location, event_date, event_end_date')
         .eq('published', true)
-        .gt('event_date', now)
-        .order('event_date', { ascending: true })
+        .or(notFinishedFilter(now))
+        .order('event_date', { ascending: true, nullsFirst: false })
         .limit(upcomingEventsMax)
     : { data: [] }
   const upcomingEvents = eventsData ?? [];

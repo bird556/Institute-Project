@@ -19,6 +19,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { createEvent, deleteEvent, toggleEventPublished } from '@/actions/events'
 import Pagination from '@/components/shared/Pagination'
 import { CountBadge, countBy, countStatus } from '@/components/admin/CountBadge'
+import { isEventPast, formatEventWhen } from '@/lib/event-dates'
 import type { Event } from '@/types'
 
 type StatusFilter = 'all' | 'published' | 'drafts'
@@ -31,20 +32,6 @@ interface EventListItem extends Event {
 
 interface EventListClientProps {
   events: EventListItem[]
-}
-
-function formatEventDate(iso: string): string {
-  const date = new Date(iso)
-  if (Number.isNaN(date.getTime())) return 'Invalid date'
-  return new Intl.DateTimeFormat('en-CA', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-    hour12: true,
-    timeZone: 'UTC',
-  }).format(date)
 }
 
 export default function EventListClient({ events: initial }: EventListClientProps) {
@@ -67,12 +54,12 @@ export default function EventListClient({ events: initial }: EventListClientProp
 
   type Ev = (typeof events)[number]
   const statusOk = (e: Ev) => statusFilter === 'all' || (statusFilter === 'published' ? e.published : !e.published)
-  const dateOk   = (e: Ev) => dateFilter === 'all' || (dateFilter === 'upcoming' ? new Date(e.event_date) > now : new Date(e.event_date) <= now)
+  const dateOk   = (e: Ev) => dateFilter === 'all' || (dateFilter === 'upcoming' ? !isEventPast(e, now) : isEventPast(e, now))
   const typeOk   = (e: Ev) => typeFilter === 'all' || e.event_type === typeFilter
   // Each filter group counts within the other active filters
   const statusCounts = countStatus(events.filter((e) => dateOk(e) && typeOk(e)))
   const dateCounts = countBy(events.filter((e) => statusOk(e) && typeOk(e)), ['all', 'upcoming', 'past'] as const,
-    (e, k) => (k === 'upcoming' ? new Date(e.event_date) > now : new Date(e.event_date) <= now))
+    (e, k) => (k === 'upcoming' ? !isEventPast(e, now) : isEventPast(e, now)))
   const typeCounts = countBy(events.filter((e) => statusOk(e) && dateOk(e)), ['all', 'kustawi', 'other'] as const, (e, k) => e.event_type === k)
 
   const filtered = events.filter((e) => {
@@ -85,14 +72,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
       statusFilter === 'all' ||
       (statusFilter === 'published' && e.published) ||
       (statusFilter === 'drafts' && !e.published)
-    const matchesDate =
-      dateFilter === 'all' ||
-      (dateFilter === 'upcoming' && new Date(e.event_date) > now) ||
-      (dateFilter === 'past' && new Date(e.event_date) <= now)
-    const matchesType =
-      typeFilter === 'all' ||
-      e.event_type === typeFilter
-    return matchesQuery && matchesStatus && matchesDate && matchesType
+    return matchesQuery && matchesStatus && dateOk(e) && typeOk(e)
   })
 
   const isFiltering = query !== '' || statusFilter !== 'all' || dateFilter !== 'all' || typeFilter !== 'all'
@@ -254,7 +234,7 @@ export default function EventListClient({ events: initial }: EventListClientProp
                   </div>
                   <div className="flex items-center gap-3 mt-0.5">
                     <span className="text-sm text-[var(--color-text-muted)] truncate">
-                      {formatEventDate(event.event_date)}
+                      {formatEventWhen(event)}
                     </span>
                     {event.location && (
                       <span className="hidden md:flex items-center gap-1 text-sm text-[var(--color-text-muted)] truncate">

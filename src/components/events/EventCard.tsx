@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, Calendar, CalendarDays, User } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { formatDate, formatTime } from '@/lib/utils'
+import { formatEventWhen } from '@/lib/event-dates'
 
 export interface EventCardProps {
   id: string
@@ -13,7 +13,8 @@ export interface EventCardProps {
   description_excerpt: string
   cover_url: string
   location: string
-  event_date: string
+  event_date: string | null
+  event_end_date?: string | null
   isPast: boolean
   event_type?: 'kustawi' | 'other'
   organizer?: string | null
@@ -28,6 +29,7 @@ export default function EventCard({
   cover_url,
   location,
   event_date,
+  event_end_date,
   isPast,
   event_type,
   organizer,
@@ -66,7 +68,7 @@ export default function EventCard({
           <div className="flex items-center gap-1.5 text-sm text-[var(--color-text-muted)]">
             <Calendar className="w-3.5 h-3.5 shrink-0" />
             <span>
-              {formatDate(event_date)} · {formatTime(event_date)}
+              {formatEventWhen({ event_date, event_end_date })}
             </span>
           </div>
 
