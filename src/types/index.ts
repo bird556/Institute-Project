@@ -410,6 +410,9 @@ export const CANADIAN_PROVINCES = [
 
 export type CanadianProvince = (typeof CANADIAN_PROVINCES)[number]
 
+// How the lines of a two-line page heading line up (page_content section 'hero_title_align')
+export type HeroTitleAlign = 'center' | 'left'
+
 // Categories that collect the litigator-only fields: phone, city, fee options, languages
 export const DIRECTORY_LITIGATOR_FIELDS: DirectoryCategory[] = ['racial_profiling_litigator']
 

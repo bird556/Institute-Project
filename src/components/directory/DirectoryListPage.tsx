@@ -25,6 +25,8 @@ export default async function DirectoryListPage({ category, pageSlug }: Props) {
 
   const heroTitle    = sections?.find((s) => s.section === 'hero_title')?.content    ?? DIRECTORY_CATEGORY_LABELS[category]
   const heroSubtitle = sections?.find((s) => s.section === 'hero_subtitle')?.content ?? ''
+  const titleLines   = heroTitle.split(/\r?\n/).map((l) => l.trim()).filter(Boolean)
+  const titleAlign   = sections?.find((s) => s.section === 'hero_title_align')?.content === 'left' ? 'text-left' : 'text-center'
 
   const cards = (entries ?? []).map((e) => ({
     id: e.id,
@@ -49,9 +51,18 @@ export default async function DirectoryListPage({ category, pageSlug }: Props) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-10">
       <header className="space-y-3">
-        <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
-          {heroTitle}
-        </h1>
+        {titleLines.length > 1 ? (
+          // Line break set in the admin: with "Centred", later lines centre under the first; the block stays left-aligned
+          <h1 className={`inline-block ${titleAlign} font-display text-3xl sm:text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white`}>
+            {titleLines.map((line, i) => (
+              <span key={i} className="block">{line}</span>
+            ))}
+          </h1>
+        ) : (
+          <h1 className="font-display text-4xl font-bold text-[var(--color-brand-teal)] dark:text-white">
+            {heroTitle}
+          </h1>
+        )}
         {heroSubtitle && (
           <p className="text-lg text-[var(--color-text-muted)] max-w-2xl">{heroSubtitle}</p>
         )}
